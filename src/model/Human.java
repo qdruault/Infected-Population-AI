@@ -1,5 +1,6 @@
 package model;
 
+import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -9,7 +10,7 @@ import sim.engine.Steppable;
 public class Human implements Steppable {
 
     public float immunity;
-    public float healthPoints;
+    public float health;
     public float age;
     public float fertility;
     public enum gender {
@@ -23,7 +24,14 @@ public class Human implements Steppable {
         FINE
     }
 
+    public float x;
+    public float y;
 
+
+    public Human(){
+        health = Constants.MAX_HEALTH;
+        gratification = Constants.MAX_GRATIFICATION;
+    }
 
     @Override
     public void step(SimState state) {
@@ -34,7 +42,7 @@ public class Human implements Steppable {
     }
 
     public Boolean mustDie(){
-        if (healthPoints == 0)
+        if (health == 0)
             return true;
         else return false;
     }

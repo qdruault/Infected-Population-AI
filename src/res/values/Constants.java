@@ -8,5 +8,7 @@ public class Constants {
     public static int GRID_SIZE = 20;
     public static int NUM_HUMANS = 30;
     public static int NB_DIRECTIONS = 8;
+    public static int MAX_HEALTH = 100;
+    public static int MAX_GRATIFICATION = 100;
 
 }

@@ -19,6 +19,19 @@ public class Beings extends SimState {
 		System.out.println("Simulation started");
 		super.start();
 	    yard.clear();
+	    addAgentsHuman();
+  }
+
+  // Add human Agents on random free cells
+  public void addAgentsHuman(){
+	  for(int  i  =  0;  i  <  Constants.NUM_HUMANS;  i++) {
+		  Human  a  =  new Human();
+		  Int2D location = getFreeLocation();
+		  yard.setObjectLocation(a, location.x, location.y);
+		  a.x = location.x;
+		  a.y = location.y;
+		  schedule.scheduleRepeating(a);
+	  }
   }
 
   public boolean free(int x,int y) {

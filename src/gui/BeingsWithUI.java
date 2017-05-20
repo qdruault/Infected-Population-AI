@@ -18,6 +18,7 @@ import sim.engine.SimState;
 import sim.portrayal.Inspector;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
+import sim.portrayal.simple.ImagePortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import model.Beings;
 
@@ -32,11 +33,12 @@ public class BeingsWithUI extends GUIState {
 		super(state);
 	}
 	public static String getName() {
-		return "Simulation de créatures"; 
+		return "Simulation de propagation de maladie dans une population humaine";
 	}
+
 	public void start() {
-	  super.start();
-	  setupPortrayals();
+		super.start();
+		setupPortrayals();
 	}
 
 	public void load(SimState state) {
@@ -46,16 +48,17 @@ public class BeingsWithUI extends GUIState {
 	public void setupPortrayals() {
 	  Beings beings = (Beings) state;	
 	  yardPortrayal.setField(beings.yard );
-	  yardPortrayal.setPortrayalForClass(Human.class, getTypeAPortrayal());
+	  yardPortrayal.setPortrayalForClass(Human.class, getHumanPortrayal());
 	  display.reset();
 	  display.setBackdrop(Color.orange);
 		// redraw the display
 	  //addBackgroundImage();
 	  display.repaint();
 	}
-	private OvalPortrayal2D getTypeAPortrayal() {
-		OvalPortrayal2D r = new OvalPortrayal2D();
-		r.paint = Color.RED;
+	private ImagePortrayal2D getHumanPortrayal() {
+		Image img = null;
+		img = new ImageIcon(getClass().getResource("human.jpg")).getImage();
+		ImagePortrayal2D r = new ImagePortrayal2D(img);
 		r.filled = true;
 		return r;
 	}
@@ -70,16 +73,7 @@ public class BeingsWithUI extends GUIState {
 		  displayFrame.setVisible(true);
 		  display.attach( yardPortrayal, "Yard" );
 		}
-	private void addBackgroundImage() {
-	  Image i = new ImageIcon(getClass().getResource("back.jpg")).getImage();
-	  int w = i.getWidth(null)/5;
-	  int h = i.getHeight(null)/5;
-	  BufferedImage b = display.getGraphicsConfiguration().createCompatibleImage(w,h);
-	  Graphics g = b.getGraphics();
-	  g.drawImage(i,0,0,w,h,null);
-	  g.dispose();
-	  display.setBackdrop(new TexturePaint(b, new Rectangle(0,0,w,h)));
-	}
+
 	public  Object  getSimulationInspectedObject()  {  return  state;  }
 	public  Inspector  getInspector() {
 	Inspector  i  =  super.getInspector();
