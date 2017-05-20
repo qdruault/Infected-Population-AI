@@ -9,28 +9,41 @@ import sim.engine.Steppable;
  */
 public class Human implements Steppable {
 
-    public float immunity;
-    public float health;
     public float age;
+    public float health;
+    public float immunity;
     public float fertility;
-    public enum gender {
+    // satiété
+    public float gratification;
+
+
+    public enum Gender {
         MALE,
         FEMALE
     };
-    // satiété
-    public float gratification;
-    public enum condition {
+    public Gender gender;
+
+    public enum Condition {
         SICK,
         FINE
     }
+    public Condition condition;
+
+
+
 
     public float x;
     public float y;
 
 
-    public Human(){
+    // Constructor used when the simulation is initialized.
+    public Human(float i, float a, float f, float g){
         health = Constants.MAX_HEALTH;
         gratification = Constants.MAX_GRATIFICATION;
+        immunity = i;
+        age = a;
+        fertility = f;
+        condition = Condition.FINE;
     }
 
     @Override

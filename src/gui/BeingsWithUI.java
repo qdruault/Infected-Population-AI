@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+import model.Food;
 import model.Human;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -49,6 +50,7 @@ public class BeingsWithUI extends GUIState {
 	  Beings beings = (Beings) state;	
 	  yardPortrayal.setField(beings.yard );
 	  yardPortrayal.setPortrayalForClass(Human.class, getHumanPortrayal());
+	  yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
 	  display.reset();
 	  display.setBackdrop(Color.orange);
 		// redraw the display
@@ -58,6 +60,14 @@ public class BeingsWithUI extends GUIState {
 	private ImagePortrayal2D getHumanPortrayal() {
 		Image img = null;
 		img = new ImageIcon(getClass().getResource("human.jpg")).getImage();
+		ImagePortrayal2D r = new ImagePortrayal2D(img);
+		r.filled = true;
+		return r;
+	}
+
+	private ImagePortrayal2D getFoodPortrayal() {
+		Image img = null;
+		img = new ImageIcon(getClass().getResource("food.jpg")).getImage();
 		ImagePortrayal2D r = new ImagePortrayal2D(img);
 		r.filled = true;
 		return r;
