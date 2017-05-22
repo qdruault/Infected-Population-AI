@@ -16,6 +16,18 @@ public class Constants {
     public static int MAX_IMMUNITY = 100;
     public static int MAX_FERTILITY = 100;
 
+    // DOCTOR parameters
+    public static int MAX_DRUG_STOCK = 100;
+    public static int HEAL_CONSUMMATION = 10;
+    public static int HEAL_VALUE = 50;
+    public static int HEAL_DIFFICULTY = 2;
+    public static int CURE_CONSUMMATION = 30;
+    public static int CURE_DIFFICULTY = 3;
+    public static int VACCINATE_CONSUMMATION = 50;
+    public static int VACCINATE_DIFFICULTY = 1;
+    public static int VACCINATE_EFFICIENCY = 100;
+    public static float SUCCESS_DIFFICULTY = 0.8f;
+
     // FOOD parameters
     public static int MAX_NUTRIOTINAL_PROVISION = 100;
     public static int MAX_QUANTITY = 100;

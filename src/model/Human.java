@@ -48,6 +48,10 @@ public class Human implements Steppable {
         condition = Condition.FINE;
     }
 
+    public Human(){
+
+    }
+
     @Override
     public void step(SimState state) {
         Beings beings = (Beings) state;
