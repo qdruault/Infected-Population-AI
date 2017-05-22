@@ -1,5 +1,6 @@
 package model;
 
+import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -11,7 +12,7 @@ public class Food implements Steppable {
     public float x;
     public float y;
 
-    public float rottingIn;
+    public float rottingIn = Constants.ROTTING_DURATION;
     public boolean rotten;
 
     public float nutritionalProvision;
@@ -29,6 +30,14 @@ public class Food implements Steppable {
         // remove if needed
         if (mustDisappear()){
             beings.yard.remove(this);
+        }
+        // Rotting
+        if (!rotten){
+            rottingIn -= 5f;
+            if (rottingIn <= 0){
+                rotten = true;
+                nutritionalProvision *= 0.25;
+            }
         }
     }
 
@@ -49,5 +58,4 @@ public class Food implements Steppable {
             return true;
         else return false;
     }
-
 }
