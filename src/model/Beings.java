@@ -28,7 +28,7 @@ public class Beings extends SimState {
   // Add human Agents on random free cells
   public void addAgentsHuman(){
 	  for(int  i  =  0;  i  <  Constants.NUM_HUMANS;  i++) {
-		  Human  a  =  new Human(random.nextInt(Constants.MAX_IMMUNITY), random.nextInt(31) + 20, random.nextInt(Constants.MAX_FERTILITY), random.nextInt(2));
+		  Human  a  =  new Human(random.nextInt(Constants.MAX_IMMUNITY), random.nextInt(31) + 20, random.nextInt(Constants.MAX_FERTILITY), random.nextInt(2), random.nextFloat());
 		  Int2D location = getFreeLocation();
 		  yard.setObjectLocation(a, location.x, location.y);
 		  a.x = location.x;
