@@ -19,5 +19,6 @@ public class Constants {
     // FOOD parameters
     public static int MAX_NUTRIOTINAL_PROVISION = 100;
     public static int MAX_QUANTITY = 100;
+    public static int ROTTING_DURATION = 100;
 
 }
