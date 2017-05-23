@@ -1,5 +1,7 @@
 ### ECLIPSE ###
 
+.classpath
+.project
 .metadata
 bin/
 tmp/
