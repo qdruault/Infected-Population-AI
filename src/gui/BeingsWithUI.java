@@ -1,25 +1,18 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.TexturePaint;
-import java.awt.image.BufferedImage;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import model.Food;
 import model.Human;
+import model.Virus;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
-import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
-import sim.portrayal.simple.ImagePortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import model.Beings;
 
@@ -51,24 +44,28 @@ public class BeingsWithUI extends GUIState {
 	  yardPortrayal.setField(beings.yard );
 	  yardPortrayal.setPortrayalForClass(Human.class, getHumanPortrayal());
 	  yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
+	  yardPortrayal.setPortrayalForClass(Virus.class, getVirusPortrayal());
 	  display.reset();
-	  display.setBackdrop(Color.orange);
-		// redraw the display
-	  //addBackgroundImage();
+	  display.setBackdrop(Color.LIGHT_GRAY);
 	  display.repaint();
 	}
-	private ImagePortrayal2D getHumanPortrayal() {
-		Image img = null;
-		img = new ImageIcon(getClass().getResource("human.jpg")).getImage();
-		ImagePortrayal2D r = new ImagePortrayal2D(img);
+	private OvalPortrayal2D getHumanPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
+		r.paint = Color.BLUE;
 		r.filled = true;
 		return r;
 	}
 
-	private ImagePortrayal2D getFoodPortrayal() {
-		Image img = null;
-		img = new ImageIcon(getClass().getResource("food.jpg")).getImage();
-		ImagePortrayal2D r = new ImagePortrayal2D(img);
+	private OvalPortrayal2D getFoodPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
+		r.paint = Color.GREEN;
+		r.filled = true;
+		return r;
+	}
+	
+	private OvalPortrayal2D getVirusPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
+		r.paint = Color.RED;
 		r.filled = true;
 		return r;
 	}
