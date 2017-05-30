@@ -50,8 +50,8 @@ public class Beings extends SimState {
 		  Food  a  =  new Food(random.nextInt(Constants.MAX_QUANTITY), random.nextInt(Constants.MAX_NUTRIOTINAL_PROVISION));
 		  Int2D location = getFreeLocation();
 		  yard.setObjectLocation(a, location.x, location.y);
-		  a.x = location.x;
-		  a.y = location.y;
+		  a.setX(location.x);
+		  a.setY(location.y);
 		  schedule.scheduleRepeating(a);
 	  }
   }
