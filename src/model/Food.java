@@ -9,21 +9,83 @@ import sim.engine.Steppable;
  */
 public class Food implements Steppable {
 
-    public int x;
-    public int y;
 
-    public float rottingIn = Constants.ROTTING_DURATION;
-    public boolean rotten;
+	private static final long serialVersionUID = 1L;
+	// Coordonn�es.
+	private int x;
+    private int y;
 
-    public float nutritionalProvision;
-    public float quantity;
+    // Dur�e avent que �a pourisse.
+    private int rottingIn = Constants.ROTTING_DURATION;
+    // Pourri.
+    private boolean rotten;
+    // Nutriments apport�s en la mangeant.
+    private int nutritionalProvision;
+    // Nombre de portions.
+    private int quantity;
+    
+    /**
+     * Constructeur
+     * @param nutritionalProvision
+     * @param quantity
+     */
+    public Food(int nutritionalProvision, int quantity) {
+		this.nutritionalProvision = nutritionalProvision;
+		this.quantity = quantity;
+		rotten = false;
+	}
+    
+    // Getters and setters.
+    public int getX() {
+		return x;
+	}
 
-    public Food(float q, float n){
-        quantity = q;
-        nutritionalProvision = n;
-    }
+	public void setX(int x) {
+		this.x = x;
+	}
 
-    @Override
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getRottingIn() {
+		return rottingIn;
+	}
+
+	public void setRottingIn(int rottingIn) {
+		this.rottingIn = rottingIn;
+	}
+
+	public boolean isRotten() {
+		return rotten;
+	}
+
+	public void setRotten(boolean rotten) {
+		this.rotten = rotten;
+	}
+
+	public int getNutritionalProvision() {
+		return nutritionalProvision;
+	}
+
+	public void setNutritionalProvision(int nutritionalProvision) {
+		this.nutritionalProvision = nutritionalProvision;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+
+	@Override
     public void step(SimState state) {
         Beings beings = (Beings) state;
 
@@ -33,16 +95,24 @@ public class Food implements Steppable {
         }
         // Rotting
         if (!rotten){
-            rottingIn -= 5f;
-            if (rottingIn <= 0){
+        	// Il se p�rime.
+            rottingIn -= 5;
+            if (rottingIn <= 0) {
+            	// Compl�tement pourri.
                 rotten = true;
+                // On diminue sa qualit� nutritionnelle.
                 nutritionalProvision *= 0.25;
             }
         }
     }
 
-    // Consume food
-    public float consume(float q){
+    
+	/**
+     * Consommation de la nourriture.
+     * @param q : quantit� voulue.
+     * @return : quantit� consomm�e.
+     */
+    public int consume(int q){
         if(quantity > q){
             quantity -= q;
             return q;
@@ -53,9 +123,11 @@ public class Food implements Steppable {
         }
     }
 
+    /**
+     * Quand il n'y a plus de nourriture.
+     * @return
+     */
     public Boolean mustDisappear(){
-        if (quantity == 0)
-            return true;
-        else return false;
+        return quantity == 0;
     }
 }
