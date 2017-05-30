@@ -178,7 +178,7 @@ public class Human implements Steppable {
         while (currentNeighbor != null){
             if (currentNeighbor instanceof Food){
                 Food food = (Food)currentNeighbor;
-                return new Int2D(food.x, food.y);
+                return new Int2D(food.getX(), food.getY());
             } else {
                 currentNeighbor = neighbors.pop();
             }
