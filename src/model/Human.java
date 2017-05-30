@@ -3,6 +3,10 @@ package model;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.field.grid.Grid2D;
+import sim.util.Bag;
+import sim.util.Int2D;
+import sim.util.IntBag;
 
 /**
  * Created by Louis on 20/05/2017.
@@ -11,33 +15,39 @@ public class Human implements Steppable {
 	
 	private static final long serialVersionUID = 1L;
 
-	public enum Gender {
+    // Age
+    private int age;
+    // PV
+    private int health;
+    // Capacitï¿½ de rï¿½sistance au virus.
+    private int immunity;
+    // Fertilitï¿½.
+    private int fertility;
+    // Niveau de statiete
+    private int gratification;
+    // Champs de vision
+    public int vision;
+    // Nombre de cellules de mouvement par tour
+    public int move;
+    // Homme ou Femme
+    private Gender gender;
+    // Malade ou pas
+    private Condition condition;
+    // Coordonnï¿½es.
+    private int x;
+    private int y;
+
+    public enum Gender {
         MALE,
         FEMALE
     };
-    
+
     public enum Condition {
         SICK,
         FINE
     };
 
-    // Age
-    private int age;
-    // PV
-    private int health;
-    // Capacité de résistance au virus.
-    private int immunity;
-    // Fertilité.
-    private int fertility;
-    // Niveau de statiete
-    private int gratification;
-    // Homme ou Femme    
-    private Gender gender;
-    // Malade ou pas
-    private Condition condition;
-    // Coordonnées.
-    private int x;
-    private int y;
+    private Bag neighbors;
 
     /**
      * Constructeur vide.
@@ -154,6 +164,72 @@ public class Human implements Steppable {
 
         if (mustDie()){
             beings.yard.remove(this);
+        }
+    }
+
+    //Perceive the cells around, should be called at the beginning of each step
+    public void perceiveCells(Beings beings){
+        neighbors = beings.yard.getMooreNeighbors(x, y, vision , Grid2D.TOROIDAL, new Bag(), new IntBag(), new IntBag());
+    }
+
+    //Check if there are any food available around
+    public Int2D lookForFood(){
+        Object currentNeighbor = neighbors.pop();
+        while (currentNeighbor != null){
+            if (currentNeighbor instanceof Food){
+                Food food = (Food)currentNeighbor;
+                return new Int2D(food.x, food.y);
+            } else {
+                currentNeighbor = neighbors.pop();
+            }
+        }
+        return new Int2D();
+    }
+
+    // get the Food object if there is one on the current cell
+    public Food food(Beings beings){
+        Food food = null;
+        // Get the location
+        Int2D flocation = new Int2D(beings.yard.stx(x), beings.yard.sty(y));
+        // Get the list of objects at the current location
+        Bag localObjects = beings.yard.getObjectsAtLocation(flocation.x, flocation.y);
+        Object currentObject = localObjects.pop();
+        while(currentObject != null){
+            if (currentObject instanceof Food){
+                food = (Food) currentObject;
+                currentObject = null;
+            } else {
+                currentObject = localObjects.pop();
+            }
+        }
+        return food;
+    }
+
+    // Move toward the given cell until it's reached or the human can't move anymore
+    public void moveTowardCell(Int2D position, Beings beings){
+        int diffX = position.x - x;
+        int diffY = position.y - y;
+        int movesLeft = move;
+
+        int resultX = x;
+        int resultY = y;
+
+        while (movesLeft > 0 && (diffX != 0 || diffY != 0)){
+            if (diffX != 0){
+                int increment = (diffX > 0) ? -1 : 1;
+                resultX -= increment;
+                diffX += increment;
+                movesLeft --;
+            }
+            if (diffY != 0) {
+                int increment = (diffY > 0) ? -1 : 1;
+                resultY -= increment;
+                diffY += increment;
+                movesLeft --;
+            }
+        }
+        if(resultX != x || resultY != y){
+            beings.yard.setObjectLocation(this, beings.yard.stx(resultX), beings.yard.sty(resultY));
         }
     }
 }

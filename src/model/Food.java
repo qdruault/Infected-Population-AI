@@ -9,8 +9,8 @@ import sim.engine.Steppable;
  */
 public class Food implements Steppable {
 
-    public float x;
-    public float y;
+    public int x;
+    public int y;
 
     public float rottingIn = Constants.ROTTING_DURATION;
     public boolean rotten;
