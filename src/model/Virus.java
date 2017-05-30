@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 import model.Human.Condition;
@@ -60,12 +59,18 @@ public class Virus implements Steppable {
 		propagationDuration--;
 
 		// Déplacement aléatoire.
-		x += ThreadLocalRandom.current().nextInt(1, moveRange + 1);
-		// Modulo la surface de la grille.
-		x %= 30;
+		x += ThreadLocalRandom.current().nextInt(-moveRange, moveRange + 1);
+		// Modulo la taille de la grille.
+		x %= Constants.GRID_SIZE;
+		
+		if(x<0)
+			x = -x;
 
-		y++;
-		y %= 30;
+		y += ThreadLocalRandom.current().nextInt(-moveRange, moveRange + 1);
+		y %= Constants.GRID_SIZE;;
+		if(y<0)
+			y = -y;
+		
 		beings.yard.setObjectLocation(this, x, y);
 		
 		detectInfectableHumans(beings);
@@ -90,8 +95,6 @@ public class Virus implements Steppable {
 					for (int i = 0; i < bag.size(); i++) {
 						// Si la case contient un objet Human
 						if (bag.get(i).getClass().equals(Human.class)) {
-							// Calcul de la distance entre l'insecte et la case
-							int distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
 							// Ajout de la case
 							humanCases.add(new Case(indexX, indexY));
 						}
@@ -127,6 +130,7 @@ public class Virus implements Steppable {
 				Human h = (Human) bag.get(0);
 
 				// L'humain est infecté.
+				h.setCondition(Condition.SICK);
 
 				nbInfectedHuman++;
 			}
