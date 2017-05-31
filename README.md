@@ -35,3 +35,41 @@ Sur master :
 git merge --no-ff ma-nouvelle-branche (on fusionne notre branche sans la remettre à plat)
 git push (on sauvegarde le tout)
 ```
+
+## Possibilités d'action des différents Agents :
+
+### Humain :
+
+ * Percevoir l'environnement autour de lui.
+ * Se déplacer.
+ * Consommer de la nourriture sur une cellule adjacente.
+ * Se reproduire avec une personne du sexe opposé sur une cellule adjacente.
+ * Mourir.
+
+### Médecin :
+
+ * A les mêmes possiblités d'action qu'un humain.
+ * Ramasser des médicaments sur une cellule adjacente.
+ * Tenter une opération sur un humain sur une cellule adjacente (Rendre des points de vie, soigner une maladie, vacciner).
+
+### Nourriture :
+
+ * Peut-être consommée.
+ * Pourrir un peu plus à chaque tour.
+
+### Virus :
+
+ * Disparaître.
+ * Se déplacer.
+ * Infecter des humains.
+
+
+
+
+
+
+
+
+
+
+
