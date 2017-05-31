@@ -15,7 +15,7 @@ public class Virus implements Steppable {
 	private int moveRange; // distance de propagation du virus
 	private int infectingArea; // zone de contamination
 	private int propagationDuration; // temps avant la disparition du virus
-	private int nbHumanToInfect; // nombre d'humain à infecter
+	private int nbHumanToInfect; // nombre d'humain ï¿½ infecter
 
 	private int x, y;
 
@@ -45,7 +45,7 @@ public class Virus implements Steppable {
 		if (propagationDuration == 0) {
 
 			// Suppression dans la grille.
-			beings.yard.removeObjectsAtLocation(x, y);
+			beings.yard.set(x, y, null);
 			// Suppression de l'agent dans le scheduling
 			stoppable.stop();
 
@@ -55,10 +55,10 @@ public class Virus implements Steppable {
 	}
 
 	private void move(Beings beings) {
-		// Un déplacement coute un point de durée.
+		// Un dï¿½placement coute un point de durï¿½e.
 		propagationDuration--;
 
-		// Déplacement aléatoire.
+		// Dï¿½placement alï¿½atoire.
 		x += ThreadLocalRandom.current().nextInt(-moveRange, moveRange + 1);
 		// Modulo la taille de la grille.
 		x %= Constants.GRID_SIZE;
@@ -71,7 +71,7 @@ public class Virus implements Steppable {
 		if(y<0)
 			y = -y;
 		
-		beings.yard.setObjectLocation(this, x, y);
+		beings.yard.set(x, y, this);
 		
 		detectInfectableHumans(beings);
 		infect(beings);
@@ -89,47 +89,43 @@ public class Virus implements Steppable {
 		// Parcours de toutes les cases
 		for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
 			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
-				// Objets aux coordonnées
-				Bag bag = beings.yard.getObjectsAtLocation(indexX, indexY);
-				if (bag != null) {
-					for (int i = 0; i < bag.size(); i++) {
-						// Si la case contient un objet Human
-						if (bag.get(i).getClass().equals(Human.class)) {
-							// Ajout de la case
-							humanCases.add(new Case(indexX, indexY));
-						}
-
+				// Objet aux coordonnï¿½es
+				Object object = beings.yard.get(indexX, indexY);
+				if (object != null) {
+					// Si la case contient un objet Human
+					if (object instanceof Human) {
+						// Ajout de la case
+						humanCases.add(new Case(indexX, indexY));
 					}
 				}
-
 			}
 		}
 
 	}
 
 	private void infect(Beings beings) {
-		// Une infection coute 5 point de durée.
+		// Une infection coute 5 point de durï¿½e.
 		propagationDuration -= 5;
 
 		int nbInfectedHuman = 0;
 
-		// Détection des humains dans la zone de contamination
-		// Les humains infectés aléatoirement.
+		// Dï¿½tection des humains dans la zone de contamination
+		// Les humains infectï¿½s alï¿½atoirement.
 
-		// Tant que le nombre max d'humain à infecter n'a pas été atteint.
+		// Tant que le nombre max d'humain ï¿½ infecter n'a pas ï¿½tï¿½ atteint.
 		while (nbInfectedHuman <= nbHumanToInfect) {
 			
-			// On récupère une case aléatoire dans la liste.
+			// On rï¿½cupï¿½re une case alï¿½atoire dans la liste.
 			int indexhuman = ThreadLocalRandom.current().nextInt(1, humanCases.size() + 1);
 			Case hcase = humanCases.get(indexhuman);
 
-			Bag bag = beings.yard.getObjectsAtLocation(hcase.getX(), hcase.getY());
-			
-			// Si la case contient bien un humain.
-			if (bag.get(0).getClass().equals(Human.class)) {
-				Human h = (Human) bag.get(0);
+			Object object = beings.yard.get(hcase.getX(), hcase.getY());
 
-				// L'humain est infecté.
+			// Si la case contient bien un humain.
+			if(object instanceof Human){
+				Human h = (Human) object;
+
+				// L'humain est infectï¿½.
 				h.setCondition(Condition.SICK);
 
 				nbInfectedHuman++;
