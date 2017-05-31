@@ -163,13 +163,13 @@ public class Human implements Steppable {
         Beings beings = (Beings) state;
 
         if (mustDie()){
-            beings.yard.remove(this);
+            beings.yard.set(x, y, null);
         }
     }
 
     //Perceive the cells around, should be called at the beginning of each step
     public void perceiveCells(Beings beings){
-        neighbors = beings.yard.getMooreNeighbors(x, y, vision , Grid2D.TOROIDAL, new Bag(), new IntBag(), new IntBag());
+        neighbors = beings.yard.getRadialNeighbors(x, y, vision, Grid2D.BOUNDED, false, new Bag(), new IntBag(), new IntBag());
     }
 
     //Check if there are any food available around
@@ -184,25 +184,6 @@ public class Human implements Steppable {
             }
         }
         return new Int2D();
-    }
-
-    // get the Food object if there is one on the current cell
-    public Food food(Beings beings){
-        Food food = null;
-        // Get the location
-        Int2D flocation = new Int2D(beings.yard.stx(x), beings.yard.sty(y));
-        // Get the list of objects at the current location
-        Bag localObjects = beings.yard.getObjectsAtLocation(flocation.x, flocation.y);
-        Object currentObject = localObjects.pop();
-        while(currentObject != null){
-            if (currentObject instanceof Food){
-                food = (Food) currentObject;
-                currentObject = null;
-            } else {
-                currentObject = localObjects.pop();
-            }
-        }
-        return food;
     }
 
     // Move toward the given cell until it's reached or the human can't move anymore
@@ -229,7 +210,7 @@ public class Human implements Steppable {
             }
         }
         if(resultX != x || resultY != y){
-            beings.yard.setObjectLocation(this, beings.yard.stx(resultX), beings.yard.sty(resultY));
+            beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY), this);
         }
     }
 }

@@ -91,7 +91,7 @@ public class Food implements Steppable {
 
         // remove if needed
         if (mustDisappear()){
-            beings.yard.remove(this);
+            beings.yard.set(x, y, null);
         }
         // Rotting
         if (!rotten){

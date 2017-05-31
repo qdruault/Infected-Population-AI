@@ -15,7 +15,7 @@ import model.Human.Gender;
 public class Beings extends SimState {
 
 
-	public SparseGrid2D yard = new SparseGrid2D(Constants.GRID_SIZE,Constants.GRID_SIZE);
+	public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE, Constants.GRID_SIZE);
 
 	public Beings(long seed) {
 		super(seed);
@@ -29,7 +29,7 @@ public class Beings extends SimState {
 	}
 
 	/**
-	 * Génère des Humains sur la carte.
+	 * Gï¿½nï¿½re des Humains sur la carte.
 	 */
 	public void addAgentsHuman(){
 		for(int  i  =  0;  i  <  Constants.NUM_HUMANS;  i++) {
@@ -43,7 +43,7 @@ public class Beings extends SimState {
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
 			Human  a = new Human(immunity, fertility, gender, Condition.FINE);
 			Int2D location = getFreeLocation();
-			yard.setObjectLocation(a, location.x, location.y);
+			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
 			schedule.scheduleRepeating(a);
@@ -52,13 +52,13 @@ public class Beings extends SimState {
 
 
 	/**
-	 * Génère de la nourriture sur la carte.
+	 * Gï¿½nï¿½re de la nourriture sur la carte.
 	 */
 	public void addAgentsFood(){
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_QUANTITY), random.nextInt(Constants.MAX_NUTRIOTINAL_PROVISION));
 			Int2D location = getFreeLocation();
-			yard.setObjectLocation(a, location.x, location.y);
+			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
 			schedule.scheduleRepeating(a);
@@ -74,7 +74,7 @@ public class Beings extends SimState {
 	public boolean free(int x,int y) {
 		int xx = yard.stx(x);
 		int yy = yard.sty(y);
-		return yard.getObjectsAtLocation(xx,yy) == null;
+		return yard.get(xx,yy) == null;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class Beings extends SimState {
 		Int2D location = new Int2D(random.nextInt(yard.getWidth()),
 				random.nextInt(yard.getHeight()) );
 		Object ag;
-		while ((ag = yard.getObjectsAtLocation(location.x,location.y)) != null) {
+		while ((ag = yard.get(location.x,location.y)) != null) {
 			location = new Int2D(random.nextInt(yard.getWidth()),
 					random.nextInt(yard.getHeight()) );
 		}
