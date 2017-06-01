@@ -24,8 +24,9 @@ public class Beings extends SimState {
 		System.out.println("Simulation started");
 		super.start();
 		yard.clear();
-		addAgentsHuman();
-		addAgentsFood();
+		createThenRemove();
+		/*addAgentsHuman();
+		addAgentsFood();*/
 	}
 
 	/**
@@ -106,4 +107,23 @@ public class Beings extends SimState {
 			food.setY(pos.y);
 		}
 	}
+	// Méthode de test pour l'objectGrid2D
+	private void createThenRemove(){
+		Gender gender;
+		gender = Gender.MALE;
+		int immunity = random.nextInt(Constants.MAX_IMMUNITY);
+		int fertility = random.nextInt(Constants.MAX_FERTILITY);
+		Human  a = new Human(immunity, fertility, gender, Condition.FINE);
+		Int2D location = getFreeLocation();
+		yard.set(location.x, location.y, a);
+		a.setX(location.x);
+		a.setY(location.y);
+		System.out.println(yard.get(location.x, location.y));
+		schedule.scheduleRepeating(a);
+		System.out.println("Human was created");
+		// Décommenter cette dernière ligne pour constater la disparition de la grille
+		/*yard.set(location.x, location.y, null);
+		System.out.println(yard.get(location.x, location.y));*/
+	}
+
 }
