@@ -1,5 +1,6 @@
 package model;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -157,6 +158,10 @@ public class Human implements Steppable {
 	private Boolean mustDie(){
         return health == 0;
     }
+
+    private Boolean isStarving() { return gratification == 0; }
+
+    private Boolean isSick() { return condition == Condition.SICK; }
     
     @Override
     public void step(SimState state) {
@@ -164,6 +169,12 @@ public class Human implements Steppable {
 
         if (mustDie()){
             beings.yard.set(x, y, null);
+        }
+        if (isStarving()){
+            health -= Constants.STARVATION_LOSS;
+        }
+        if (isSick()){
+            health -= Constants.GRAVITY;
         }
     }
 
@@ -211,6 +222,14 @@ public class Human implements Steppable {
         }
         if(resultX != x || resultY != y){
             beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY), this);
+        }
+    }
+
+    // Mange une unité de nourriture
+    public void eat(Food food){
+        if (food.getQuantity() > 0){
+            food.consume(1);
+            gratification += food.getNutritionalProvision();
         }
     }
 }

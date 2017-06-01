@@ -56,7 +56,7 @@ public class Beings extends SimState {
 	 */
 	public void addAgentsFood(){
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
-			Food  a  =  new Food(random.nextInt(Constants.MAX_QUANTITY), random.nextInt(Constants.MAX_NUTRIOTINAL_PROVISION));
+			Food  a  =  new Food(random.nextInt(Constants.MAX_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
@@ -81,7 +81,7 @@ public class Beings extends SimState {
 	 * Trouve un endroit libre sur la carte.
 	 * @return
 	 */
-	private Int2D getFreeLocation() {
+	public Int2D getFreeLocation() {
 		Int2D location = new Int2D(random.nextInt(yard.getWidth()),
 				random.nextInt(yard.getHeight()) );
 		Object ag;
@@ -90,5 +90,20 @@ public class Beings extends SimState {
 					random.nextInt(yard.getHeight()) );
 		}
 		return location;
+	}
+
+	// Génère une quantité aléatoire de nourriture sur la grille
+	// Pour une valeur de maxInt = 100 :
+	// Le nombre de cellules de nourriture générées va de 0 à 4.
+	public void generateFood(int maxInt) {
+		int result = random.nextInt(maxInt)/25;
+
+		for (int i = 0; i < result; i++){
+			Int2D pos = getFreeLocation();
+			Food food = new Food(random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), random.nextInt(Constants.MAX_QUANTITY));
+			yard.set(pos.x, pos.y, food);
+			food.setX(pos.x);
+			food.setY(pos.y);
+		}
 	}
 }
