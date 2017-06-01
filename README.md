@@ -43,8 +43,12 @@ git push (on sauvegarde le tout)
  * Percevoir l'environnement autour de lui.
  * Se déplacer.
  * Consommer de la nourriture sur une cellule adjacente.
+    => Est-ce qu'on peut consommer plus d'une unité de nourriture par tour ou pas ?
  * Se reproduire avec une personne du sexe opposé sur une cellule adjacente.
+    => Préciser les règles pour la reproduction.
  * Mourir.
+ * Souffrir de la maladie.
+ * Souffrir de la famine.
 
 ### Médecin :
 
@@ -56,12 +60,27 @@ git push (on sauvegarde le tout)
 
  * Peut-être consommée.
  * Pourrir un peu plus à chaque tour.
+    => Apparition automatique d'une nouvelle cellule de nourriture chaque fois qu'une est consommée / Génération aléatoire de cellules de nourritures à chaque tour ?
 
 ### Virus :
 
  * Disparaître.
  * Se déplacer.
  * Infecter des humains.
+    => Ajouter en paramètre la gravité de l'infection, rapport avec le nombre de points de vie perdus à chaque tour ?
+
+
+## Stratégie des différents Agents :
+
+### Humain :
+
+### Médecin :
+
+### Nourriture :
+
+ * Agent statique. Comportement passif et constant.
+
+### Virus :
 
 
 
