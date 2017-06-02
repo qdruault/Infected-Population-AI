@@ -15,7 +15,7 @@ import sim.util.IntBag;
 public class Human implements Steppable {
 	
 	private static final long serialVersionUID = 1L;
-	private Beings model;
+	private Beings beings;
 
     // Age
     private int age;
@@ -54,7 +54,7 @@ public class Human implements Steppable {
 
     @Override
     public void step(SimState state) {
-        Beings beings = (Beings) state;
+        beings = (Beings) state;
         IntBag    xPos       = new IntBag();
         IntBag    yPos       = new IntBag();
         Bag       neighbours = toPerceive(xPos, yPos);
@@ -141,17 +141,17 @@ public class Human implements Steppable {
 		this.vision = vision;
 		this.survival=Constants.MAX_SURVIVAL;
 	}
+	//TODO Add a constructor or method to create a human and pass its age as a parameter
 
     public void toProcreate(Human h){
 	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
-			  //Human  child  =  new Human(random.nextInt(Constants.MAX_IMMUNITY), random.nextInt(31) + 20, random.nextInt(Constants.MAX_FERTILITY), random.nextInt(2), random.nextFloat());
-			  // Refaire avec les bons param�tres et des entiers. + ajouter vision + beings
-			  Human  child = new Human();
-//			  model.yard.setObjectLocation(child, this.getX(), this.getY());
-			  model.yard.set(this.getX(),this.getY(),child);
-				child.x = this.getX();
-				child.y = this.getY();
-				model.schedule.scheduleRepeating(child);
+	        // TODO Refaire avec les bons param�tres et des entiers. + ajouter vision + beings
+            //Human  child  =  new Human(beings.random.nextInt(Constants.MAX_IMMUNITY), beings.random.nextInt(31) + 20, beings.random.nextInt(Constants.MAX_FERTILITY), random.nextInt(2), random.nextFloat());
+            Human  child = new Human();
+            beings.yard.set(this.getX(),this.getY(),child);
+            child.x = this.getX();
+            child.y = this.getY();
+            beings.schedule.scheduleRepeating(child);
 	    }
     }
     
@@ -163,10 +163,10 @@ public class Human implements Steppable {
     //Perceive the cells around, record location, is called at the beginning of each step
     private Bag toPerceive(IntBag xPos, IntBag yPos) {
         Bag result = new Bag();
-        model.yard.getMooreNeighborsAndLocations(x, y, vision, Grid2D.TOROIDAL, false, result, xPos, yPos);
+        beings.yard.getMooreNeighborsAndLocations(x, y, vision, Grid2D.TOROIDAL, false, result, xPos, yPos);
         return result;
     }
-    
+
 	private Boolean mustDie(){
 		if (health == 0 || gratification == 100 || survival <= 10)
             return true;
@@ -175,7 +175,7 @@ public class Human implements Steppable {
     
     //Perceive the cells around, should be called at the beginning of each step
     public void perceiveCells(Beings beings){
-        neighbors = beings.yard.getMooreNeighbors(x, y, vision , Grid2D.TOROIDAL, false, new Bag(), new IntBag(), new IntBag());
+        neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), new IntBag(), new IntBag());
     }
 
     //Check if there are any food available around
@@ -192,28 +192,6 @@ public class Human implements Steppable {
         return new Int2D();
     }
 
-    /* Ne marche pas dans ObjectGrid (getObjectATLocation*/
-    /*
-    // get the Food object if there is one on the current cell
-    public Food food(Beings beings){
-        Food food = null;
-        // Get the location
-        Int2D flocation = new Int2D(beings.yard.stx(x), beings.yard.sty(y));
-        // Get the list of objects at the current location
-        Bag localObjects = beings.yard.getObjectsAtLocation(flocation.x, flocation.y);
-        Object currentObject = localObjects.pop();
-        while(currentObject != null){
-            if (currentObject instanceof Food){
-                food = (Food) currentObject;
-                currentObject = null;
-            } else {
-                currentObject = localObjects.pop();
-            }
-        }
-        return food;
-    }
-*/
-    
     // Move toward the given cell until it's reached or the human can't move anymore
     public void moveTowardCell(Int2D position, Beings beings){
         int diffX = position.x - x;
