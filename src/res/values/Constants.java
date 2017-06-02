@@ -12,6 +12,7 @@ public class Constants {
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
     public static int MAX_HEALTH = 100;
+    public static int MAX_SURVIVAL = 100;
     public static int MAX_GRATIFICATION = 100;
     public static int MAX_IMMUNITY = 100;
     public static int MAX_FERTILITY = 100;

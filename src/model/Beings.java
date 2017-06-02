@@ -41,7 +41,8 @@ public class Beings extends SimState {
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
-			Human  a = new Human(immunity, fertility, gender, Condition.FINE);
+			//Remplacer par le bon constructeur 
+			Human  a = new Human();
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);

@@ -106,7 +106,6 @@ public class Food implements Steppable {
         }
     }
 
-    
 	/**
      * Consommation de la nourriture.
      * @param q : quantit� voulue.
@@ -125,9 +124,12 @@ public class Food implements Steppable {
 
     /**
      * Quand il n'y a plus de nourriture.
+     * Ou qu'elle est trop pourrie
      * @return
      */
     public Boolean mustDisappear(){
-        return quantity == 0;
+        if (quantity == 0 || rottingIn<= -5)
+            return true;
+        else return false;
     }
 }

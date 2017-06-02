@@ -10,9 +10,9 @@ import sim.engine.SimState;
 public class Doctor extends Human {
 
 	private static final long serialVersionUID = 1L;
-	// Stock de médicaments.
+	// Stock de mï¿½dicaments.
 	private int drugStock;
-    // Facilité à soigner les gens (compétence du medecin)
+    // Facilitï¿½ ï¿½ soigner les gens (compï¿½tence du medecin)
 	private int skill;
 
 	public Doctor() {
@@ -20,7 +20,9 @@ public class Doctor extends Human {
 	}
 
 	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int skill) {
-		super(immunity, fertility, gender, condition);
+		//super(immunity, fertility, gender, condition);
+		//Remplacer par le bon constructeur
+		super();
 		this.skill = skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 	}
@@ -53,7 +55,7 @@ public class Doctor extends Human {
     }
     
     /**
-     * Vacine un humain, augmente son immunité.
+     * Vacine un humain, augmente son immunitï¿½.
      * @param beings
      * @param human
      */
