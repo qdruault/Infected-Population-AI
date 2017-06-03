@@ -37,22 +37,48 @@ public class BeingsWithUI extends GUIState {
 	}
 
 	public void load(SimState state) {
-	  super.load(state);
-	  setupPortrayals();
+		super.load(state);
+		setupPortrayals();
 	}
 	public void setupPortrayals() {
-	  Beings beings = (Beings) state;	
-	  yardPortrayal.setField(beings.yard );
-	  yardPortrayal.setPortrayalForClass(Human.class, getHumanPortrayal());
-	  yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
-	  yardPortrayal.setPortrayalForClass(Virus.class, getVirusPortrayal());
-	  display.reset();
-	  display.setBackdrop(Color.LIGHT_GRAY);
-	  display.repaint();
+		Beings beings = (Beings) state;
+		yardPortrayal.setField(beings.yard );
+		setupPortrayalForHumans(beings);
+		yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
+		yardPortrayal.setPortrayalForClass(Virus.class, getVirusPortrayal());
+		display.reset();
+		display.setBackdrop(Color.LIGHT_GRAY);
+		display.repaint();
 	}
+
+	private void setupPortrayalForHumans(Beings beings){
+		for(Object o: beings.yard.elements()){
+			if (o instanceof Human){
+				if (((Human) o).getGender() == Human.Gender.MALE)
+					yardPortrayal.setPortrayalForObject(o, getMaleHumanPortrayal());
+				else
+					yardPortrayal.setPortrayalForObject(o, getFemaleHumanPortrayal());
+			}
+		}
+	}
+
 	private OvalPortrayal2D getHumanPortrayal() {
 		OvalPortrayal2D r = new OvalPortrayal2D();
 		r.paint = Color.BLUE;
+		r.filled = true;
+		return r;
+	}
+
+	private OvalPortrayal2D getMaleHumanPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
+		r.paint = Color.BLUE;
+		r.filled = true;
+		return r;
+	}
+
+	private OvalPortrayal2D getFemaleHumanPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
+		r.paint = Color.PINK;
 		r.filled = true;
 		return r;
 	}
@@ -72,20 +98,20 @@ public class BeingsWithUI extends GUIState {
 	}
 
 	public void init(Controller c) {
-		  super.init(c);
-		  display = new Display2D(FRAME_SIZE,FRAME_SIZE,this);
-		  display.setClipping(false);
-		  displayFrame = display.createFrame();
-		  displayFrame.setTitle("Beings");
-		  c.registerFrame(displayFrame); // so the frame appears in the "Display" list
-		  displayFrame.setVisible(true);
-		  display.attach( yardPortrayal, "Yard" );
-		}
+		super.init(c);
+		display = new Display2D(FRAME_SIZE,FRAME_SIZE,this);
+		display.setClipping(false);
+		displayFrame = display.createFrame();
+		displayFrame.setTitle("Beings");
+		c.registerFrame(displayFrame); // so the frame appears in the "Display" list
+		displayFrame.setVisible(true);
+		display.attach( yardPortrayal, "Yard" );
+	}
 
 	public  Object  getSimulationInspectedObject()  {  return  state;  }
 	public  Inspector  getInspector() {
 	Inspector  i  =  super.getInspector();
-	  i.setVolatile(true);
-	  return  i;
+		i.setVolatile(true);
+		return  i;
 	}
 }
