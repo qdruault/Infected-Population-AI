@@ -102,7 +102,7 @@ public class Human implements Steppable {
                 if (diffX <= 1 && diffY <= 1) {
                     System.out.println("Let's eat");
                     int quantity;
-                    if (getGratification()>=50) quantity = 5;
+                    if (getGratification()<=50) quantity = 5;
                     else quantity = 2;
                     toEat((Food) object, quantity);
                     eatDone = true;
@@ -157,7 +157,7 @@ public class Human implements Steppable {
     
     public void toEat(Food f, int quantity){
     	f.consume(quantity);
-        gratification = Math.max(gratification - quantity, 0);
+        gratification = Math.min(gratification + quantity * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
     }
     
     //Perceive the cells around, record location, is called at the beginning of each step
@@ -167,8 +167,9 @@ public class Human implements Steppable {
         return result;
     }
 
+    // TODO remove the death if gratification == 0 and replace by a loss of health
 	private Boolean mustDie(){
-		if (health == 0 || gratification == 100 || survival <= 10)
+		if (health == 0 || gratification == 0 || survival <= 10)
             return true;
         else return false;	
     }
