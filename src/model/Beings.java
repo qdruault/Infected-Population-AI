@@ -108,4 +108,18 @@ public class Beings extends SimState {
 			food.setY(pos.y);
 		}
 	}
+
+	// Return a free adjacent cell if there is one, null otherwise
+	public Case getFreeAdjacentCell(int x, int y){
+		if( yard.get(x + 1, y) == null){
+			return new Case(x + 1, y);
+		} else if( yard.get(x - 1, y) == null){
+			return new Case(x -1, y);
+		} else if ( yard.get(x, y + 1) == null){
+			return new Case(x, y + 1);
+		} else if (yard.get(x, y - 1) == null){
+			return new Case(x, y - 1);
+		}
+		return null;
+	}
 }
