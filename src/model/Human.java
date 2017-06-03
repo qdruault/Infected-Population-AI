@@ -59,6 +59,7 @@ public class Human implements Steppable {
         IntBag    yPos       = new IntBag();
         Bag       neighbours = toPerceive(xPos, yPos);
 
+        // TODO remove the agent from the scheduling
         // remove if needed
         if (mustDie()){
             beings.yard.set(x, y, null);
@@ -85,8 +86,10 @@ public class Human implements Steppable {
 
                 if (diffX <= 1 && diffY <= 1) {
                     System.out.println("Let's procreate");
-                    toProcreate((Human) object);
-                    procreationDone = true;
+                    if (tryToProcreate((Human) object)) {
+                        toProcreate((Human) object);
+                        procreationDone = true;
+                    }
                     break;
                 }	    		
 	    	}
@@ -155,7 +158,20 @@ public class Human implements Steppable {
         this.age = age;
     }
 
+    // Generate a boolean based on the fertility of both humans
+    public boolean tryToProcreate(Human h){
+        float fertilityProbability1 = (float) fertility  / (float) Constants.MAX_FERTILITY;
+        float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
 
+        float successProbability = fertilityProbability1 * fertilityProbability2;
+        float f = 1f - successProbability;
+        successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
+
+        return  beings.random.nextFloat() < successProbability;
+    }
+
+
+    // TODO add a pregnancy mecanism
     public void toProcreate(Human h){
 	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
 	        if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)

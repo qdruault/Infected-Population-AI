@@ -21,6 +21,7 @@ public class Constants {
     public static int MAX_AGE = 100;
     public static int MAX_VISION = 5;
     public static int STARVATION_LOSS = 10;
+    public static int PROCREATION_MULTIPLIER = 1;
     public static float TRANSMISSION_PROBABILITY_1 = 0.5f;
     public static float TRANSMISSION_PROBABILITY_2 = 0.25f;
 
