@@ -158,13 +158,29 @@ public class Human implements Steppable {
 
     public void toProcreate(Human h){
 	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
-	        // TODO Refaire avec les bons param�tres et des entiers. + ajouter vision + beings
-            //Human  child  =  new Human(beings.random.nextInt(Constants.MAX_IMMUNITY), beings.random.nextInt(31) + 20, beings.random.nextInt(Constants.MAX_FERTILITY), random.nextInt(2), random.nextFloat());
-            Human  child = new Human();
-            beings.yard.set(this.getX(),this.getY(),child);
-            child.x = this.getX();
-            child.y = this.getY();
-            beings.schedule.scheduleRepeating(child);
+	        if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
+            {
+
+                int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
+                int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
+                Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
+                int vision = beings.random.nextInt(Constants.MAX_VISION);
+
+                Condition condition = Condition.FINE;
+                float conditionResult = beings.random.nextFloat();
+                if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
+                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
+                        condition = Condition.SICK;
+                } else if (getCondition() == Condition.SICK || getCondition() == Condition.SICK) {
+                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
+                        condition = Condition.SICK;
+                }
+                Human child = new Human(immunity, fertility, gender, condition, vision);
+                beings.yard.set(this.getX(), this.getY(), child);
+                child.x = this.getX();
+                child.y = this.getY();
+                beings.schedule.scheduleRepeating(child);
+            }
 	    }
     }
     
