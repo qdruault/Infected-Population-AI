@@ -141,7 +141,20 @@ public class Human implements Steppable {
 		this.vision = vision;
 		this.survival=Constants.MAX_SURVIVAL;
 	}
-	//TODO Add a constructor or method to create a human and pass its age as a parameter
+
+	// To create humans at the  beginning of the simulation
+    public Human(int immunity, int fertility, Gender gender, int vision, int age){
+        health = Constants.MAX_HEALTH;
+        gratification = Constants.MAX_GRATIFICATION;
+        this.immunity = immunity;
+        this.fertility = fertility;
+        this.gender = gender;
+        this.condition = Condition.FINE;
+        this.vision = vision;
+        this.survival=Constants.MAX_SURVIVAL;
+        this.age = age;
+    }
+
 
     public void toProcreate(Human h){
 	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
