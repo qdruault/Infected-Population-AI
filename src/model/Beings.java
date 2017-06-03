@@ -2,14 +2,9 @@ package model;
 
 import res.values.Constants;
 import sim.engine.SimState;
-import sim.engine.Stoppable;
 import sim.field.grid.ObjectGrid2D;
-import sim.field.grid.SparseGrid2D;
 import sim.util.Int2D;
 
-import java.util.Random;
-
-import model.Human.Condition;
 import model.Human.Gender;
 
 public class Beings extends SimState {
@@ -58,7 +53,7 @@ public class Beings extends SimState {
 	 */
 	public void addAgentsFood(){
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
-			Food  a  =  new Food(random.nextInt(Constants.MAX_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
+			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
@@ -94,20 +89,7 @@ public class Beings extends SimState {
 		return location;
 	}
 
-	// Génère une quantité aléatoire de nourriture sur la grille
-	// Pour une valeur de maxInt = 100 :
-	// Le nombre de cellules de nourriture générées va de 0 à 4.
-	public void generateFood(int maxInt) {
-		int result = random.nextInt(maxInt)/25;
 
-		for (int i = 0; i < result; i++){
-			Int2D pos = getFreeLocation();
-			Food food = new Food(random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), random.nextInt(Constants.MAX_QUANTITY));
-			yard.set(pos.x, pos.y, food);
-			food.setX(pos.x);
-			food.setY(pos.y);
-		}
-	}
 
 	// Return a free adjacent cell if there is one, null otherwise
 	public Case getFreeAdjacentCell(int x, int y){

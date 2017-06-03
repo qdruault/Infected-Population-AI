@@ -1,9 +1,9 @@
 package model;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.util.Int2D;
 
 /**
  * Created by Louis on 01/06/2017.
@@ -11,15 +11,39 @@ import sim.engine.Steppable;
 public class Environment implements Steppable{
 
     int maxFood = Constants.BASE_FOOD;
+    int maxMedicine = Constants.BASE_MEDICINE;
 
+    Beings beings;
     @Override
     public void step(SimState state) {
-        Beings beings = (Beings) state;
-        requestFood(beings);
+        beings = (Beings) state;
+        generateFood(maxFood);
     }
 
-    // Génère une quantité aléatoire de nourriture sur la grille
-    private void requestFood(Beings beings) {
-        beings.generateFood(maxFood);
+    // Generate a random food quantity on the yard
+    public void generateFood(int max) {
+        int result = beings.random.nextInt(max + 1);
+
+        for (int i = 0; i < result; i++){
+            Int2D pos = beings.getFreeLocation();
+            Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY));
+            beings.yard.set(pos.x, pos.y, food);
+            food.setX(pos.x);
+            food.setY(pos.y);
+        }
     }
+
+    // Generate a random medicine quantity on the yard
+    public void generateMedicine(int max){
+        int result = beings.random.nextInt(max + 1);
+
+        for (int i = 0; i < result; i++){
+            Int2D pos = beings.getFreeLocation();
+            Medicine medicine = new Medicine();
+            beings.yard.set(pos.x, pos.y, medicine);
+            medicine.setX(pos.x);
+            medicine.setY(pos.y);
+        }
+    }
+
 }

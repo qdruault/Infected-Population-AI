@@ -37,12 +37,16 @@ public class Constants {
     public static int VACCINATE_DIFFICULTY = 1;
     public static int VACCINATE_EFFICIENCY = 100;
     public static float SUCCESS_DIFFICULTY = 0.8f;
+    public static int BASE_MEDICINE = 100;
+
+    // MEDICINE parameters
+    public static int MAX_MEDICINE_QUANTITY = 100;
 
     // FOOD parameters
     public static int MAX_NUTRITIONAL_PROVISION = 100;
-    public static int MAX_QUANTITY = 100;
+    public static int MAX_FOOD_QUANTITY = 100;
     public static int ROTTING_DURATION = 100;
-    public static int BASE_FOOD = 100;
+    public static int BASE_FOOD = 5;
     
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 100;
