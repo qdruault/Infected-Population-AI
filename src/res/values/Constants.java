@@ -5,9 +5,11 @@ package res.values;
  */
 public class Constants {
 
-    public static int GRID_SIZE = 20;
-    public static int NUM_HUMANS = 30;
-    public static int NUM_FOODS = 10;
+    public static int GRID_SIZE = 100;
+
+    // BEGINNING parameters
+    public static int NUM_HUMANS = 750;
+    public static int NUM_FOODS = 250;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
@@ -16,6 +18,8 @@ public class Constants {
     public static int MAX_GRATIFICATION = 100;
     public static int MAX_IMMUNITY = 100;
     public static int MAX_FERTILITY = 100;
+    public static int MAX_AGE = 100;
+    public static int MAX_VISION = 5;
     public static int STARVATION_LOSS = 10;
 
     // DOCTOR parameters
