@@ -185,5 +185,13 @@ public class Doctor extends Human {
     	return (0.5f + (Math.pow(skill * 0.5f, operationSuccessLevel) * beings.random.nextFloat(false, false)) > Constants.SUCCESS_DIFFICULTY); 
     }
 
+    /**
+     * Add a patient to the list of humans to help
+     * @param human who is calling for help
+     */
+    public void processRequest(Human h){
+        humansToHelp.add(h);
+    }
+
 
 }

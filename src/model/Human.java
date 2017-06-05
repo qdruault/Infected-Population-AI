@@ -71,7 +71,7 @@ public class Human implements Steppable {
         }
 
         // Perceive the cells around the himself
-        perceiveCells(beings);
+        perceiveCells();
 
         if (gratification < 60){
             // Look for food
@@ -250,7 +250,7 @@ public class Human implements Steppable {
     }
     
     //Perceive the cells around, should be called at the beginning of each step
-    public void perceiveCells(Beings beings){
+    public void perceiveCells(){
         neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), new IntBag(), new IntBag());
     }
 
@@ -298,7 +298,7 @@ public class Human implements Steppable {
     }
 
     // Move toward the given cell until it's reached or the human can't move anymore
-    public void moveTowardCell(Int2D position, Beings beings){
+    public void moveTowardCell(Int2D position){
         int diffX = position.x - x;
         int diffY = position.y - y;
         int movesLeft = move;
@@ -324,7 +324,22 @@ public class Human implements Steppable {
             beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY),this);
         }
     }
-    
+    /**
+     * Ask to be curated by a doctor in the perception zone
+     * @return true if a doctor was called
+     */
+    public boolean callDoctor{
+        boolean success = false;
+        for (object : neighbors){
+            if (object instanceof Doctor){
+                object.processRequest(this);
+                success =true;
+            }
+            //call only one doctor per step
+            if (success) break;
+        }
+        return success;
+    }
     
 	// Getters and setters.
     public int getAge() {
