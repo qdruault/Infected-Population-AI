@@ -1,11 +1,16 @@
 package model;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.field.grid.ObjectGrid2D;
+import sim.util.Bag;
 import sim.util.Int2D;
 
 import model.Human.Gender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Beings extends SimState {
 
@@ -103,5 +108,31 @@ public class Beings extends SimState {
 			return new Case(x, y - 1);
 		}
 		return null;
+	}
+
+	// Return a list of adjacent cells
+	public Bag getAdjacentCells(int x, int y){
+		Bag objects = new Bag();
+		if (x + 1 > Constants.GRID_SIZE)
+			objects.add( yard.get(0, y));
+		else
+			objects.add( yard.get(x + 1, y));
+
+		if (x - 1 > 0)
+			objects.add( yard.get(Constants.GRID_SIZE, y));
+		else
+			objects.add( yard.get(x - 1, y));
+
+		if (y + 1 > Constants.GRID_SIZE)
+			objects.add( yard.get(x, 0));
+		else
+			objects.add( yard.get(x, y + 1));
+
+		if (y - 1 < 0)
+			objects.add( yard.get(x, Constants.GRID_SIZE));
+		else
+			objects.add( yard.get(x, y - 1));
+
+		return objects;
 	}
 }
