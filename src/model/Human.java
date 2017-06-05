@@ -21,6 +21,8 @@ public class Human implements Steppable {
     private int age;
     // PV
     private int health;
+    //temps avant l'activation du virus
+    private int timeBeforeSuffering;
     // Capacit� de r�sistance au virus.
     private int immunity;
     // Fertilit�.
@@ -114,6 +116,12 @@ public class Human implements Steppable {
 	    	}
 	    	
 	    	index ++;
+        }
+        //decrease health level depending on his condition
+        if (this.condition ==Condition.SICK){
+            if(timeBeforeSuffering==0)
+                health--;
+            else timeBeforeSuffering --;
         }
     }
     
@@ -288,6 +296,9 @@ public class Human implements Steppable {
 		this.health += health;
 	}
 
+	public void setTimeBeforeSuffering(int time){
+        this.timeBeforeSuffering=time;
+    }
 	public int getImmunity() {
 		return immunity;
 	}
