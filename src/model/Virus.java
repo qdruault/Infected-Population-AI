@@ -27,9 +27,9 @@ public class Virus implements Steppable {
 	// Cases contenant des humains et leur distance par rapport au virus.
 	private ArrayList<Case> humanCases;
 
-	public Virus(int _timeBeforeActivation) {
+
 	//TODO homogenize, add parameters and move the random generation into the Beings class
-	public Virus() {
+	public Virus(int _timeBeforeActivation) {
 		moveRange = ThreadLocalRandom.current().nextInt(1, Constants.MAX_MOVE_RANGE + 1);
 		infectingArea = ThreadLocalRandom.current().nextInt(1, Constants.MAX_INFECTING_ZONE + 1);
 		propagationDuration = ThreadLocalRandom.current().nextInt(1, Constants.MAX_PROPAGATION_DURATION + 1);
@@ -131,13 +131,11 @@ public class Virus implements Steppable {
 				h.setCondition(Condition.SICK);
 
 				//TODO change the health level of the human, depending on the type of the virus
-				h.setTimeBeforeSuffering(timeOfActivation);
+				h.setTimeBeforeSuffering(timeBeforeActivation);
 				nbInfectedHuman++;
-				}
 			}
 			humanCases.remove(indexhuman);
 		}
-
 	}
 
 	public int getX() {
