@@ -24,6 +24,9 @@ public class Constants {
     public static int PROCREATION_MULTIPLIER = 1;
     public static float TRANSMISSION_PROBABILITY_1 = 0.5f;
     public static float TRANSMISSION_PROBABILITY_2 = 0.25f;
+    public static float DOCTOR_PROBABILITY = 0.7f;
+    public static int IMPROVE_IMMUNITY_HEALED=4;
+    public static int IMPROVE_IMMUNITY_CURED=2;
 
 
     // DOCTOR parameters
@@ -38,6 +41,8 @@ public class Constants {
     public static int VACCINATE_EFFICIENCY = 100;
     public static float SUCCESS_DIFFICULTY = 0.8f;
     public static int BASE_MEDICINE = 100;
+    public static int IMPROVE_IMMUNITY_DOCTOR_1=5;
+    public static int IMPROVE_IMMUNITY_DOCTOR_2=10;
 
     // MEDICINE parameters
     public static int MAX_MEDICINE_QUANTITY = 100;

@@ -16,6 +16,7 @@ public class Human implements Steppable {
 	
 	private static final long serialVersionUID = 1L;
 	private Beings beings;
+    private Bag neighbors;
 
     // Age
     private int age;
@@ -51,7 +52,6 @@ public class Human implements Steppable {
         SICK,
         FINE
     };
-    private Bag neighbors;
 
 
     @Override
@@ -129,9 +129,7 @@ public class Human implements Steppable {
     /**
      * Constructeur vide.
      */
-    public Human(){
-
-    }
+    public Human(){}
     
     /**
      * Constructeur
@@ -199,7 +197,15 @@ public class Human implements Steppable {
                     if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
                         condition = Condition.SICK;
                 }
-                Human child = new Human(immunity, fertility, gender, condition, vision);
+                float doctorProbability =  beings.random.nextFloat();
+                if (doctorProbability> Constants.DOCTOR_PROBABILITY){
+                    float skill = beings.random.nextFloat();
+                    Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
+                }
+                else {
+                    Human child = new Human(immunity, fertility, gender, condition, vision);
+                }
+
                 beings.yard.set(this.getX(), this.getY(), child);
                 child.x = this.getX();
                 child.y = this.getY();
