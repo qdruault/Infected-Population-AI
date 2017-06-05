@@ -9,6 +9,9 @@ import sim.util.Bag;
 import sim.util.Int2D;
 import sim.util.IntBag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Louis on 20/05/2017.
  */
@@ -66,7 +69,20 @@ public class Human implements Steppable {
         if (mustDie()){
             beings.yard.set(x, y, null);
         }
-        
+
+        // Perceive the cells around the himself
+        perceiveCells(beings);
+
+        if (gratification < 60){
+            // Look for food
+            Food food = leastRottenFood(lookForFood());
+            if (food != null){
+
+            }
+        }
+
+
+
         //Partie à intégrer dans autre chose 
         //le cas de la procréation
         int     index            = 0;
@@ -114,7 +130,6 @@ public class Human implements Steppable {
                     break;
                 }	    		
 	    	}
-	    	
 	    	index ++;
         }
         //decrease health level depending on his condition
@@ -180,6 +195,7 @@ public class Human implements Steppable {
 
 
     // TODO add a pregnancy mecanism
+    // TODO add a probability to give birth to a doctor
     public void toProcreate(Human h){
 	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
 	        if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
@@ -232,8 +248,9 @@ public class Human implements Steppable {
         neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), new IntBag(), new IntBag());
     }
 
-    //Check if there are any food available around
-    public Int2D lookForFood(){
+    // Probably useless
+    // Check if there are any food available around
+    public Int2D lookForFoodLocation(){
         Object currentNeighbor = neighbors.pop();
         while (currentNeighbor != null){
             if (currentNeighbor instanceof Food){
@@ -244,6 +261,34 @@ public class Human implements Steppable {
             }
         }
         return new Int2D();
+    }
+
+    // Return the adjacent foods
+    private Bag lookForFood(){
+        Bag foods = new Bag();
+        Bag neighbors = beings.getAdjacentCells(getX(), getY());
+
+        Object currentNeighbor = neighbors.pop();
+
+        while(currentNeighbor != null){
+            if (currentNeighbor instanceof  Food) {
+                foods.add(currentNeighbor);
+            }
+            currentNeighbor = neighbors.pop();
+        }
+        return foods;
+    }
+
+    // Return non rotten food in priority
+    private Food leastRottenFood(Bag foods){
+        Object food = foods.pop();
+        Food leastRottenFood = null;
+        while(food != null) {
+            if (leastRottenFood == null || (food != null && food instanceof Food && !((Food) food).isRotten() && leastRottenFood.isRotten())) {
+                leastRottenFood = (Food) food;
+            }
+        }
+        return leastRottenFood;
     }
 
     // Move toward the given cell until it's reached or the human can't move anymore
