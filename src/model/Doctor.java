@@ -5,6 +5,9 @@ import res.values.Constants;
 import sim.engine.SimState;
 import model.Human;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Louis on 22/05/2017.
  */
@@ -14,7 +17,7 @@ public class Doctor extends Human {
 	// Stock de m�dicaments.
 	private int drugStock;
     // Facilit� � soigner les gens (comp�tence du medecin)
-	private int skill;
+	private float skill; //between 0 and 1
 	private List<Human> humansToHelp;
 	private Beings beings;
 
@@ -22,11 +25,11 @@ public class Doctor extends Human {
 		super();
 	}
 
-	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision int skill) {
+	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision, float skill) {
 		super(immunity, fertility, gender, condition, vision);
 		this.skill = skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
-		this.humansToHelp=new ArrayList<Human>(); //initialize the list to empty
+		this.humansToHelp= new ArrayList<>();//initialize the list to empty
 	}
 
 	@Override
@@ -42,26 +45,26 @@ public class Doctor extends Human {
     }
 
     /**
-     * Decide to heal himself
-     * @param human
+     * Decide to vaccinate himself
      * @return true if successed, false otherwise
      */
     public boolean vaccinateMyself(){
         if (canVaccinate()){
             return tryVaccinate(this);
         }
+        return false;
     }
 
     /**
      * Decide to heal himself
-     * @param human
      * @return true if successed, false otherwise
      */
     public boolean healMyself(){
+        boolean feelBetter= false;
         if (canHeal()) {
             feelBetter=tryHeal(this);
         }
-        if(!hasHelped){
+        if(!feelBetter){
             if (canCure())
                 feelBetter = tryCure(this);
         }
@@ -71,17 +74,16 @@ public class Doctor extends Human {
 
     /**
      * Decide which one to cure
-     * @param human
      * @return true if somebody got cured; false otherwise
      */
     public boolean helpHumans(){
         int minHealth= Constants.MAX_HEALTH;
-        Human sickestHuman, fineHuman;
+        Human sickestHuman=null, fineHuman=null;
         int nbToVaccinate = 0;
-        boolean hasHelped;
+        boolean hasHelped = false;
         for (Human human : humansToHelp){
             //look for the sickest human
-            if (human.getCondition == Condition.SICK){
+            if (human.getCondition() == Condition.SICK){
                 if (human.getHealth()<minHealth) {
                     sickestHuman=human;
                     minHealth=human.getHealth();
@@ -108,6 +110,7 @@ public class Doctor extends Human {
                 hasHelped=tryVaccinate(fineHuman);
             }
         }
+        return hasHelped;
     }
     /**
      * Soigne un peu
@@ -119,7 +122,7 @@ public class Doctor extends Human {
         } else {
             human.setHealth(Constants.MAX_HEALTH);
         }
-        human.addImmunity(Constants.IMPROVE_IMMUNITY_HEALED)
+        human.addImmunity(Constants.IMPROVE_IMMUNITY_HEALED);
         if (human!=this){
             //if the doctor is not healing himself, get more immunity
             this.immunity += Constants.IMPROVE_IMMUNITY_DOCTOR_1;
@@ -134,7 +137,7 @@ public class Doctor extends Human {
      */
     public void cureDisease(Human human) {
     	human.setCondition(Condition.FINE);
-        human.addImmunity(Constants.IMPROVE_IMMUNITY_CURED)
+        human.addImmunity(Constants.IMPROVE_IMMUNITY_CURED);
         if (human!=this){
             //if the doctor is not healing himself, get more immunity
             this.immunity += Constants.IMPROVE_IMMUNITY_DOCTOR_2;
@@ -143,7 +146,6 @@ public class Doctor extends Human {
     
     /**
      * Vacine un humain, augmente son immunit�.
-     * @param beings
      * @param human
      */
     public void vaccinate( Human human){
@@ -163,19 +165,25 @@ public class Doctor extends Human {
 
     // Check the success of an operation based on the skill level of the doctor
     public Boolean tryHeal(Human human){
-    	if (tryOperation(beings, Constants.HEAL_DIFFICULTY)){
+    	if (tryOperation(Constants.HEAL_DIFFICULTY)){
     	    heal(human);
+            return true;
         }
+        return false;
     }
     public Boolean tryCure(Human human) {
-    	if (tryOperation(beings, Constants.CURE_DIFFICULTY)){
+    	if (tryOperation(Constants.CURE_DIFFICULTY)){
     	    cureDisease(human);
+    	    return true;
         }
+        return false;
     }
     public Boolean tryVaccinate(Human human){
-    	if(tryOperation(beings, Constants.VACCINATE_DIFFICULTY)){
+    	if(tryOperation(Constants.VACCINATE_DIFFICULTY)){
     	    vaccinate(human);
+    	    return true;
         }
+        return false;
     }
     // The resulting number of the calculation must be superior to the SUCCESS_DIFFICULTY for the operation to succeed
     // The resulting number varies between 0.5f and 1f
@@ -189,8 +197,8 @@ public class Doctor extends Human {
      * Add a patient to the list of humans to help
      * @param human who is calling for help
      */
-    public void processRequest(Human h){
-        humansToHelp.add(h);
+    public void processRequest(Human human){
+        humansToHelp.add(human);
     }
 
 

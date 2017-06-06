@@ -22,17 +22,17 @@ public class Human implements Steppable {
     private Bag neighbors;
 
     // Age
-    private int age;
+    protected int age;
     // PV
-    private int health;
+    protected int health;
     //temps avant l'activation du virus
-    private int timeBeforeSuffering;
+    protected int timeBeforeSuffering;
     // Capacit� de r�sistance au virus.
-    private int immunity;
+    protected int immunity;
     // Fertilit�.
-    private int fertility;
+    protected int fertility;
     // Niveau de statiete
-    private int gratification;
+    protected int gratification;
     // Champs de vision
     public int vision;
     // Nombre de cellules de mouvement par tour
@@ -42,8 +42,8 @@ public class Human implements Steppable {
     // Malade ou pas
     private Condition condition;
     // Coordonn�es.
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
     // A MAX_SURVIVAL à la naissance puis diminue avec les maladies et autres 
     // ± probabilite de mourir
     public int survival;
@@ -217,15 +217,18 @@ public class Human implements Steppable {
                 if (doctorProbability> Constants.DOCTOR_PROBABILITY){
                     float skill = beings.random.nextFloat();
                     Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
+                    beings.yard.set(this.getX(), this.getY(), child);
+                    child.x = this.getX();
+                    child.y = this.getY();
+                    beings.schedule.scheduleRepeating(child);
                 }
                 else {
                     Human child = new Human(immunity, fertility, gender, condition, vision);
+                    beings.yard.set(this.getX(), this.getY(), child);
+                    child.x = this.getX();
+                    child.y = this.getY();
+                    beings.schedule.scheduleRepeating(child);
                 }
-
-                beings.yard.set(this.getX(), this.getY(), child);
-                child.x = this.getX();
-                child.y = this.getY();
-                beings.schedule.scheduleRepeating(child);
             }
 	    }
     }
@@ -328,11 +331,11 @@ public class Human implements Steppable {
      * Ask to be curated by a doctor in the perception zone
      * @return true if a doctor was called
      */
-    public boolean callDoctor{
+    public boolean callDoctor() {
         boolean success = false;
-        for (object : neighbors){
+        for (Object object: neighbors){
             if (object instanceof Doctor){
-                object.processRequest(this);
+                ((Doctor) object).processRequest(this);
                 success =true;
             }
             //call only one doctor per step
@@ -340,7 +343,7 @@ public class Human implements Steppable {
         }
         return success;
     }
-    
+
 	// Getters and setters.
     public int getAge() {
 		return age;
