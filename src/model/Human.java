@@ -157,7 +157,7 @@ public class Human implements Steppable {
         successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
 
         if (beings.random.nextFloat() < successProbability){
-            toProcreate((h);
+            toProcreate((h));
         }
     }
 
@@ -329,19 +329,12 @@ public class Human implements Steppable {
      * Ask to be curated by a doctor in the perception zone
      * @return true if a doctor was called
      */
-<<<<<<< HEAD
+
     public boolean callDoctor() {
         boolean success = false;
         for (Object object: neighbors){
             if (object instanceof Doctor){
                 ((Doctor) object).processRequest(this);
-=======
-    public boolean callDoctor (){
-        boolean success = false;
-        for (Object object : neighbors){
-            if (object instanceof Doctor){
-                (Doctor)object.processRequest(this);
->>>>>>> f828eaeb4674c9b5e32323fecd74abfda192925c
                 success =true;
             }
             //call only one doctor per step
