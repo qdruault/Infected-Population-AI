@@ -1,5 +1,6 @@
 package model;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -19,7 +20,9 @@ public class Human implements Steppable {
 	
 	private static final long serialVersionUID = 1L;
 	private Beings beings;
-    private Bag neighbors;
+    private Bag neighbors = new Bag();
+    private IntBag neighborsPosX = new IntBag();
+    private IntBag neighborsPosY = new IntBag();
 
     // Age
     private int age;
@@ -56,87 +59,52 @@ public class Human implements Steppable {
         FINE
     };
 
-
     @Override
     public void step(SimState state) {
         beings = (Beings) state;
-        IntBag    xPos       = new IntBag();
-        IntBag    yPos       = new IntBag();
-        Bag       neighbours = toPerceive(xPos, yPos);
+
+        boolean eatDone  = false;
 
         // TODO remove the agent from the scheduling
         // remove if needed
         if (mustDie()){
             beings.yard.set(x, y, null);
-        }
+        } else {
 
-        // Perceive the cells around the himself
-        perceiveCells();
-
-        if (gratification < 60){
-            // Look for food
-            Food food = leastRottenFood(lookForFood());
-            if (food != null){
-
+            //decrease health level depending on his condition
+            // TODO decrease health depending on the disease's gravity
+            if (this.condition ==Condition.SICK){
+                if(timeBeforeSuffering==0)
+                    health--;
+                else timeBeforeSuffering --;
             }
-        }
 
+            // Perceive the cells around himself
+            perceiveCells(neighborsPosX, neighborsPosY);
 
-
-        //Partie à intégrer dans autre chose 
-        //le cas de la procréation
-        int     index            = 0;
-        boolean procreationDone  = false;
-        boolean eatDone  = false;
-        
-        for (Object object : neighbours) {
-            int x = xPos.get(index);
-            int y = yPos.get(index);
-	    	int posX=getX();
-	    	int posY=getY();
-	    	if(object instanceof Human){	//If there is another human nearby 
-                int minX  = Math.min(this.x, x);
-                int maxX  = Math.max(this.x, x);
-                int diffX = Math.min((maxX - minX), Constants.GRID_SIZE - (maxX - minX));
-                int minY  = Math.min(this.y, y);
-                int maxY  = Math.max(this.y, y);
-                int diffY = Math.min((maxY - minY), Constants.GRID_SIZE - (maxY - minY));
-
-                if (diffX <= 1 && diffY <= 1) {
-                    System.out.println("Let's procreate");
-                    if (tryToProcreate((Human) object)) {
-                        toProcreate((Human) object);
-                        procreationDone = true;
-                    }
-                    break;
-                }	    		
-	    	}
-	    	
-	    	if(object instanceof Food){	//If there is some food nearby 
-                int minX  = Math.min(this.x, x);
-                int maxX  = Math.max(this.x, x);
-                int diffX = Math.min((maxX - minX), Constants.GRID_SIZE - (maxX - minX));
-                int minY  = Math.min(this.y, y);
-                int maxY  = Math.max(this.y, y);
-                int diffY = Math.min((maxY - minY), Constants.GRID_SIZE - (maxY - minY));
-
-                if (diffX <= 1 && diffY <= 1) {
+            // Eat
+            if (getGratification() < 0.8f * Constants.MAX_GRATIFICATION){
+                // Look for food
+                Food food = leastRottenFood(lookForAdjacentFood());
+                if (food != null){
                     System.out.println("Let's eat");
                     int quantity;
-                    if (getGratification()<=50) quantity = 5;
+                    if (getGratification() < 0.5f * Constants.MAX_GRATIFICATION ) quantity = 5;
                     else quantity = 2;
-                    toEat((Food) object, quantity);
+                    toEat(food, quantity);
                     eatDone = true;
-                    break;
-                }	    		
-	    	}
-	    	index ++;
-        }
-        //decrease health level depending on his condition
-        if (this.condition ==Condition.SICK){
-            if(timeBeforeSuffering==0)
-                health--;
-            else timeBeforeSuffering --;
+                }
+            } else {
+                // Procreation
+                Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
+                if (human != null && canProcreateWith(human)){
+                    System.out.println("Let's procreate");
+                    tryToProcreate(human);
+                } else {
+                    // Movement
+                    // TODO add the movement code
+                }
+            }
         }
     }
     
@@ -179,8 +147,8 @@ public class Human implements Steppable {
         this.age = age;
     }
 
-    // Generate a boolean based on the fertility of both humans
-    public boolean tryToProcreate(Human h){
+    // Try to procreate based on both fertilities
+    public void tryToProcreate(Human h){
         float fertilityProbability1 = (float) fertility  / (float) Constants.MAX_FERTILITY;
         float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
 
@@ -188,7 +156,13 @@ public class Human implements Steppable {
         float f = 1f - successProbability;
         successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
 
-        return  beings.random.nextFloat() < successProbability;
+        if (beings.random.nextFloat() < successProbability){
+            toProcreate((h);
+        }
+    }
+
+    public boolean canProcreateWith(Human h){
+        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60);
     }
 
 
@@ -234,13 +208,6 @@ public class Human implements Steppable {
     	f.consume(quantity);
         gratification = Math.min(gratification + quantity * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
     }
-    
-    //Perceive the cells around, record location, is called at the beginning of each step
-    private Bag toPerceive(IntBag xPos, IntBag yPos) {
-        Bag result = new Bag();
-        beings.yard.getMooreNeighborsAndLocations(x, y, vision, Grid2D.TOROIDAL, false, result, xPos, yPos);
-        return result;
-    }
 
     // TODO remove the death if gratification == 0 and replace by a loss of health
 	private Boolean mustDie(){
@@ -250,8 +217,8 @@ public class Human implements Steppable {
     }
     
     //Perceive the cells around, should be called at the beginning of each step
-    public void perceiveCells(){
-        neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), new IntBag(), new IntBag());
+    public void perceiveCells(IntBag xPos, IntBag yPos){
+        neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), xPos, yPos);
     }
 
     // Probably useless
@@ -269,8 +236,39 @@ public class Human implements Steppable {
         return new Int2D();
     }
 
+    // Return a human of requested gender
+    private Human getHumanOfOppositeGender(Bag humans){
+        Human human;
+        Bag availableHumans = new Bag();
+        while((human = (Human) humans.pop()) != null){
+            if (human.getGender() != getGender()){
+                availableHumans.add(human);
+            }
+        }
+        // if there are several possibilities, return a random
+        return (Human)availableHumans.get(beings.random.nextInt(availableHumans.size()));
+    }
+
+
+    // TODO find a clean way to factorize these two methods, Java Generics aren't very advisable here
+    // Return the adjacent humans
+    private Bag lookForAdjacentHumans(){
+        Bag humans = new Bag();
+        Bag neighbors = beings.getAdjacentCells(getX(), getY());
+
+        Object currentNeighbor = neighbors.pop();
+
+        while(currentNeighbor != null){
+            if (currentNeighbor instanceof  Human) {
+                humans.add(currentNeighbor);
+            }
+            currentNeighbor = neighbors.pop();
+        }
+        return humans;
+    }
+
     // Return the adjacent foods
-    private Bag lookForFood(){
+    private Bag lookForAdjacentFood(){
         Bag foods = new Bag();
         Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
@@ -328,11 +326,11 @@ public class Human implements Steppable {
      * Ask to be curated by a doctor in the perception zone
      * @return true if a doctor was called
      */
-    public boolean callDoctor{
+    public boolean callDoctor (){
         boolean success = false;
-        for (object : neighbors){
+        for (Object object : neighbors){
             if (object instanceof Doctor){
-                object.processRequest(this);
+                (Doctor)object.processRequest(this);
                 success =true;
             }
             //call only one doctor per step
