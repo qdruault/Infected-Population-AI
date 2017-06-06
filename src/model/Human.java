@@ -101,7 +101,8 @@ public class Human implements Steppable {
                     System.out.println("Let's procreate");
                     tryToProcreate(human);
                 } else {
-                    // Movement
+                    Int2D foodCase = lookForFoodLocation();
+                    moveTowardCell(foodCase);
                     // TODO add the movement code
                 }
             }
@@ -132,6 +133,7 @@ public class Human implements Steppable {
 		this.condition = condition;
 		this.vision = vision;
 		this.survival=Constants.MAX_SURVIVAL;
+		this.move = 1;
 	}
 
 	// To create humans at the  beginning of the simulation
@@ -145,6 +147,7 @@ public class Human implements Steppable {
         this.vision = vision;
         this.survival=Constants.MAX_SURVIVAL;
         this.age = age;
+		this.move = 1;
     }
 
     // Try to procreate based on both fertilities
@@ -249,7 +252,9 @@ public class Human implements Steppable {
             }
         }
         // if there are several possibilities, return a random
-        return (Human)availableHumans.get(beings.random.nextInt(availableHumans.size()));
+        if (!availableHumans.isEmpty())
+        	return (Human)availableHumans.get(beings.random.nextInt(availableHumans.size()));
+        return null;
     }
 
 
@@ -323,6 +328,13 @@ public class Human implements Steppable {
         }
         if(resultX != x || resultY != y){
             beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY),this);
+            
+            beings.yard.set(beings.yard.stx(getX()), beings.yard.sty(getY()),null);
+            
+            setX(resultX);
+            setY(resultY);
+            
+            
         }
     }
     /**

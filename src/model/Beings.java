@@ -113,23 +113,23 @@ public class Beings extends SimState {
 	// Return a list of adjacent cells
 	public Bag getAdjacentCells(int x, int y){
 		Bag objects = new Bag();
-		if (x + 1 > Constants.GRID_SIZE)
+		if (x + 1 > Constants.GRID_SIZE-1)
 			objects.add( yard.get(0, y));
 		else
 			objects.add( yard.get(x + 1, y));
 
-		if (x - 1 > 0)
-			objects.add( yard.get(Constants.GRID_SIZE, y));
+		if (x - 1 < 0)
+			objects.add( yard.get(Constants.GRID_SIZE-1, y));
 		else
 			objects.add( yard.get(x - 1, y));
 
-		if (y + 1 > Constants.GRID_SIZE)
+		if (y + 1 > Constants.GRID_SIZE-1)
 			objects.add( yard.get(x, 0));
 		else
 			objects.add( yard.get(x, y + 1));
 
 		if (y - 1 < 0)
-			objects.add( yard.get(x, Constants.GRID_SIZE));
+			objects.add( yard.get(x, Constants.GRID_SIZE-1));
 		else
 			objects.add( yard.get(x, y - 1));
 
