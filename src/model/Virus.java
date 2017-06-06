@@ -17,6 +17,7 @@ public class Virus implements Steppable {
 	private int propagationDuration; // temps avant la disparition du virus
 	private int nbHumanToInfect; // nombre d'humain � infecter
 	private int timeBeforeActivation; // durée avant d'être ressenti par l'humain
+	private int gravity; //gravité de la maladie (impact sur la santé lorsque le virus est actif)
 
 	private int x, y;
 
@@ -28,12 +29,11 @@ public class Virus implements Steppable {
 	private ArrayList<Case> humanCases;
 
 
-	//TODO homogenize, add parameters and move the random generation into the Beings class
-	public Virus(int _timeBeforeActivation) {
-		moveRange = ThreadLocalRandom.current().nextInt(1, Constants.MAX_MOVE_RANGE + 1);
-		infectingArea = ThreadLocalRandom.current().nextInt(1, Constants.MAX_INFECTING_ZONE + 1);
-		propagationDuration = ThreadLocalRandom.current().nextInt(1, Constants.MAX_PROPAGATION_DURATION + 1);
-		nbHumanToInfect = ThreadLocalRandom.current().nextInt(1, Constants.MAX_NB_HUMAN_TO_CONTAMINATE + 1);
+	public Virus(int _gravity, int _moveRange, int _infectingArea, int _propagationDuration, int _nbHumanToInfect, int _timeBeforeActivation) {
+		moveRange = _moveRange;
+		infectingArea = _infectingArea;
+		propagationDuration = _propagationDuration;
+		nbHumanToInfect = _nbHumanToInfect;
 		timeBeforeActivation=_timeBeforeActivation;
 	}
 
@@ -129,9 +129,8 @@ public class Virus implements Steppable {
 
 				// L'humain est infect�.
 				h.setCondition(Condition.SICK);
-
-				//TODO change the health level of the human, depending on the type of the virus
 				h.setTimeBeforeSuffering(timeBeforeActivation);
+				h.setInfectionGravity(gravity);
 				nbInfectedHuman++;
 			}
 			humanCases.remove(indexhuman);
