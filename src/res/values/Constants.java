@@ -8,7 +8,7 @@ public class Constants {
     public static int GRID_SIZE = 100;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 750;
+    public static int NUM_HUMANS = 10;
     public static int NUM_FOODS = 250;
 
     // HUMAN parameters
