@@ -34,7 +34,7 @@ public class Beings extends SimState {
 	public void addAgentsHuman(){
 		for(int  i  =  0;  i  <  Constants.NUM_HUMANS;  i++) {
 			Gender gender;
-			if (i % 2 == 0) {
+			if (i % 2 != 0) {
 				gender = Gender.FEMALE;
 			} else {
 				gender = Gender.MALE;
@@ -42,7 +42,7 @@ public class Beings extends SimState {
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
 			int age = random.nextInt(Constants.MAX_AGE);
-			int vision = random.nextInt(Constants.MAX_VISION);
+			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
@@ -51,6 +51,8 @@ public class Beings extends SimState {
 			schedule.scheduleRepeating(a);
 		}
 	}
+	
+	
 
 
 	/**

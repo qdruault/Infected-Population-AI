@@ -8,7 +8,7 @@ public class Constants {
     public static int GRID_SIZE = 100;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 50;
+    public static int NUM_HUMANS = 1;
     public static int NUM_FOODS = 250;
 
     // HUMAN parameters
@@ -19,7 +19,7 @@ public class Constants {
     public static int MAX_IMMUNITY = 100;
     public static int MAX_FERTILITY = 100;
     public static int MAX_AGE = 100;
-    public static int MAX_VISION = 10;
+    public static int MAX_VISION = 4;
     public static int STARVATION_LOSS = 10;
     public static int PROCREATION_MULTIPLIER = 1;
     public static float TRANSMISSION_PROBABILITY_1 = 0.5f;
