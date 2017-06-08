@@ -11,7 +11,10 @@ import sim.util.Int2D;
 import sim.util.IntBag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  * Created by Louis on 20/05/2017.
@@ -59,6 +62,8 @@ public class Human implements Steppable {
         SICK,
         FINE
     };
+    
+    private HashMap<Case, Integer> FoodCases;
 
     @Override
     public void step(SimState state) {
@@ -105,7 +110,7 @@ public class Human implements Steppable {
                     tryToProcreate(human);
                 } else {
                     Int2D foodCase = lookForFoodLocation();
-                    moveTowardCell(foodCase);
+                    move(foodCase);
                     // TODO add the movement code
                 }
             }
@@ -238,17 +243,71 @@ public class Human implements Steppable {
     // Probably useless
     // Check if there are any food available around
     public Int2D lookForFoodLocation(){
-        Object currentNeighbor = neighbors.pop();
-        while (currentNeighbor != null){
-            if (currentNeighbor instanceof Food){
-                Food food = (Food)currentNeighbor;
-//                System.out.println("Food is x "+getX()+" y "+getY());
-                return new Int2D(food.getX(), food.getY());
-            } else {
-                currentNeighbor = neighbors.pop();
-            }
-        }
-        return new Int2D();
+//        Object currentNeighbor = neighbors.pop();
+//        while (currentNeighbor != null){
+//            if (currentNeighbor instanceof Food){
+//                Food food = (Food)currentNeighbor;
+//                return new Int2D(food.getX(), food.getY());
+//            } else {
+//                currentNeighbor = neighbors.pop();
+//            }
+//        }
+//        return new Int2D();
+    	
+    	FoodCases = new HashMap<Case, Integer>();
+
+		int x_depart = x - vision;
+		int y_depart = y - vision;
+
+		int x_fin = x + vision;
+		int y_fin = y + vision;
+
+		// Parcours de toutes les cases
+		for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
+			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
+				// Pour pas sortir de la grille.
+				int realX = indexX % Constants.GRID_SIZE;
+				if (realX < 0) {
+					realX = - realX;
+				}
+				
+				int realY = indexY % Constants.GRID_SIZE;
+				if (realY < 0) {
+					realY = - realY;
+				}
+				
+				// Objet aux coordonn�es
+				Object object = beings.yard.get(realX, realY);
+				if (object != null) {
+					// Si la case contient un objet Human
+					if (object instanceof Food) {
+						// Ajout de la case avec sa distance.
+						Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
+						FoodCases.put(new Case(indexX, indexY), distance);
+					}
+				}
+			}
+		}
+		
+		// On cherche la plus proche.
+		Int2D res = null;
+		Integer minD = Constants.GRID_SIZE;
+		
+		Iterator<Entry<Case, Integer>> it = FoodCases.entrySet().iterator();
+	    while (it.hasNext()) {
+	        HashMap.Entry pair = (HashMap.Entry)it.next(); 
+	        Integer value = (Integer)pair.getValue();
+	        Case key = (Case)pair.getKey();
+	        if(value < minD) {
+	        	minD = value;
+	        	res = new Int2D(key.getX(), key.getY());
+	        }
+	    }
+    	
+	    //System.out.println("Cible x : " + res.x);
+	    //System.out.println("Cible y : " + res.y);
+	    
+	    return res;
     }
 
     // Return a human of requested gender
@@ -311,6 +370,21 @@ public class Human implements Steppable {
         }
         return leastRottenFood;
     }
+    
+    public void move(Int2D position){
+    	if(position==null){
+            
+            beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),null);
+            x++;
+            y++;
+            x %= Constants.GRID_SIZE;
+            y %= Constants.GRID_SIZE;
+            
+            beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),this);
+            
+    	}else
+    		moveTowardCell(position);
+    }
 
     // Move toward the given cell until it's reached or the human can't move anymore
     public void moveTowardCell(Int2D position){
@@ -323,25 +397,42 @@ public class Human implements Steppable {
 
         while (movesLeft > 0 && (diffX != 0 || diffY != 0)){
             if (diffX != 0){
-                int increment = (diffX > 0) ? -1 : 1;
-                resultX -= increment;
-                diffX += increment;
+                int increment = (diffX > 0) ? 1 : -1;
+                resultX += increment;
+                diffX += -increment;
                 movesLeft --;
             }
             if (diffY != 0) {
-                int increment = (diffY > 0) ? -1 : 1;
-                resultY -= increment;
-                diffY += increment;
+                int increment = (diffY > 0) ? 1 : -1;
+                resultY += increment;
+                diffY += -increment;
                 movesLeft --;
             }
-        }
+        }        
+        
         if(resultX != x || resultY != y){
+        	
+    		if (resultX > Constants.GRID_SIZE-1)
+    			resultX=0;
+
+    		if (resultX < 0)
+    			resultX=Constants.GRID_SIZE-1;
+
+    		if (resultY > Constants.GRID_SIZE-1)
+    			resultY=0;
+
+    		if (resultY < 0)
+    			resultY = Constants.GRID_SIZE-1;
+        	
+        	
             beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY),this);
             
             beings.yard.set(beings.yard.stx(getX()), beings.yard.sty(getY()),null);
             
             setX(resultX);
             setY(resultY);
+            System.out.println("Coord X :" + x);
+            System.out.println("Coord Y :" + y);
             
             
         }
