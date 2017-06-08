@@ -229,7 +229,7 @@ public class Human implements Steppable {
    
     private Boolean mustDie(){
 		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
-//			System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
+			//System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
             return true;
 		}
         else return false;	
@@ -240,20 +240,9 @@ public class Human implements Steppable {
         neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), xPos, yPos);
     }
 
-    // Probably useless
     // Check if there are any food available around
     public Int2D lookForFoodLocation(){
-//        Object currentNeighbor = neighbors.pop();
-//        while (currentNeighbor != null){
-//            if (currentNeighbor instanceof Food){
-//                Food food = (Food)currentNeighbor;
-//                return new Int2D(food.getX(), food.getY());
-//            } else {
-//                currentNeighbor = neighbors.pop();
-//            }
-//        }
-//        return new Int2D();
-    	
+
     	FoodCases = new HashMap<Case, Integer>();
 
 		int x_depart = x - vision;
@@ -268,12 +257,12 @@ public class Human implements Steppable {
 				// Pour pas sortir de la grille.
 				int realX = indexX % Constants.GRID_SIZE;
 				if (realX < 0) {
-					realX = - realX;
+					realX = Constants.GRID_SIZE + realX;
 				}
 				
 				int realY = indexY % Constants.GRID_SIZE;
 				if (realY < 0) {
-					realY = - realY;
+					realY = Constants.GRID_SIZE + realY;
 				}
 				
 				// Objet aux coordonn�es
@@ -395,6 +384,7 @@ public class Human implements Steppable {
         int resultX = x;
         int resultY = y;
 
+        // Move until there's no more move possible or the target is reached
         while (movesLeft > 0 && (diffX != 0 || diffY != 0)){
             if (diffX != 0){
                 int increment = (diffX > 0) ? 1 : -1;
@@ -433,8 +423,6 @@ public class Human implements Steppable {
             setY(resultY);
             System.out.println("Coord X :" + x);
             System.out.println("Coord Y :" + y);
-            
-            
         }
     }
     /**
