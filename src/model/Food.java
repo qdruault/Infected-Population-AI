@@ -119,7 +119,7 @@ public class Food implements Steppable {
             quantity -= q;
             return q;
         } else {
-            q -= quantity;
+            q = quantity;
             quantity = 0;
             return q;
         }
