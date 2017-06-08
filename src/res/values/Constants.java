@@ -58,6 +58,7 @@ public class Constants {
     public static final int MAX_INFECTING_ZONE = 20;
     public static final int MAX_PROPAGATION_DURATION = 100;
     public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 5;
-    public static final int GRAVITY = 5;
+    public static final int MAX_GRAVITY = 5;
+    public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
 }

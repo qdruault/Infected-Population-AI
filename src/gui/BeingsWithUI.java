@@ -16,6 +16,12 @@ import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import model.Beings;
+import sim.portrayal.DrawInfo2D;
+import sim.portrayal.simple.OvalPortrayal2D;
+
+import java.awt.*;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Syntax.Java;
 
 
 public class BeingsWithUI extends GUIState {
@@ -69,19 +75,19 @@ public class BeingsWithUI extends GUIState {
 		return r;
 	}
 
-	private OvalPortrayal2D getMaleHumanPortrayal() {
-		OvalPortrayal2D r = new OvalPortrayal2D();
-		r.paint = Color.BLUE;
-		r.filled = true;
-		return r;
-	}
+//	private OvalPortrayal2D getMaleHumanPortrayal() {
+//		OvalPortrayal2D r = new OvalPortrayal2D();
+//		r.paint = Color.BLUE;
+//		r.filled = true;
+//		return r;
+//	}
 
-	private OvalPortrayal2D getFemaleHumanPortrayal() {
-		OvalPortrayal2D r = new OvalPortrayal2D();
-		r.paint = Color.PINK;
-		r.filled = true;
-		return r;
-	}
+//	private OvalPortrayal2D getFemaleHumanPortrayal() {
+//		OvalPortrayal2D r = new OvalPortrayal2D();
+//		r.paint = Color.PINK;
+//		r.filled = true;
+//		return r;
+//	}
 
 	private OvalPortrayal2D getFoodPortrayal() {
 		OvalPortrayal2D r = new OvalPortrayal2D();
@@ -89,7 +95,51 @@ public class BeingsWithUI extends GUIState {
 		r.filled = true;
 		return r;
 	}
-	
+
+	private OvalPortrayal2D getMaleHumanPortrayal() {
+		OvalPortrayal2D malePortrayal = new OvalPortrayal2D()
+		{
+			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+			{
+				Human male = (Human)object;
+				//make orange if sick
+				Human.Condition c = male.getCondition();
+				int age = male.getAge();
+				if (c== Human.Condition.SICK)
+					paint=new Color(255, 128, 0);
+				else if (age<15)
+					paint=new Color(153, 51, 255);
+				else if (c== Human.Condition.FINE)
+					paint=new Color(0,153,153);
+				scale=1;
+				super.draw(object, graphics, info);  // it'll use the new paint and scale values
+			}
+		};
+		return malePortrayal;
+	}
+
+	private OvalPortrayal2D getFemaleHumanPortrayal() {
+		OvalPortrayal2D malePortrayal = new OvalPortrayal2D()
+		{
+			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+			{
+				Human female = (Human)object;
+				//make orange if sick
+				Human.Condition c = female.getCondition();
+				int age = female.getAge();
+				if (c== Human.Condition.SICK)
+					paint=new Color(255, 255, 0);
+				else if (age<15)
+					paint=new Color(153, 51, 255);
+				else if (c== Human.Condition.FINE)
+					paint=new Color(204,0,204);
+				scale=1;
+				super.draw(object, graphics, info);  // it'll use the new paint and scale values
+			}
+		};
+		return malePortrayal;
+	}
+
 	private OvalPortrayal2D getVirusPortrayal() {
 		OvalPortrayal2D r = new OvalPortrayal2D();
 		r.paint = Color.RED;

@@ -50,6 +50,7 @@ public class Human implements Steppable {
     // Coordonn�es.
     protected int x;
     protected int y;
+    protected int infection_gravity;
     // A MAX_SURVIVAL à la naissance puis diminue avec les maladies et autres 
     // ± probabilite de mourir
     public int survival;
@@ -77,12 +78,10 @@ public class Human implements Steppable {
         if (mustDie()){
             beings.yard.set(x, y, null);
         } else {
-        	
-            //decrease health level depending on his condition
-            // TODO decrease health depending on the disease's gravity
+            //decrease health level depending on his condition the activation and gravity of the virus
             if (this.condition ==Condition.SICK){
                 if(timeBeforeSuffering==0)
-                    health--;
+                    health-= infection_gravity;
                 else timeBeforeSuffering --;
             }
             
@@ -139,10 +138,12 @@ public class Human implements Steppable {
 		this.immunity = immunity;
 		this.fertility = fertility;
 		this.gender = gender;
+		//TODO the condition is always initialized with FINE
 		this.condition = condition;
 		this.vision = vision;
 		this.survival=Constants.MAX_SURVIVAL;
 		this.move = 1;
+		this.infection_gravity=0;
 	}
 
 	// To create humans at the  beginning of the simulation
@@ -179,7 +180,6 @@ public class Human implements Steppable {
 
 
     // TODO add a pregnancy mecanism
-    // TODO add a probability to give birth to a doctor
     public void toProcreate(Human h){
 		System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
 
@@ -527,6 +527,12 @@ public class Human implements Steppable {
 		this.y = y;
 	}
 
+	public int getInfectionGravity(){
+	    return infection_gravity;
+    }
+    public void setInfectionGravity (int _infection_gravity){
+	    this.infection_gravity =_infection_gravity;
+    }
     public int getVision() {
 		return vision;
 	}

@@ -17,6 +17,7 @@ public class Beings extends SimState {
 
 	public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE, Constants.GRID_SIZE);
 
+
 	public Beings(long seed) {
 		super(seed);
 	}
@@ -61,6 +62,27 @@ public class Beings extends SimState {
 	public void addAgentsFood(){
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
+			Int2D location = getFreeLocation();
+			yard.set(location.x, location.y, a);
+			a.setX(location.x);
+			a.setY(location.y);
+			schedule.scheduleRepeating(a);
+		}
+	}
+
+	/**
+	 * G�n�re un virus sur la carte.
+	 */
+	public void addAgentsVirus(){
+		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
+
+			int gravity= random.nextInt(Constants.MAX_GRAVITY);
+			int moveRange = random.nextInt(Constants.MAX_MOVE_RANGE);
+			int infectingArea = random.nextInt(Constants.MAX_INFECTING_ZONE);
+			int propagationDuration= random.nextInt(Constants.MAX_PROPAGATION_DURATION);
+			int nbHumanToInfect = random.nextInt(Constants.MAX_NB_HUMAN_TO_CONTAMINATE);
+			int timeBeforeActivation = random.nextInt(Constants.MAX_TIME_BEFORE_ACTIVATION);
+			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
