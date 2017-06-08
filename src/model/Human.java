@@ -66,19 +66,22 @@ public class Human implements Steppable {
 
         boolean eatDone  = false;
 
+        setAge(getAge()+1);
+        
         // TODO remove the agent from the scheduling
         // remove if needed
         if (mustDie()){
             beings.yard.set(x, y, null);
         } else {
-
             //decrease health level depending on his condition the activation and gravity of the virus
             if (this.condition ==Condition.SICK){
                 if(timeBeforeSuffering==0)
                     health-= infection_gravity;
                 else timeBeforeSuffering --;
             }
-
+            
+            if (getGratification() <= 0 ) health--; // the Human is Starving
+                        		   	
             // Perceive the cells around himself
             perceiveCells(neighborsPosX, neighborsPosY);
 
@@ -162,21 +165,22 @@ public class Human implements Steppable {
         successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
 
         if (beings.random.nextFloat() < successProbability){
-            toProcreate((h));
+            toProcreate(h);
         }
     }
 
     public boolean canProcreateWith(Human h){
-        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60);
+        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80);
     }
 
 
     // TODO add a pregnancy mecanism
     public void toProcreate(Human h){
-	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<60 && h.getAge()>15 && h.getAge()<60){
+		System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
+
+	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80){
 	        if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
             {
-
                 int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
                 int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
                 Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
@@ -187,11 +191,12 @@ public class Human implements Steppable {
                 if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
                     if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
                         condition = Condition.SICK;
-                } else if (getCondition() == Condition.SICK || getCondition() == Condition.SICK) {
+                } else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
                     if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
                         condition = Condition.SICK;
                 }
                 float doctorProbability =  beings.random.nextFloat();
+        		System.out.println("I have a child!");
                 if (doctorProbability> Constants.DOCTOR_PROBABILITY){
                     float skill = beings.random.nextFloat();
                     Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
@@ -215,11 +220,13 @@ public class Human implements Steppable {
     	f.consume(quantity);
         gratification = Math.min(gratification + quantity * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
     }
-
-    // TODO remove the death if gratification == 0 and replace by a loss of health
-	private Boolean mustDie(){
-		if (health == 0 || gratification == 0 || survival <= 10)
+    
+   
+    private Boolean mustDie(){
+		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
+//			System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
             return true;
+		}
         else return false;	
     }
     
@@ -235,6 +242,7 @@ public class Human implements Steppable {
         while (currentNeighbor != null){
             if (currentNeighbor instanceof Food){
                 Food food = (Food)currentNeighbor;
+//                System.out.println("Food is x "+getX()+" y "+getY());
                 return new Int2D(food.getX(), food.getY());
             } else {
                 currentNeighbor = neighbors.pop();

@@ -3,12 +3,14 @@ package model;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.util.Int2D;
 
 /**
  * Created by Louis on 20/05/2017.
  */
 public class Food implements Steppable {
 
+	private Beings beings;
 
 	private static final long serialVersionUID = 1L;
 	// Coordonn�es.
@@ -92,6 +94,7 @@ public class Food implements Steppable {
         // remove if needed
         if (mustDisappear()){
             beings.yard.set(x, y, null);
+//            addFood();      //TODO : passer le Beings en constructeur sinon nullpointerexception?
         }
         // Rotting
         if (!rotten){
@@ -127,9 +130,22 @@ public class Food implements Steppable {
      * Ou qu'elle est trop pourrie
      * @return
      */
+    //TODO : changer le rotten pour avoir une condition de disparition quand la nourriture est trop périmée
     public Boolean mustDisappear(){
-        if (quantity == 0 || rottingIn<= -5)
+        if (quantity == 0)
             return true;
         else return false;
+    }
+    
+  //TODO : passer le Beings en constructeur sinon nullpointerexception?    
+    private void addFood(){
+    	int quantity = beings.random.nextInt(Constants.MAX_FOOD_QUANTITY);
+        int nutritionalProvision = beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION);
+		Food  a  =  new Food(nutritionalProvision,quantity);
+		Int2D location = beings.getFreeLocation();
+		beings.yard.set(location.x, location.y, a);
+		a.setX(location.x);
+		a.setY(location.y);
+		beings.schedule.scheduleRepeating(a);
     }
 }

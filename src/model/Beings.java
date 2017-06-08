@@ -17,6 +17,7 @@ public class Beings extends SimState {
 
 	public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE, Constants.GRID_SIZE);
 
+
 	public Beings(long seed) {
 		super(seed);
 	}
