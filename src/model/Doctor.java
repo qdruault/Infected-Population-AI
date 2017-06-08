@@ -32,7 +32,14 @@ public class Doctor extends Human {
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
 	}
 
-	@Override
+    // To create doctors at the  beginning of the simulation
+    public Doctor(int immunity, int fertility, Gender gender, int vision, int age, float skill){
+	    super(immunity, fertility, gender, vision, age);
+	    this.skill=skill;
+        this.drugStock = Constants.MAX_DRUG_STOCK;
+        this.humansToHelp= new ArrayList<>();//initialize the list to empty
+    }
+    @Override
     public void step(SimState state) {
 	    //TODO exclusive strategy of a doctor which supports his humans needs
         //if sick --> heal himself

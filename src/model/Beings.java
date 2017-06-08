@@ -27,6 +27,7 @@ public class Beings extends SimState {
 		yard.clear();
 		addAgentsHuman();
 		addAgentsFood();
+		addAgentsDoctor();
 	}
 
 	/**
@@ -45,6 +46,30 @@ public class Beings extends SimState {
 			int age = random.nextInt(Constants.MAX_AGE);
 			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age);
+			Int2D location = getFreeLocation();
+			yard.set(location.x, location.y, a);
+			a.setX(location.x);
+			a.setY(location.y);
+			schedule.scheduleRepeating(a);
+		}
+	}
+	/**
+	 * G�n�re des docteurs sur la carte.
+	 */
+	public void addAgentsDoctor(){
+		for(int  i  =  0;  i  <  Constants.NUM_DOCTORS;  i++) {
+			Gender gender;
+			if (i % 2 != 0) {
+				gender = Gender.FEMALE;
+			} else {
+				gender = Gender.MALE;
+			}
+			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
+			int fertility = random.nextInt(Constants.MAX_FERTILITY);
+			int age = random.nextInt(Constants.MAX_AGE);
+			int vision = 10;
+			float skill = random.nextFloat();
+			Human a = new Doctor(immunity, fertility, gender, vision, age, skill);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
