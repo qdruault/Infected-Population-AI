@@ -244,14 +244,12 @@ public class Human implements Steppable {
         Food food = leastRottenFood(lookForAdjacentFood());
         // Eat adjacent food
         if (food != null){
-            System.out.println("Adjacent food found");
             int quantity;
             while (getGratification() < 100 && food.getQuantity() > 0 ){
                 toEat(food, 1);
             }
         } else {
             // Move to find food
-            System.out.println("looking for food");
             Int2D foodCase = lookForFoodLocation();
 
             if (foodCase != null){
@@ -528,11 +526,12 @@ public class Human implements Steppable {
         Bag foods = new Bag();
         Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
+        System.out.println(neighbors.size());
         Object currentNeighbor = neighbors.pop();
 
         for (int i = 0; i < 8; i++){
-            System.out.println(currentNeighbor);
             if (currentNeighbor instanceof  Food) {
+                System.out.println("FOUND FOOD");
                 foods.add(currentNeighbor);
             }
             currentNeighbor = neighbors.pop();
@@ -543,12 +542,15 @@ public class Human implements Steppable {
     // Return non rotten food in priority
     private Food leastRottenFood(Bag foods){
         Object food = foods.pop();
+        //System.out.println(food);
         Food leastRottenFood = null;
         while(food != null) {
             if (leastRottenFood == null || (food != null && food instanceof Food && !((Food) food).isRotten() && leastRottenFood.isRotten())) {
                 leastRottenFood = (Food) food;
             }
+            food = foods.pop();
         }
+        System.out.println(leastRottenFood);
         return leastRottenFood;
     }
 
@@ -591,7 +593,6 @@ public class Human implements Steppable {
     }
 
     public void move(Int2D position){
-        System.out.println("moveRandom called");
     	if(position==null){
             
             beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),null);
@@ -608,7 +609,6 @@ public class Human implements Steppable {
 
     // Move toward the given cell until it's reached or the human can't move anymore
     public void moveTowardsCell(Int2D position){
-        System.out.println("Move Towards cell");
         int diffX = position.x - x;
         int diffY = position.y - y;
         int movesLeft = move;
