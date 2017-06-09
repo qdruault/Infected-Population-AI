@@ -178,7 +178,7 @@ public class Beings extends SimState {
 //		else
 //			objects.add( yard.get(x + 1, y));
 
-		objects.add(yard.get(yard.stx(++x), y));
+		objects.add(yard.get(yard.stx(x + 1), y));
 
 		// LEFT
 //		if (x - 1 < 0)
@@ -186,7 +186,7 @@ public class Beings extends SimState {
 //		else
 //			objects.add( yard.get(x - 1, y));
 
-		objects.add(yard.get(yard.stx(--x), y));
+		objects.add(yard.get(yard.stx(x - 1), y));
 
 		// DOWN
 //		if (y + 1 > Constants.GRID_SIZE-1)
@@ -194,7 +194,7 @@ public class Beings extends SimState {
 //		else
 //			objects.add( yard.get(x, y + 1));
 
-		objects.add(yard.get(x, yard.sty( ++y)));
+		objects.add(yard.get(x, yard.sty(y + 1)));
 
 		// UP
 //		if (y - 1 < 0)
@@ -202,7 +202,7 @@ public class Beings extends SimState {
 //		else
 //			objects.add( yard.get(x, y - 1));
 
-		objects.add(yard.get(x, yard.sty(--y)));
+		objects.add(yard.get(x, yard.sty(y - 1)));
 
 		// TOP RIGHT
 		objects.add(yard.get(yard.stx(x + 1), yard.sty(y - 1)));
