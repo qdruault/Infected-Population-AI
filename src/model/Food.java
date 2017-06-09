@@ -3,6 +3,7 @@ package model;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.util.Int2D;
 
 /**
@@ -11,6 +12,7 @@ import sim.util.Int2D;
 public class Food implements Steppable {
 
 	private Beings beings;
+	private Stoppable stoppable;
 
 	private static final long serialVersionUID = 1L;
 	// Coordonn�es.
@@ -86,6 +88,8 @@ public class Food implements Steppable {
 		this.quantity = quantity;
 	}
 
+	public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
+
 
 	@Override
     public void step(SimState state) {
@@ -93,20 +97,22 @@ public class Food implements Steppable {
 
         // remove if needed
         if (mustDisappear()){
-            beings.yard.set(x, y, null);
+            beings.yard.set(getX(), getY(), null);
+			stoppable.stop();
 //            addFood();      //TODO : passer le Beings en constructeur sinon nullpointerexception?
-        }
-        // Rotting
-        if (!rotten){
-        	// Il se p�rime.
-            rottingIn -= 5;
-            if (rottingIn <= 0) {
-            	// Compl�tement pourri.
-                rotten = true;
-                // On diminue sa qualit� nutritionnelle.
-                nutritionalProvision *= 0.25;
-            }
-        }
+        } else {
+			// Rotting
+			if (!rotten) {
+				// Il se p�rime.
+				rottingIn -= 5;
+				if (rottingIn <= 0) {
+					// Compl�tement pourri.
+					rotten = true;
+					// On diminue sa qualit� nutritionnelle.
+					nutritionalProvision *= 0.25;
+				}
+			}
+		}
     }
 
 	/**

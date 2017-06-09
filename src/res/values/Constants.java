@@ -5,18 +5,22 @@ package res.values;
  */
 public class Constants {
 
-    public static int GRID_SIZE = 100;
+    public static int GRID_SIZE = 25;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 10;
+    public static int NUM_HUMANS = 1;
     public static int NUM_DOCTORS = 5;
-    public static int NUM_FOODS = 250;
+    public static int NUM_FOODS = 20;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
     public static int MAX_HEALTH = 100;
+    public static int PASSIVE_HEALTH_GAIN = 2;
+    public static int MID_HEALTH = 60;
+    public static int LOW_HEALTH = 30;
     public static int MAX_SURVIVAL = 100;
     public static int MAX_GRATIFICATION = 100;
+    public static int GRATIFICATION_LOSS = 5;
     public static int MAX_IMMUNITY = 100;
     public static int MAX_FERTILITY = 100;
     public static int MAX_AGE = 100;

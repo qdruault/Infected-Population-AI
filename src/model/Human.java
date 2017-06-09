@@ -3,6 +3,7 @@ package model;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.field.grid.Grid2D;
 import sim.util.Bag;
 
@@ -20,6 +21,7 @@ public class Human implements Steppable {
 	
 	private static final long serialVersionUID = 1L;
 	private Beings beings;
+	private Stoppable stoppable;
     private Bag neighbors = new Bag();
     private IntBag neighborsPosX = new IntBag();
     private IntBag neighborsPosY = new IntBag();
@@ -60,8 +62,6 @@ public class Human implements Steppable {
         FINE
     };
     
-    private HashMap<Case, Integer> foodCases = new HashMap<Case, Integer>();
-    private HashMap<Case, Integer> doctorCases = new HashMap<Case, Integer>();
 
     private Doctor doctorCalled = null;
 
@@ -69,81 +69,64 @@ public class Human implements Steppable {
     public void step(SimState state) {
         beings = (Beings) state;
 
-        boolean eatDone  = false;
+        boolean eatDone = false;
+        setAge(getAge() + 1);
 
-        setAge(getAge()+1);
-        
         // TODO remove the agent from the scheduling
         // remove if needed
-        if (mustDie()){
+        if (mustDie()) {
             beings.yard.set(x, y, null);
+            stoppable.stop();
         } else {
             //decrease health level depending on his condition the activation and gravity of the virus
-            if (this.condition == Condition.SICK){
-                if(timeBeforeSuffering==0)
-                    health-= infection_gravity;
-                else timeBeforeSuffering --;
-            } else if( getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH ) {
+            if (this.condition == Condition.SICK) {
+                if (timeBeforeSuffering == 0)
+                    health -= infection_gravity;
+                else timeBeforeSuffering--;
+            } else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
                 // Increase the health level if the human is fine
                 setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
             }
-            
-            if (getGratification() <= 0 ) {
+
+            if (getGratification() <= 0) {
                 health--; // the Human is Starving
             } else {
                 setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
             }
 
+            System.out.println("Gratification : " + getGratification());
 
-                        		   	
             // Perceive the cells around himself
             perceiveCells(neighborsPosX, neighborsPosY);
 
-            // Eat
+            // Eat: Rule about eating, a human always try to eat so that gratification = 100, meaning that he's full
+            // Gratification: if the gratification level is only half empty: the stomach is empty and the human is hungry. If it is below this level, the hunger starts to be dangerous
             // TODO add a parameter to define the level of gratification below which each human start looking for food
-            // TODO change the bahaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
-            if (getGratification() < 0.8f * Constants.MAX_GRATIFICATION){
-                // Look for food
-                Food food = leastRottenFood(lookForAdjacentFood());
-                if (food != null){
-                    System.out.println("Let's eat");
-                    int quantity;
-                    if (getGratification() < 0.5f * Constants.MAX_GRATIFICATION ) quantity = 5;
-                    else quantity = 2;
-                    toEat(food, quantity);
-                    eatDone = true;
-                }
+            // TODO change the behaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
+
+            // NEED TO EAT
+            if (needEatingStrong()) {
+                //System.out.println("I strongly need to eat");
+                basicNeedEat();
             } else {
-                // Look for a doctor
-                if (needDoctor()){
-                    // Call a doctor if not done
-                    if (doctorCalled == null) {
-                        Int2D doctorLocation = lookForDoctorLocation();
-                        if (doctorLocation != null){
-                            callDoctor((Doctor)beings.yard.get(doctorLocation.getX(), doctorLocation.getY()));
-                        } else {
-                            // No doctor found
-                            // TODO move in a random direction and hope to find a doctor
-                        }
-                    }
-                    // Move to reach the calledDoctor
-                    moveTowardsCell(new Int2D(doctorCalled.getX(), doctorCalled.getY()));
+                // NEED TO LOOK FOR A DOCTOR
+                if (needDoctor()) {
+                    //System.out.println("I need a doctor");
+                    basicNeedHealh();
                 } else {
-                    // Procreation
-                    Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
-                    if (human != null && canProcreateWith(human)) {
-                        System.out.println("Let's procreate");
-                        tryToProcreate(human);
+                    // NEED TO EAT
+                    if (needEatingMedium()) {
+                        //System.out.println("I need to eat");
+                        basicNeedEat();
                     } else {
-                        Int2D foodCase = lookForFoodLocation();
-                        // TODO change the behaviour when there is no food available
-                        move(foodCase);
+                        // NEED TO PROCREATE
+                        //System.out.println("I need to procreate");
+                        basicNeedProcreate();
                     }
                 }
             }
         }
     }
-    
 
     /**
      * Constructeur vide.
@@ -176,7 +159,8 @@ public class Human implements Steppable {
 	// To create humans at the  beginning of the simulation
     public Human(int immunity, int fertility, Gender gender, int vision, int age){
         health = Constants.MAX_HEALTH;
-        gratification = Constants.MAX_GRATIFICATION;
+//        gratification = Constants.MAX_GRATIFICATION;
+        gratification = 60;
         this.immunity = immunity;
         this.fertility = fertility;
         this.gender = gender;
@@ -247,16 +231,76 @@ public class Human implements Steppable {
             }
 	    }
     }
-    
+
     public void toEat(Food f, int quantity){
-    	f.consume(quantity);
-        gratification = Math.min(gratification + quantity * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
+    	int quantityEaten = f.consume(quantity);
+        gratification = Math.min(gratification + quantityEaten * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
+
     }
     
-   
+    private void basicNeedEat(){
+        System.out.println("Basic Need Eat");
+        // Look for food
+        Food food = leastRottenFood(lookForAdjacentFood());
+        // Eat adjacent food
+        if (food != null){
+            System.out.println("Adjacent food found");
+            int quantity;
+            while (getGratification() < 100 && food.getQuantity() > 0 ){
+                toEat(food, 1);
+            }
+        } else {
+            // Move to find food
+            System.out.println("looking for food");
+            Int2D foodCase = lookForFoodLocation();
+
+            if (foodCase != null){
+//                System.out.println("Coordonnées moi : " + getX() + " " + getY());
+//                System.out.println("Coordonnées target : " + foodCase.getX() + " " + foodCase.getY());
+                moveTowardsCell(foodCase);
+            } else {
+                // Move in a random direction and hope to find food
+                //System.out.println("random to find food");
+                moveRandom();
+            }
+        }
+    }
+
+    private void basicNeedHealh(){
+        // Call a doctor if not done
+        if (doctorCalled == null) {
+            Int2D doctorLocation = lookForDoctorLocation();
+            if (doctorLocation != null){
+                callDoctor((Doctor)beings.yard.get(doctorLocation.getX(), doctorLocation.getY()));
+            } else {
+                // No doctor found
+                // Move in a random direction and hope to find a doctor
+                moveRandom();
+            }
+        }
+        // Move to reach the calledDoctor
+        moveTowardsCell(new Int2D(doctorCalled.getX(), doctorCalled.getY()));
+    }
+
+    private void basicNeedProcreate(){
+        Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
+        if (human != null && canProcreateWith(human)) {
+            System.out.println("Let's procreate");
+            tryToProcreate(human);
+        } else {
+            // TODO look for a human to procreate with
+            Int2D humanLocation = lookForOppositeGenderHumanLocation();
+            if (humanLocation != null){
+                moveTowardsCell(humanLocation);
+            } else {
+                // Move in a random Direction and hope to find a human to procreate whith
+                moveRandom();
+            }
+        }
+    }
     private Boolean mustDie(){
 		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
-			//System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
+            System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
             return true;
 		}
         else return false;	
@@ -270,7 +314,10 @@ public class Human implements Steppable {
     // Check if there are any food available around
     public Int2D lookForFoodLocation(){
 
-		int x_depart = x - vision;
+        HashMap<Case, Integer> foodCases = new HashMap<Case, Integer>();
+
+
+        int x_depart = x - vision;
 		int y_depart = y - vision;
 
 		int x_fin = x + vision;
@@ -327,7 +374,8 @@ public class Human implements Steppable {
     // Check if there are any food available around
     public Int2D lookForDoctorLocation(){
 
-        doctorCases = new HashMap<Case, Integer>();
+        HashMap<Case, Integer> doctorCases = new HashMap<Case, Integer>();
+
 
         int x_depart = x - vision;
         int y_depart = y - vision;
@@ -383,6 +431,65 @@ public class Human implements Steppable {
         return res;
     }
 
+    public Int2D lookForOppositeGenderHumanLocation(){
+
+        HashMap<Case, Integer> humanCases = new HashMap<Case, Integer>();
+
+
+        int x_depart = x - vision;
+        int y_depart = y - vision;
+
+        int x_fin = x + vision;
+        int y_fin = y + vision;
+
+        // Parcours de toutes les cases
+        for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
+            for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
+                // Pour pas sortir de la grille.
+                int realX = indexX % Constants.GRID_SIZE;
+                if (realX < 0) {
+                    realX = Constants.GRID_SIZE + realX;
+                }
+
+                int realY = indexY % Constants.GRID_SIZE;
+                if (realY < 0) {
+                    realY = Constants.GRID_SIZE + realY;
+                }
+
+                // Objet aux coordonn�es
+                Object object = beings.yard.get(realX, realY);
+                if (object != null) {
+                    // Si la case contient un objet Humain
+                    if (object instanceof Human && ((Human) object).getGender() != getGender()) {
+                        // Ajout de la case avec sa distance.
+                        Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
+                        humanCases.put(new Case(indexX, indexY), distance);
+                    }
+                }
+            }
+        }
+
+        // On cherche la plus proche.
+        Int2D res = null;
+        Integer minD = Constants.GRID_SIZE;
+
+        Iterator<Entry<Case, Integer>> it = humanCases.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)it.next();
+            Integer value = (Integer)pair.getValue();
+            Case key = (Case)pair.getKey();
+            if(value < minD) {
+                minD = value;
+                res = new Int2D(key.getX(), key.getY());
+            }
+        }
+
+        //System.out.println("Cible x : " + res.x);
+        //System.out.println("Cible y : " + res.y);
+
+        return res;
+    }
+
     // Return a human of requested gender
     private Human getHumanOfOppositeGender(Bag humans){
         Human human;
@@ -416,14 +523,15 @@ public class Human implements Steppable {
         return humans;
     }
 
-    // Return the adjacent foods
+    // Return the adjacent food
     private Bag lookForAdjacentFood(){
         Bag foods = new Bag();
         Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
         Object currentNeighbor = neighbors.pop();
 
-        while(currentNeighbor != null){
+        for (int i = 0; i < 8; i++){
+            System.out.println(currentNeighbor);
             if (currentNeighbor instanceof  Food) {
                 foods.add(currentNeighbor);
             }
@@ -443,8 +551,47 @@ public class Human implements Steppable {
         }
         return leastRottenFood;
     }
-    
+
+
+    // Move one cell in a random direction
+    private void moveRandom(){
+        int direction = beings.random.nextInt(4);
+        int xRes = getX();
+        int yRes = getY();
+
+        switch (direction){
+            case 0:
+                // UP
+                //yRes = (yRes == 0 ) ? Constants.GRID_SIZE - 1 : --yRes;
+                yRes = beings.yard.sty(--yRes);
+                break;
+            case 1:
+                // RIGHT
+                //xRes = (xRes == Constants.GRID_SIZE - 1) ? 0 : ++xRes;
+                xRes = beings.yard.stx(++xRes);
+                break;
+            case 2:
+                // DOWN
+                //yRes = (yRes == Constants.GRID_SIZE - 1) ? 0 : ++yRes;
+                yRes = beings.yard.sty(++yRes);
+                break;
+            case 3:
+                // LEFT
+                //xRes = (xRes == 0) ? Constants.GRID_SIZE - 1 : --xRes;
+                xRes = beings.yard.stx(--xRes);
+                break;
+            default:
+                break;
+        }
+
+        beings.yard.set(getX(), getY(), null);
+        beings.yard.set(xRes, yRes, this);
+        setX(xRes);
+        setY(yRes);
+    }
+
     public void move(Int2D position){
+        System.out.println("moveRandom called");
     	if(position==null){
             
             beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),null);
@@ -461,6 +608,7 @@ public class Human implements Steppable {
 
     // Move toward the given cell until it's reached or the human can't move anymore
     public void moveTowardsCell(Int2D position){
+        System.out.println("Move Towards cell");
         int diffX = position.x - x;
         int diffY = position.y - y;
         int movesLeft = move;
@@ -505,8 +653,8 @@ public class Human implements Steppable {
             
             setX(resultX);
             setY(resultY);
-            System.out.println("Coord X :" + x);
-            System.out.println("Coord Y :" + y);
+//            System.out.println("Coord X :" + x);
+//            System.out.println("Coord Y :" + y);
         }
     }
     /**
@@ -534,6 +682,13 @@ public class Human implements Steppable {
 
     private boolean needDoctor(){
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
+    }
+
+    private boolean needEatingStrong(){
+        return (getGratification() < 0.2f * Constants.MAX_GRATIFICATION);
+    }
+    private boolean needEatingMedium(){
+        return (getGratification() < 0.6f * Constants.MAX_GRATIFICATION);
     }
 
 	// Getters and setters.
@@ -633,4 +788,6 @@ public class Human implements Steppable {
 	public void setVision(int vision) {
 		this.vision = vision;
 	}
+
+	public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
 }

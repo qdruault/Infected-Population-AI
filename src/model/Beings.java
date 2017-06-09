@@ -3,6 +3,7 @@ package model;
 import com.sun.corba.se.impl.orbutil.closure.Constant;
 import res.values.Constants;
 import sim.engine.SimState;
+import sim.engine.Stoppable;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
@@ -27,13 +28,14 @@ public class Beings extends SimState {
 		yard.clear();
 		addAgentsHuman();
 		addAgentsFood();
-		addAgentsDoctor();
+		//addAgentsDoctor();
 	}
 
 	/**
 	 * G�n�re des Humains sur la carte.
 	 */
 	public void addAgentsHuman(){
+		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_HUMANS;  i++) {
 			Gender gender;
 			if (i % 2 != 0) {
@@ -50,13 +52,15 @@ public class Beings extends SimState {
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
-			schedule.scheduleRepeating(a);
+			stoppable = schedule.scheduleRepeating(a);
+			a.setStoppable(stoppable);
 		}
 	}
 	/**
 	 * G�n�re des docteurs sur la carte.
 	 */
 	public void addAgentsDoctor(){
+		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_DOCTORS;  i++) {
 			Gender gender;
 			if (i % 2 != 0) {
@@ -74,7 +78,8 @@ public class Beings extends SimState {
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
-			schedule.scheduleRepeating(a);
+			stoppable = schedule.scheduleRepeating(a);
+			a.setStoppable(stoppable);
 		}
 	}
 	
@@ -85,13 +90,15 @@ public class Beings extends SimState {
 	 * G�n�re de la nourriture sur la carte.
 	 */
 	public void addAgentsFood(){
+		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
-			schedule.scheduleRepeating(a);
+			stoppable = schedule.scheduleRepeating(a);
+			a.setStoppable(stoppable);
 		}
 	}
 
@@ -99,6 +106,7 @@ public class Beings extends SimState {
 	 * G�n�re un virus sur la carte.
 	 */
 	public void addAgentsVirus(){
+		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 
 			int gravity= random.nextInt(Constants.MAX_GRAVITY);
@@ -112,7 +120,8 @@ public class Beings extends SimState {
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
-			schedule.scheduleRepeating(a);
+			stoppable = schedule.scheduleRepeating(a);
+			a.setStoppable(stoppable);
 		}
 	}
 
@@ -159,28 +168,53 @@ public class Beings extends SimState {
 		return null;
 	}
 
-	// Return a list of adjacent cells
+	// TODO remove the old instructions when the new instructions have been tested
+	// Return a list of adjacent cells to the position (x,y)
 	public Bag getAdjacentCells(int x, int y){
 		Bag objects = new Bag();
-		if (x + 1 > Constants.GRID_SIZE-1)
-			objects.add( yard.get(0, y));
-		else
-			objects.add( yard.get(x + 1, y));
+		// RIGHT
+//		if (x + 1 > Constants.GRID_SIZE-1)
+//			objects.add( yard.get(0, y));
+//		else
+//			objects.add( yard.get(x + 1, y));
 
-		if (x - 1 < 0)
-			objects.add( yard.get(Constants.GRID_SIZE-1, y));
-		else
-			objects.add( yard.get(x - 1, y));
+		objects.add(yard.get(yard.stx(++x), y));
 
-		if (y + 1 > Constants.GRID_SIZE-1)
-			objects.add( yard.get(x, 0));
-		else
-			objects.add( yard.get(x, y + 1));
+		// LEFT
+//		if (x - 1 < 0)
+//			objects.add( yard.get(Constants.GRID_SIZE-1, y));
+//		else
+//			objects.add( yard.get(x - 1, y));
 
-		if (y - 1 < 0)
-			objects.add( yard.get(x, Constants.GRID_SIZE-1));
-		else
-			objects.add( yard.get(x, y - 1));
+		objects.add(yard.get(yard.stx(--x), y));
+
+		// DOWN
+//		if (y + 1 > Constants.GRID_SIZE-1)
+//			objects.add( yard.get(x, 0));
+//		else
+//			objects.add( yard.get(x, y + 1));
+
+		objects.add(yard.get(x, yard.sty( ++y)));
+
+		// UP
+//		if (y - 1 < 0)
+//			objects.add( yard.get(x, Constants.GRID_SIZE-1));
+//		else
+//			objects.add( yard.get(x, y - 1));
+
+		objects.add(yard.get(x, yard.sty(--y)));
+
+		// TOP RIGHT
+		objects.add(yard.get(yard.stx(x + 1), yard.sty(y - 1)));
+
+		// TOP LEFT
+		objects.add(yard.get(yard.stx(x - 1), yard.sty(y - 1)));
+
+		// BOTTOM LEFT
+		objects.add(yard.get(yard.stx(x - 1), yard.sty(y + 1)));
+
+		// BOTTOM RIGHT
+		objects.add(yard.get(yard.stx(x + 1), yard.sty(y - 1)));
 
 		return objects;
 	}

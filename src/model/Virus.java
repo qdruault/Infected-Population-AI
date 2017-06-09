@@ -153,4 +153,6 @@ public class Virus implements Steppable {
 		this.y = y;
 	}
 
+	public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
+
 }
