@@ -254,12 +254,9 @@ public class Human implements Steppable {
                 Int2D foodCase = lookForFoodLocation();
 
                 if (foodCase != null) {
-//                System.out.println("Coordonnées moi : " + getX() + " " + getY());
-//                System.out.println("Coordonnées target : " + foodCase.getX() + " " + foodCase.getY());
                     moveTowardsCell(foodCase);
                 } else {
                     // Move in a random direction and hope to find food
-                    //System.out.println("random to find food");
                     moveRandom();
                 }
             } else {
@@ -304,7 +301,7 @@ public class Human implements Steppable {
             if (humanLocation != null){
                 moveTowardsCell(humanLocation);
             } else {
-                // Move in a random Direction and hope to find a human to procreate whith
+                // Move in a random Direction and hope to find a human to procreate with
                 moveRandom();
             }
         }
@@ -570,31 +567,43 @@ public class Human implements Steppable {
 
     // Move one cell in a random direction
     private void moveRandom(){
-        int direction = beings.random.nextInt(4);
+        int direction = beings.random.nextInt(7);
         int xRes = getX();
         int yRes = getY();
 
         switch (direction){
             case 0:
                 // UP
-                //yRes = (yRes == 0 ) ? Constants.GRID_SIZE - 1 : --yRes;
                 yRes = beings.yard.sty(--yRes);
                 break;
             case 1:
                 // RIGHT
-                //xRes = (xRes == Constants.GRID_SIZE - 1) ? 0 : ++xRes;
                 xRes = beings.yard.stx(++xRes);
                 break;
             case 2:
                 // DOWN
-                //yRes = (yRes == Constants.GRID_SIZE - 1) ? 0 : ++yRes;
                 yRes = beings.yard.sty(++yRes);
                 break;
             case 3:
                 // LEFT
-                //xRes = (xRes == 0) ? Constants.GRID_SIZE - 1 : --xRes;
                 xRes = beings.yard.stx(--xRes);
                 break;
+            case 4:
+                // TOP RIGHT
+                xRes = beings.yard.stx(++xRes);
+                yRes = beings.yard.sty(--yRes);
+            case 5:
+                // TOP LEFT
+                xRes = beings.yard.stx(--xRes);
+                yRes = beings.yard.sty(--yRes);
+            case 6:
+                // BOTTOM RIGHT
+                xRes = beings.yard.stx(++xRes);
+                yRes = beings.yard.sty(++yRes);
+            case 7:
+                // BOTTOM LEFT
+                xRes = beings.yard.stx(--xRes);
+                yRes = beings.yard.sty(++yRes);
             default:
                 break;
         }
@@ -661,15 +670,18 @@ public class Human implements Steppable {
     		if (resultY < 0)
     			resultY = Constants.GRID_SIZE-1;
         	
-        	
-            beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY),this);
-            
-            beings.yard.set(beings.yard.stx(getX()), beings.yard.sty(getY()),null);
-            
-            setX(resultX);
-            setY(resultY);
-//            System.out.println("Coord X :" + x);
-//            System.out.println("Coord Y :" + y);
+
+    		if (canMoveOn(resultX, resultY)) {
+                beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY), this);
+
+                beings.yard.set(beings.yard.stx(getX()), beings.yard.sty(getY()), null);
+
+                setX(resultX);
+                setY(resultY);
+            } else {
+    		    // TODO create a new strategy to move in an intelligent way
+    		    moveRandom();
+            }
         }
     }
 
