@@ -94,8 +94,6 @@ public class Human implements Steppable {
                 setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
             }
 
-            System.out.println("Gratification : " + getGratification());
-
             // Perceive the cells around himself
             perceiveCells(neighborsPosX, neighborsPosY);
 
@@ -228,9 +226,9 @@ public class Human implements Steppable {
 
 
     private void basicNeedProcreate(){
+        System.out.println("I would like to procreate");
         Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
         if (human != null && canProcreateWith(human)) {
-            System.out.println("Let's procreate");
             tryToProcreate(human);
         } else {
             if (canMove()) {
@@ -447,8 +445,9 @@ public class Human implements Steppable {
 
         Object currentNeighbor = neighbors.pop();
 
-        while(currentNeighbor != null){
+        for (int i = 0; i < 8; i++){
             if (currentNeighbor instanceof  Human) {
+                System.out.println("FOUND FOOD");
                 humans.add(currentNeighbor);
             }
             currentNeighbor = neighbors.pop();
@@ -693,6 +692,8 @@ public class Human implements Steppable {
         if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80){
             if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
             {
+                System.out.println("I have a child!");
+
                 int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
                 int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
                 Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
@@ -707,21 +708,23 @@ public class Human implements Steppable {
                     if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
                         condition = Condition.SICK;
                 }
+
                 float doctorProbability =  beings.random.nextFloat();
-                System.out.println("I have a child!");
                 if (doctorProbability> Constants.DOCTOR_PROBABILITY){
                     float skill = beings.random.nextFloat();
                     Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
-                    beings.yard.set(this.getX(), this.getY(), child);
-                    child.x = this.getX();
-                    child.y = this.getY();
+                    Case pos = beings.getFreeAdjacentCell(getX(), getY());
+                    beings.yard.set(pos.getX(), pos.getY(), child);
+                    child.setX(pos.getX());
+                    child.setY(pos.getY());
                     beings.schedule.scheduleRepeating(child);
                 }
                 else {
                     Human child = new Human(immunity, fertility, gender, condition, vision);
-                    beings.yard.set(this.getX(), this.getY(), child);
-                    child.x = this.getX();
-                    child.y = this.getY();
+                    Case pos = beings.getFreeAdjacentCell(getX(), getY());
+                    beings.yard.set(pos.getX(), pos.getY(), child);
+                    child.setX(pos.getX());
+                    child.setY(pos.getY());
                     beings.schedule.scheduleRepeating(child);
                 }
             }
@@ -743,6 +746,7 @@ public class Human implements Steppable {
     }
 
     public boolean canProcreateWith(Human h){
+        System.out.println("Data about both humans: " + this.getGender() + " " + h.getGender() + " " + this.getAge() + " " + h.getAge());
         return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80);
     }
 
