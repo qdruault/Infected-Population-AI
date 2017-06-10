@@ -61,6 +61,7 @@ public class Human implements Steppable {
         SICK,
         FINE
     };
+    private boolean hasRecentlyProcreated = false;
     
 
     private Doctor doctorCalled = null;
@@ -69,7 +70,7 @@ public class Human implements Steppable {
     public void step(SimState state) {
         beings = (Beings) state;
 
-        boolean eatDone = false;
+        boolean hasRecentlyProcreated = false;
         setAge(getAge() + 1);
 
         // TODO remove the agent from the scheduling
@@ -743,11 +744,12 @@ public class Human implements Steppable {
         if (beings.random.nextFloat() < successProbability){
             toProcreate(h);
         }
+        hasRecentlyProcreated = true;
     }
 
     public boolean canProcreateWith(Human h){
         System.out.println("Data about both humans: " + this.getGender() + " " + h.getGender() + " " + this.getAge() + " " + h.getAge());
-        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80);
+        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80 && !h.getHasRecentlyProcreated());
     }
 
     //
@@ -894,4 +896,8 @@ public class Human implements Steppable {
 	}
 
 	public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
+
+	public boolean getHasRecentlyProcreated(){ return this.hasRecentlyProcreated; }
+
+	public void setHasRecentlyProcreated(boolean b){ this.hasRecentlyProcreated = b; }
 }
