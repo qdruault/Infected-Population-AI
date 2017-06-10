@@ -296,13 +296,16 @@ public class Human implements Steppable {
             System.out.println("Let's procreate");
             tryToProcreate(human);
         } else {
-            // TODO look for a human to procreate with
-            Int2D humanLocation = lookForOppositeGenderHumanLocation();
-            if (humanLocation != null){
-                moveTowardsCell(humanLocation);
+            if (canMove()) {
+                Int2D humanLocation = lookForOppositeGenderHumanLocation();
+                if (humanLocation != null) {
+                    moveTowardsCell(humanLocation);
+                } else {
+                    // Move in a random Direction and hope to find a human to procreate with
+                    moveRandom();
+                }
             } else {
-                // Move in a random Direction and hope to find a human to procreate with
-                moveRandom();
+                // TODO do something instead of waiting depending on what there is on the adjacent cells
             }
         }
     }
@@ -372,10 +375,6 @@ public class Human implements Steppable {
 	        	res = new Int2D(key.getX(), key.getY());
 	        }
 	    }
-    	
-	    //System.out.println("Cible x : " + res.x);
-	    //System.out.println("Cible y : " + res.y);
-	    
 	    return res;
     }
 
@@ -432,10 +431,6 @@ public class Human implements Steppable {
                 res = new Int2D(key.getX(), key.getY());
             }
         }
-
-        //System.out.println("Cible x : " + res.x);
-        //System.out.println("Cible y : " + res.y);
-
         return res;
     }
 
@@ -552,7 +547,6 @@ public class Human implements Steppable {
     // Return non rotten food in priority
     private Food leastRottenFood(Bag foods){
         Object food = foods.pop();
-        //System.out.println(food);
         Food leastRottenFood = null;
         while(food != null) {
             if (leastRottenFood == null || (food != null && food instanceof Food && !((Food) food).isRotten() && leastRottenFood.isRotten())) {
