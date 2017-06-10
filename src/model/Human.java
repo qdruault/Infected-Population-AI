@@ -249,17 +249,21 @@ public class Human implements Steppable {
                 toEat(food, 1);
             }
         } else {
-            // Move to find food
-            Int2D foodCase = lookForFoodLocation();
+            if (canMove()) {
+                // Move to find food
+                Int2D foodCase = lookForFoodLocation();
 
-            if (foodCase != null){
+                if (foodCase != null) {
 //                System.out.println("Coordonnées moi : " + getX() + " " + getY());
 //                System.out.println("Coordonnées target : " + foodCase.getX() + " " + foodCase.getY());
-                moveTowardsCell(foodCase);
+                    moveTowardsCell(foodCase);
+                } else {
+                    // Move in a random direction and hope to find food
+                    //System.out.println("random to find food");
+                    moveRandom();
+                }
             } else {
-                // Move in a random direction and hope to find food
-                //System.out.println("random to find food");
-                moveRandom();
+                // TODO do something instead of waiting depending on what there is on the adjacent cells
             }
         }
     }
@@ -269,16 +273,25 @@ public class Human implements Steppable {
         if (doctorCalled == null) {
             Int2D doctorLocation = lookForDoctorLocation();
             if (doctorLocation != null){
-                callDoctor((Doctor)beings.yard.get(doctorLocation.getX(), doctorLocation.getY()));
-            } else {
-                // No doctor found
-                // Move in a random direction and hope to find a doctor
-                moveRandom();
+                doctorCalled = (Doctor)beings.yard.get(doctorLocation.getX(), doctorLocation.getY());
+                callDoctor(doctorCalled);
             }
         }
-        // Move to reach the calledDoctor
-        moveTowardsCell(new Int2D(doctorCalled.getX(), doctorCalled.getY()));
+
+        // If no doctor available around
+        if (doctorCalled == null){
+            // Random move
+            if (canMove()){
+                moveRandom();
+            }
+        } else {
+            // Move to reach the calledDoctor if can move and not already adjacent
+            if (!objectIsAdjacent(doctorCalled) && canMove()){
+                moveTowardsCell(new Int2D(doctorCalled.getX(), doctorCalled.getY()));
+            }
+        }
     }
+
 
     private void basicNeedProcreate(){
         Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
@@ -585,11 +598,12 @@ public class Human implements Steppable {
             default:
                 break;
         }
-
-        beings.yard.set(getX(), getY(), null);
-        beings.yard.set(xRes, yRes, this);
-        setX(xRes);
-        setY(yRes);
+        if (canMoveOn(xRes, yRes)) {
+            beings.yard.set(getX(), getY(), null);
+            beings.yard.set(xRes, yRes, this);
+            setX(xRes);
+            setY(yRes);
+        } else moveRandom();
     }
 
     public void move(Int2D position){
@@ -607,6 +621,7 @@ public class Human implements Steppable {
     		moveTowardsCell(position);
     }
 
+    // TODO prevent the human from going on an occupied cell.
     // Move toward the given cell until it's reached or the human can't move anymore
     public void moveTowardsCell(Int2D position){
         int diffX = position.x - x;
@@ -656,6 +671,19 @@ public class Human implements Steppable {
 //            System.out.println("Coord X :" + x);
 //            System.out.println("Coord Y :" + y);
         }
+    }
+
+    private boolean canMoveOn(int x, int y){
+        return beings.yard.get(x, y) == null;
+    }
+
+    private boolean canMove(){
+        return beings.getFreeAdjacentCell(getX(), getY()) != null;
+    }
+
+    // True if the given object is adjacent to the human
+    private boolean objectIsAdjacent(Object o){
+        return beings.getAdjacentCells().contains(o);
     }
     /**
      * Ask to be curated by a doctor in the perception zone
