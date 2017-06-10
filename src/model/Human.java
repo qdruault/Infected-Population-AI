@@ -171,73 +171,10 @@ public class Human implements Steppable {
 		this.move = 1;
     }
 
-    // Try to procreate based on both fertilities
-    public void tryToProcreate(Human h){
-        float fertilityProbability1 = (float) fertility  / (float) Constants.MAX_FERTILITY;
-        float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
+    //
+    // START OF THE BASIC NEED SECTION
+    //
 
-        float successProbability = fertilityProbability1 * fertilityProbability2;
-        float f = 1f - successProbability;
-        successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
-
-        if (beings.random.nextFloat() < successProbability){
-            toProcreate(h);
-        }
-    }
-
-    public boolean canProcreateWith(Human h){
-        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80);
-    }
-
-
-    // TODO add a pregnancy mecanism
-    public void toProcreate(Human h){
-		System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
-
-	    if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80){
-	        if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
-            {
-                int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
-                int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
-                Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
-                int vision = beings.random.nextInt(Constants.MAX_VISION);
-
-                Condition condition = Condition.FINE;
-                float conditionResult = beings.random.nextFloat();
-                if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
-                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
-                        condition = Condition.SICK;
-                } else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
-                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
-                        condition = Condition.SICK;
-                }
-                float doctorProbability =  beings.random.nextFloat();
-        		System.out.println("I have a child!");
-                if (doctorProbability> Constants.DOCTOR_PROBABILITY){
-                    float skill = beings.random.nextFloat();
-                    Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
-                    beings.yard.set(this.getX(), this.getY(), child);
-                    child.x = this.getX();
-                    child.y = this.getY();
-                    beings.schedule.scheduleRepeating(child);
-                }
-                else {
-                    Human child = new Human(immunity, fertility, gender, condition, vision);
-                    beings.yard.set(this.getX(), this.getY(), child);
-                    child.x = this.getX();
-                    child.y = this.getY();
-                    beings.schedule.scheduleRepeating(child);
-                }
-            }
-	    }
-    }
-
-    public void toEat(Food f, int quantity){
-    	int quantityEaten = f.consume(quantity);
-        gratification = Math.min(gratification + quantityEaten * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
-
-    }
-    
     private void basicNeedEat(){
         System.out.println("Basic Need Eat");
         // Look for food
@@ -309,18 +246,27 @@ public class Human implements Steppable {
             }
         }
     }
+
     private Boolean mustDie(){
-		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
+        if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
             System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
             return true;
-		}
-        else return false;	
+        }
+        else return false;
     }
-    
-    //Perceive the cells around, should be called at the beginning of each step
-    public void perceiveCells(IntBag xPos, IntBag yPos){
-        neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), xPos, yPos);
-    }
+
+    //
+    // END OF THE BASIC NEED SECTION
+    //
+
+
+
+
+    // TODO try to factorize the three loofForLocation methods
+    //
+    // START OF THE OBJECTS SEARCH SECTION
+    //
+
 
     // Check if there are any food available around
     public Int2D lookForFoodLocation(){
@@ -329,53 +275,53 @@ public class Human implements Steppable {
 
 
         int x_depart = x - vision;
-		int y_depart = y - vision;
+        int y_depart = y - vision;
 
-		int x_fin = x + vision;
-		int y_fin = y + vision;
+        int x_fin = x + vision;
+        int y_fin = y + vision;
 
-		// Parcours de toutes les cases
-		for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
-			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
-				// Pour pas sortir de la grille.
-				int realX = indexX % Constants.GRID_SIZE;
-				if (realX < 0) {
-					realX = Constants.GRID_SIZE + realX;
-				}
-				
-				int realY = indexY % Constants.GRID_SIZE;
-				if (realY < 0) {
-					realY = Constants.GRID_SIZE + realY;
-				}
-				
-				// Objet aux coordonn�es
-				Object object = beings.yard.get(realX, realY);
-				if (object != null) {
-					// Si la case contient un objet Human
-					if (object instanceof Food) {
-						// Ajout de la case avec sa distance.
-						Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
-						foodCases.put(new Case(indexX, indexY), distance);
-					}
-				}
-			}
-		}
-		
-		// On cherche la plus proche.
-		Int2D res = null;
-		Integer minD = Constants.GRID_SIZE;
-		
-		Iterator<Entry<Case, Integer>> it = foodCases.entrySet().iterator();
-	    while (it.hasNext()) {
-	        HashMap.Entry pair = (HashMap.Entry)it.next(); 
-	        Integer value = (Integer)pair.getValue();
-	        Case key = (Case)pair.getKey();
-	        if(value < minD) {
-	        	minD = value;
-	        	res = new Int2D(key.getX(), key.getY());
-	        }
-	    }
-	    return res;
+        // Parcours de toutes les cases
+        for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
+            for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
+                // Pour pas sortir de la grille.
+                int realX = indexX % Constants.GRID_SIZE;
+                if (realX < 0) {
+                    realX = Constants.GRID_SIZE + realX;
+                }
+
+                int realY = indexY % Constants.GRID_SIZE;
+                if (realY < 0) {
+                    realY = Constants.GRID_SIZE + realY;
+                }
+
+                // Objet aux coordonn�es
+                Object object = beings.yard.get(realX, realY);
+                if (object != null) {
+                    // Si la case contient un objet Human
+                    if (object instanceof Food) {
+                        // Ajout de la case avec sa distance.
+                        Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
+                        foodCases.put(new Case(indexX, indexY), distance);
+                    }
+                }
+            }
+        }
+
+        // On cherche la plus proche.
+        Int2D res = null;
+        Integer minD = Constants.GRID_SIZE;
+
+        Iterator<Entry<Case, Integer>> it = foodCases.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)it.next();
+            Integer value = (Integer)pair.getValue();
+            Case key = (Case)pair.getKey();
+            if(value < minD) {
+                minD = value;
+                res = new Int2D(key.getX(), key.getY());
+            }
+        }
+        return res;
     }
 
     // Check if there are any food available around
@@ -493,22 +439,6 @@ public class Human implements Steppable {
         return res;
     }
 
-    // Return a human of requested gender
-    private Human getHumanOfOppositeGender(Bag humans){
-        Human human;
-        Bag availableHumans = new Bag();
-        while((human = (Human) humans.pop()) != null){
-            if (human.getGender() != getGender()){
-                availableHumans.add(human);
-            }
-        }
-        // if there are several possibilities, return a random
-        if (!availableHumans.isEmpty())
-        	return (Human)availableHumans.get(beings.random.nextInt(availableHumans.size()));
-        return null;
-    }
-
-
     // TODO find a clean way to factorize these two methods, Java Generics aren't very advisable here
     // Return the adjacent humans
     private Bag lookForAdjacentHumans(){
@@ -544,20 +474,41 @@ public class Human implements Steppable {
         return foods;
     }
 
-    // Return non rotten food in priority
-    private Food leastRottenFood(Bag foods){
-        Object food = foods.pop();
-        Food leastRottenFood = null;
-        while(food != null) {
-            if (leastRottenFood == null || (food != null && food instanceof Food && !((Food) food).isRotten() && leastRottenFood.isRotten())) {
-                leastRottenFood = (Food) food;
-            }
-            food = foods.pop();
-        }
-        System.out.println(leastRottenFood);
-        return leastRottenFood;
+    //Perceive the cells around, should be called at the beginning of each step
+    public void perceiveCells(IntBag xPos, IntBag yPos){
+        neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), xPos, yPos);
     }
 
+    // Return a human of requested gender
+    private Human getHumanOfOppositeGender(Bag humans){
+        Human human;
+        Bag availableHumans = new Bag();
+        while((human = (Human) humans.pop()) != null){
+            if (human.getGender() != getGender()){
+                availableHumans.add(human);
+            }
+        }
+        // if there are several possibilities, return a random
+        if (!availableHumans.isEmpty())
+            return (Human)availableHumans.get(beings.random.nextInt(availableHumans.size()));
+        return null;
+    }
+
+    // True if the given object is adjacent to the human
+    private boolean objectIsAdjacent(Object o){
+        return beings.getAdjacentCells().contains(o);
+    }
+
+    //
+    // END OF THE OBJECTS SEARCH SECTION
+    //
+
+
+
+
+    //
+    // START OF THE MOVEMENT SECTION
+    //
 
     // Move one cell in a random direction
     private void moveRandom(){
@@ -610,18 +561,18 @@ public class Human implements Steppable {
     }
 
     public void move(Int2D position){
-    	if(position==null){
-            
+        if(position==null){
+
             beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),null);
             x++;
             y++;
             x %= Constants.GRID_SIZE;
             y %= Constants.GRID_SIZE;
-            
+
             beings.yard.set(beings.yard.stx(x), beings.yard.sty(y),this);
-            
-    	}else
-    		moveTowardsCell(position);
+
+        }else
+            moveTowardsCell(position);
     }
 
     // TODO prevent the human from going on an occupied cell.
@@ -648,24 +599,24 @@ public class Human implements Steppable {
                 diffY += -increment;
                 movesLeft --;
             }
-        }        
-        
+        }
+
         if(resultX != x || resultY != y){
-        	
-    		if (resultX > Constants.GRID_SIZE-1)
-    			resultX=0;
 
-    		if (resultX < 0)
-    			resultX=Constants.GRID_SIZE-1;
+            if (resultX > Constants.GRID_SIZE-1)
+                resultX=0;
 
-    		if (resultY > Constants.GRID_SIZE-1)
-    			resultY=0;
+            if (resultX < 0)
+                resultX=Constants.GRID_SIZE-1;
 
-    		if (resultY < 0)
-    			resultY = Constants.GRID_SIZE-1;
-        	
+            if (resultY > Constants.GRID_SIZE-1)
+                resultY=0;
 
-    		if (canMoveOn(resultX, resultY)) {
+            if (resultY < 0)
+                resultY = Constants.GRID_SIZE-1;
+
+
+            if (canMoveOn(resultX, resultY)) {
                 beings.yard.set(beings.yard.stx(resultX), beings.yard.sty(resultY), this);
 
                 beings.yard.set(beings.yard.stx(getX()), beings.yard.sty(getY()), null);
@@ -673,8 +624,8 @@ public class Human implements Steppable {
                 setX(resultX);
                 setY(resultY);
             } else {
-    		    // TODO create a new strategy to move in an intelligent way
-    		    moveRandom();
+                // TODO create a new strategy to move in an intelligent way
+                moveRandom();
             }
         }
     }
@@ -687,10 +638,125 @@ public class Human implements Steppable {
         return beings.getFreeAdjacentCell(getX(), getY()) != null;
     }
 
-    // True if the given object is adjacent to the human
-    private boolean objectIsAdjacent(Object o){
-        return beings.getAdjacentCells().contains(o);
+    //
+    // END OF THE MOVEMENT SECTION
+    //
+
+
+
+
+    //
+    // START OF THE EATING SECTION
+    //
+
+    public void toEat(Food f, int quantity){
+        int quantityEaten = f.consume(quantity);
+        gratification = Math.min(gratification + quantityEaten * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
     }
+
+    // Return non rotten food in priority
+    private Food leastRottenFood(Bag foods){
+        Object food = foods.pop();
+        Food leastRottenFood = null;
+        while(food != null) {
+            if (leastRottenFood == null || (food != null && food instanceof Food && !((Food) food).isRotten() && leastRottenFood.isRotten())) {
+                leastRottenFood = (Food) food;
+            }
+            food = foods.pop();
+        }
+        System.out.println(leastRottenFood);
+        return leastRottenFood;
+    }
+
+    private boolean needEatingStrong(){
+        return (getGratification() < 0.2f * Constants.MAX_GRATIFICATION);
+    }
+    private boolean needEatingMedium(){
+        return (getGratification() < 0.6f * Constants.MAX_GRATIFICATION);
+    }
+
+    //
+    // END OF THE EATING SECTION
+    //
+
+
+
+
+    //
+    // START OF THE PROCREATION SECTION
+    //
+
+    // TODO add a pregnancy mecanism
+    public void toProcreate(Human h){
+        System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
+
+        if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80){
+            if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
+            {
+                int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
+                int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
+                Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
+                int vision = beings.random.nextInt(Constants.MAX_VISION);
+
+                Condition condition = Condition.FINE;
+                float conditionResult = beings.random.nextFloat();
+                if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
+                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
+                        condition = Condition.SICK;
+                } else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
+                    if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
+                        condition = Condition.SICK;
+                }
+                float doctorProbability =  beings.random.nextFloat();
+                System.out.println("I have a child!");
+                if (doctorProbability> Constants.DOCTOR_PROBABILITY){
+                    float skill = beings.random.nextFloat();
+                    Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
+                    beings.yard.set(this.getX(), this.getY(), child);
+                    child.x = this.getX();
+                    child.y = this.getY();
+                    beings.schedule.scheduleRepeating(child);
+                }
+                else {
+                    Human child = new Human(immunity, fertility, gender, condition, vision);
+                    beings.yard.set(this.getX(), this.getY(), child);
+                    child.x = this.getX();
+                    child.y = this.getY();
+                    beings.schedule.scheduleRepeating(child);
+                }
+            }
+        }
+    }
+
+    // Try to procreate based on both fertilities
+    public void tryToProcreate(Human h){
+        float fertilityProbability1 = (float) fertility  / (float) Constants.MAX_FERTILITY;
+        float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
+
+        float successProbability = fertilityProbability1 * fertilityProbability2;
+        float f = 1f - successProbability;
+        successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
+
+        if (beings.random.nextFloat() < successProbability){
+            toProcreate(h);
+        }
+    }
+
+    public boolean canProcreateWith(Human h){
+        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80);
+    }
+
+    //
+    // END OF THE PROCREATION SECTION
+    //
+
+
+
+
+    //
+    // START OF THE DOCTOR SECTION
+    //
+
     /**
      * Ask to be curated by a doctor in the perception zone
      * @return true if a doctor was called
@@ -718,12 +784,12 @@ public class Human implements Steppable {
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
     }
 
-    private boolean needEatingStrong(){
-        return (getGratification() < 0.2f * Constants.MAX_GRATIFICATION);
-    }
-    private boolean needEatingMedium(){
-        return (getGratification() < 0.6f * Constants.MAX_GRATIFICATION);
-    }
+    //
+    // END OF THE DOCTOR SECTION
+    //
+
+
+
 
 	// Getters and setters.
     public int getAge() {
