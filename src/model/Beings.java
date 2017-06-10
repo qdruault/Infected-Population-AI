@@ -156,14 +156,37 @@ public class Beings extends SimState {
 
 	// Return a free adjacent cell if there is one, null otherwise
 	public Case getFreeAdjacentCell(int x, int y){
-		if( yard.get(x + 1, y) == null){
-			return new Case(x + 1, y);
-		} else if( yard.get(x - 1, y) == null){
-			return new Case(x -1, y);
-		} else if ( yard.get(x, y + 1) == null){
-			return new Case(x, y + 1);
-		} else if (yard.get(x, y - 1) == null){
-			return new Case(x, y - 1);
+		// RIGHT
+		if( yard.get(yard.stx(x + 1), y) == null){
+			return new Case(yard.stx(x + 1), y);
+		}
+		// LEFT
+		else if( yard.get(yard.stx(x - 1), y) == null){
+			return new Case(yard.stx(x -1), y);
+		}
+		// DOWN
+		else if ( yard.get(x, yard.sty(y + 1)) == null){
+			return new Case(x, yard.sty(y + 1));
+		}
+		// UP
+		else if (yard.get(x, yard.sty(y - 1)) == null){
+			return new Case(x, yard.sty(y - 1));
+		}
+		// TOP RIGHT
+		else if (yard.get(yard.stx(x + 1), yard.sty(y - 1)) == null ){
+			return new Case(yard.stx(x + 1), yard.sty(y - 1));
+		}
+		// TOP LEFT
+		else if (yard.get(yard.stx(x - 1), yard.sty(y - 1)) == null ){
+			return new Case(yard.stx(x - 1), yard.sty(y - 1));
+		}
+		// BOTTOM RIGHT
+		else if (yard.get(yard.stx(x + 1), yard.sty(y + 1)) == null ){
+			return new Case(yard.stx(x + 1), yard.sty(y + 1));
+		}
+		// BOTTOM LEFT
+		else if (yard.get(yard.stx(x - 1), yard.sty(y + 1)) == null ){
+			return new Case(yard.stx(x - 1), yard.sty(y + 1));
 		}
 		return null;
 	}
