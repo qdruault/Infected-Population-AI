@@ -496,7 +496,7 @@ public class Human implements Steppable {
 
     // True if the given object is adjacent to the human
     private boolean objectIsAdjacent(Object o){
-        return beings.getAdjacentCells().contains(o);
+        return beings.getAdjacentCells(getX(), getY()).contains(o);
     }
 
     //
