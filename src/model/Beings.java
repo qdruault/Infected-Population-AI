@@ -28,7 +28,7 @@ public class Beings extends SimState {
 		yard.clear();
 		addAgentsHuman();
 		addAgentsFood();
-		//addAgentsDoctor();
+		addAgentsDoctor();
 	}
 
 	/**
