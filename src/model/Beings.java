@@ -28,8 +28,13 @@ public class Beings extends SimState {
 		yard.clear();
 		addAgentsHuman();
 		addAgentsFood();
+<<<<<<< HEAD
 		//addAgentsDoctor();
 		addEnvironment();
+=======
+		addAgentsDoctor();
+		addAgentsVirus();
+>>>>>>> a8706ca972832d59a799536d982ed3860e83bf9c
 	}
 
 	/**
@@ -108,13 +113,12 @@ public class Beings extends SimState {
 	 */
 	public void addAgentsVirus(){
 		Stoppable stoppable;
-		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 
 			int gravity= random.nextInt(Constants.MAX_GRAVITY);
-			int moveRange = random.nextInt(Constants.MAX_MOVE_RANGE);
-			int infectingArea = random.nextInt(Constants.MAX_INFECTING_ZONE);
-			int propagationDuration= random.nextInt(Constants.MAX_PROPAGATION_DURATION);
-			int nbHumanToInfect = random.nextInt(Constants.MAX_NB_HUMAN_TO_CONTAMINATE);
+			int moveRange = Constants.MAX_MOVE_RANGE;
+			int infectingArea = Constants.MAX_INFECTING_ZONE;
+			int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
+			int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
 			int timeBeforeActivation = random.nextInt(Constants.MAX_TIME_BEFORE_ACTIVATION);
 			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
 			Int2D location = getFreeLocation();
@@ -123,7 +127,6 @@ public class Beings extends SimState {
 			a.setY(location.y);
 			stoppable = schedule.scheduleRepeating(a);
 			a.setStoppable(stoppable);
-		}
 	}
 
 	/**

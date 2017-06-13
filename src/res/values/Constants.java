@@ -60,10 +60,10 @@ public class Constants {
     public static int BASE_FOOD = 5;
     
     // VIRUS parameters
-    public static final int MAX_MOVE_RANGE = 100;
-    public static final int MAX_INFECTING_ZONE = 20;
-    public static final int MAX_PROPAGATION_DURATION = 100;
-    public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 5;
+    public static final int MAX_MOVE_RANGE = 3;
+    public static final int MAX_INFECTING_ZONE = 2;
+    public static final int MAX_PROPAGATION_DURATION = 10;
+    public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
