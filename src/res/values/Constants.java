@@ -8,7 +8,7 @@ public class Constants {
     public static int GRID_SIZE = 25;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 2;
+    public static int NUM_HUMANS = 5;
     public static int NUM_DOCTORS = 5;
     public static int NUM_FOODS = 20;
 
@@ -60,11 +60,16 @@ public class Constants {
     public static int BASE_FOOD = 5;
     
     // VIRUS parameters
-    public static final int MAX_MOVE_RANGE = 100;
-    public static final int MAX_INFECTING_ZONE = 20;
-    public static final int MAX_PROPAGATION_DURATION = 100;
-    public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 5;
+    public static final int MAX_MOVE_RANGE = 3;
+    public static final int MAX_INFECTING_ZONE = 2;
+    public static final int MAX_PROPAGATION_DURATION = 10;
+    public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
+    // ENVIRONMENT parameters
+    public static final int MAX_FOOD_ENV = 100;
+    public static final int MAX_MEDICINE_ENV = 30;
+    public static final int FAMINE_DURATION = 10;
+    
 }

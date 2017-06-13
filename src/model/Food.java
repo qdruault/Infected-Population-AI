@@ -145,10 +145,13 @@ public class Food implements Steppable {
     
   //TODO : passer le Beings en constructeur sinon nullpointerexception?    
     private void addFood(){
+    	System.out.println(" Food added ");
     	int quantity = beings.random.nextInt(Constants.MAX_FOOD_QUANTITY);
         int nutritionalProvision = beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION);
-		Food  a  =  new Food(nutritionalProvision,quantity);
+        Food  a  =  new Food(nutritionalProvision,quantity);
+    	System.out.println(" Food added 2");
 		Int2D location = beings.getFreeLocation();
+    	System.out.println(" Food added  3");
 		beings.yard.set(location.x, location.y, a);
 		a.setX(location.x);
 		a.setY(location.y);

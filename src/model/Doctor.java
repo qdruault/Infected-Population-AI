@@ -2,9 +2,12 @@ package model;
 
 import res.values.Constants;
 import sim.engine.SimState;
+import sim.util.Int2D;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Human.Condition;
 
 /**
  * Created by Louis on 22/05/2017.
@@ -14,13 +17,12 @@ import java.util.List;
 // TODO add the methods basicNeed: Heal myself, Cure myself, vaccinate myself, help someone who called, help someone who doesn't call
 public class Doctor extends Human {
 
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 	// Stock de mï¿½dicaments.
-	private int drugStock;
+	protected int drugStock;
     // Facilitï¿½ ï¿½ soigner les gens (compï¿½tence du medecin)
-	private float skill; //between 0 and 1
-	private List<Human> humansToHelp;
-	private Beings beings;
+	protected float skill; //between 0 and 1
+	protected List<Human> humansToHelp;
 
 	public Doctor() {
 		super();
@@ -42,7 +44,7 @@ public class Doctor extends Human {
     }
     @Override
     public void step(SimState state) {
-
+    	beings = (Beings)state;
         setHasRecentlyProcreated(false);
         setAge(getAge() + 1);
 
@@ -70,12 +72,27 @@ public class Doctor extends Human {
                 basicNeedEat();
             } else if (needHealing()){
                 basicNeedHealth();
-            } else if (needEatingMedium()){
-                basicNeedEat();
             } else if (needCuration()){
                 basicNeedCuration();
             } else if (needVaccination()){
                 basicNeedVaccination();
+            } else if (humansToHelp.isEmpty() == false) {
+            	System.out.println("Humains à soigner");
+            	// Si il y a des gens à soigner.
+            	Human patient = humansToHelp.get(0);
+            	if (objectIsAdjacent(patient)) {
+					// SI je suis a cote de lui je le soigne.
+            		System.out.println("Je te soigne.");
+            		handlePatient(patient);
+            		humansToHelp.remove(0);
+            		
+				} else {
+					System.out.println("Poussez vous je suis medecin !");
+					// SInon je m'approche de lui.
+					moveTowardsPatient();
+				}
+            } else if (needEatingMedium()){
+                basicNeedEat();
             }
 
 
@@ -92,7 +109,7 @@ public class Doctor extends Human {
         //else --> move to human
         //++ consider his human needs
 //        super.step(state);
-        beings = (Beings)state;
+        
     }
 
 
@@ -146,47 +163,14 @@ public class Doctor extends Human {
         return feelBetter;
     }
 
-
     /**
-     * Decide which one to cure
-     * @return true if somebody got cured; false otherwise
+     * Va vers le premier patient.
      */
-    public boolean helpHumans(){
-        int minHealth= Constants.MAX_HEALTH;
-        Human sickestHuman=null, fineHuman=null;
-        int nbToVaccinate = 0;
-        boolean hasHelped = false;
-        for (Human human : humansToHelp){
-            //look for the sickest human
-            if (human.getCondition() == Condition.SICK){
-                if (human.getHealth()<minHealth) {
-                    sickestHuman=human;
-                    minHealth=human.getHealth();
-                }
-            }
-            else {
-                nbToVaccinate++;
-                fineHuman=human;
-            }
-        }
-        if (minHealth<=10 || nbToVaccinate==0){
-            //heal or cure the sickest human
-            if (canHeal()) {
-                hasHelped=tryHeal(sickestHuman);
-            }
-            if(!hasHelped){
-                if (canCure())
-                    hasHelped = tryCure(sickestHuman);
-            }
-        }
-        if((minHealth>10 || !hasHelped) && nbToVaccinate!=0){
-            //vaccinate a fine human
-            if (canVaccinate()){
-                hasHelped=tryVaccinate(fineHuman);
-            }
-        }
-        return hasHelped;
+    protected void moveTowardsPatient() {
+    	Int2D positionFirstPatient = new Int2D(humansToHelp.get(0).getX(), humansToHelp.get(0).getY());
+    	moveTowardsCell(positionFirstPatient);	
     }
+    
     /**
      * Soigne un peu
      * @param human
@@ -217,6 +201,18 @@ public class Doctor extends Human {
             //if the doctor is not healing himself, get more immunity
             this.immunity += Constants.IMPROVE_IMMUNITY_DOCTOR_2;
         }
+    }
+    
+    /**
+     * S'occupe d'un de ses patients.
+     * @param patient
+     */
+    protected void handlePatient(Human patient) {
+    	if (patient.getHealth() < Constants.LOW_HEALTH) {
+    		heal(patient);
+    	} else if (patient.getCondition() == Condition.SICK) {
+    		cureDisease(patient);
+    	}
     }
     
     /**

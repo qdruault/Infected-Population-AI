@@ -19,12 +19,12 @@ import java.util.Map.Entry;
  */
 public class Human implements Steppable {
 	
-	private static final long serialVersionUID = 1L;
-	private Beings beings;
-	private Stoppable stoppable;
-    private Bag neighbors = new Bag();
-    private IntBag neighborsPosX = new IntBag();
-    private IntBag neighborsPosY = new IntBag();
+	protected static final long serialVersionUID = 1L;
+	protected Beings beings;
+	protected Stoppable stoppable;
+    protected Bag neighbors = new Bag();
+    protected IntBag neighborsPosX = new IntBag();
+    protected IntBag neighborsPosY = new IntBag();
 
     // Age
     protected int age;
@@ -43,9 +43,9 @@ public class Human implements Steppable {
     // Nombre de cellules de mouvement par tour
     public int move;
     // Homme ou Femme
-    private Gender gender;
+    protected Gender gender;
     // Malade ou pas
-    private Condition condition;
+    protected Condition condition;
     // Coordonnï¿½es.
     protected int x;
     protected int y;
@@ -64,7 +64,7 @@ public class Human implements Steppable {
     protected boolean hasRecentlyProcreated = false;
     
 
-    private Doctor doctorCalled = null;
+    protected Doctor doctorCalled = null;
 
     @Override
     public void step(SimState state) {
@@ -103,8 +103,12 @@ public class Human implements Steppable {
             // TODO add a parameter to define the level of gratification below which each human start looking for food
             // TODO change the behaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
 
-            // NEED TO EAT
-            if (needEatingStrong()) {
+            // NEED DOCTOR
+            if (doctorCalled != null) {
+				// On se dirige vers le docteur.
+            	moveTowardsDoctor();
+			} else if (needEatingStrong()) {
+				// NEED TO EAT
                 //System.out.println("I strongly need to eat");
                 basicNeedEat();
             } else {
@@ -196,7 +200,8 @@ public class Human implements Steppable {
                     moveRandom();
                 }
             } else {
-                // TODO do something instead of waiting depending on what there is on the adjacent cells
+//            	Make sure it does not create an infinite loop
+            	basicNeedProcreate();	// Instead of waiting depending on what there is on the adjacent cells decide to procreate
             }
         }
     }
@@ -239,9 +244,10 @@ public class Human implements Steppable {
                 } else {
                     // Move in a random Direction and hope to find a human to procreate with
                     moveRandom();
+                	
                 }
             } else {
-                // TODO do something instead of waiting depending on what there is on the adjacent cells
+            	basicNeedEat();	          //Instead of waiting depending on what there is on the adjacent cells decide to go and eat
             }
         }
     }
@@ -440,7 +446,7 @@ public class Human implements Steppable {
 
     // TODO find a clean way to factorize these two methods, Java Generics aren't very advisable here
     // Return the adjacent humans
-    private Bag lookForAdjacentHumans(){
+    protected Bag lookForAdjacentHumans(){
         Bag humans = new Bag();
         Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
@@ -457,7 +463,7 @@ public class Human implements Steppable {
     }
 
     // Return the adjacent food
-    private Bag lookForAdjacentFood(){
+    protected Bag lookForAdjacentFood(){
         Bag foods = new Bag();
         Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
@@ -480,7 +486,7 @@ public class Human implements Steppable {
     }
 
     // Return a human of requested gender
-    private Human getHumanOfOppositeGender(Bag humans){
+    protected Human getHumanOfOppositeGender(Bag humans){
         Human human;
         Bag availableHumans = new Bag();
         while((human = (Human) humans.pop()) != null){
@@ -495,7 +501,7 @@ public class Human implements Steppable {
     }
 
     // True if the given object is adjacent to the human
-    private boolean objectIsAdjacent(Object o){
+    protected boolean objectIsAdjacent(Object o){
         return beings.getAdjacentCells(getX(), getY()).contains(o);
     }
 
@@ -511,7 +517,7 @@ public class Human implements Steppable {
     //
 
     // Move one cell in a random direction
-    private void moveRandom(){
+    protected void moveRandom(){
         int direction = beings.random.nextInt(7);
         int xRes = getX();
         int yRes = getY();
@@ -630,11 +636,11 @@ public class Human implements Steppable {
         }
     }
 
-    private boolean canMoveOn(int x, int y){
+    protected boolean canMoveOn(int x, int y){
         return beings.yard.get(x, y) == null;
     }
 
-    private boolean canMove(){
+    protected boolean canMove(){
         return beings.getFreeAdjacentCell(getX(), getY()) != null;
     }
 
@@ -655,7 +661,7 @@ public class Human implements Steppable {
     }
 
     // Return non rotten food in priority
-    private Food leastRottenFood(Bag foods){
+    protected Food leastRottenFood(Bag foods){
         Object food = foods.pop();
         Food leastRottenFood = null;
         while(food != null) {
@@ -783,11 +789,22 @@ public class Human implements Steppable {
 
     // Call the doctor passed as a parameter
     public void callDoctor(Doctor doctor){
+    	System.out.println("j'appelle un docteur.");
         doctor.processRequest(this);
     }
 
-    private boolean needDoctor(){
+    protected boolean needDoctor(){
+    	System.out.println("J'ai besoin d'un docteur.");
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
+    }
+    
+    /**
+     * Se déplace vers le docteur appelé.
+     */
+    protected void moveTowardsDoctor() {
+    	System.out.println("Je m'approche d'un docteur.");
+    	Int2D positionDoctor = new Int2D(doctorCalled.getX(), doctorCalled.getY());
+    	moveTowardsCell(positionDoctor);
     }
 
     protected boolean needHealing() { return health < Constants.LOW_HEALTH; }
