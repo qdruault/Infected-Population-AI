@@ -264,8 +264,7 @@ public class Doctor extends Human {
     // The resulting number varies between 0.5f and 1f
     // The resulting number depends on the level of skill of the doctor, the difficulty of the operation and a random number between 0f (open) and 1f (open)
     public Boolean tryOperation(int operationSuccessLevel){
-    	// TODO simplifier formule
-    	return (0.5f + (Math.pow(skill * 0.5f, operationSuccessLevel) * beings.random.nextFloat(false, false)) > Constants.SUCCESS_DIFFICULTY); 
+    	return (0.5f + (Math.pow(skill, operationSuccessLevel)/0.5f * beings.random.nextFloat(false, false)) > Constants.SUCCESS_DIFFICULTY);
     }
 
     /**
