@@ -14,13 +14,12 @@ import java.util.List;
 // TODO add the methods basicNeed: Heal myself, Cure myself, vaccinate myself, help someone who called, help someone who doesn't call
 public class Doctor extends Human {
 
-	private static final long serialVersionUID = 1L;
+	protected static final long serialVersionUID = 1L;
 	// Stock de m�dicaments.
-	private int drugStock;
+	protected int drugStock;
     // Facilit� � soigner les gens (comp�tence du medecin)
-	private float skill; //between 0 and 1
-	private List<Human> humansToHelp;
-	private Beings beings;
+	protected float skill; //between 0 and 1
+	protected List<Human> humansToHelp;
 
 	public Doctor() {
 		super();
@@ -42,7 +41,7 @@ public class Doctor extends Human {
     }
     @Override
     public void step(SimState state) {
-
+    	beings = (Beings)state;
         setHasRecentlyProcreated(false);
         setAge(getAge() + 1);
 
@@ -92,7 +91,7 @@ public class Doctor extends Human {
         //else --> move to human
         //++ consider his human needs
 //        super.step(state);
-        beings = (Beings)state;
+        
     }
 
 
