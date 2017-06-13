@@ -77,14 +77,17 @@ public class Doctor extends Human {
             } else if (needVaccination()){
                 basicNeedVaccination();
             } else if (humansToHelp.isEmpty() == false) {
+            	System.out.println("Humains à soigner");
             	// Si il y a des gens à soigner.
             	Human patient = humansToHelp.get(0);
             	if (objectIsAdjacent(patient)) {
 					// SI je suis a cote de lui je le soigne.
+            		System.out.println("Je te soigne.");
             		handlePatient(patient);
             		humansToHelp.remove(0);
             		
 				} else {
+					System.out.println("Poussez vous je suis medecin !");
 					// SInon je m'approche de lui.
 					moveTowardsPatient();
 				}

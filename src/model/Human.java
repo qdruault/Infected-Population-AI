@@ -789,10 +789,12 @@ public class Human implements Steppable {
 
     // Call the doctor passed as a parameter
     public void callDoctor(Doctor doctor){
+    	System.out.println("j'appelle un docteur.");
         doctor.processRequest(this);
     }
 
     protected boolean needDoctor(){
+    	System.out.println("J'ai besoin d'un docteur.");
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
     }
     
@@ -800,6 +802,7 @@ public class Human implements Steppable {
      * Se déplace vers le docteur appelé.
      */
     protected void moveTowardsDoctor() {
+    	System.out.println("Je m'approche d'un docteur.");
     	Int2D positionDoctor = new Int2D(doctorCalled.getX(), doctorCalled.getY());
     	moveTowardsCell(positionDoctor);
     }
