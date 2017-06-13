@@ -61,7 +61,7 @@ public class Human implements Steppable {
         SICK,
         FINE
     };
-    private boolean hasRecentlyProcreated = false;
+    protected boolean hasRecentlyProcreated = false;
     
 
     private Doctor doctorCalled = null;
@@ -70,7 +70,7 @@ public class Human implements Steppable {
     public void step(SimState state) {
         beings = (Beings) state;
 
-        boolean hasRecentlyProcreated = false;
+        hasRecentlyProcreated = false;
         setAge(getAge() + 1);
 
         // TODO remove the agent from the scheduling
@@ -111,7 +111,7 @@ public class Human implements Steppable {
                 // NEED TO LOOK FOR A DOCTOR
                 if (needDoctor()) {
                     //System.out.println("I need a doctor");
-                    basicNeedHealh();
+                    basicNeedHealth();
                 } else {
                     // NEED TO EAT
                     if (needEatingMedium()) {
@@ -174,7 +174,7 @@ public class Human implements Steppable {
     // START OF THE BASIC NEED SECTION
     //
 
-    private void basicNeedEat(){
+    protected void basicNeedEat(){
         System.out.println("Basic Need Eat");
         // Look for food
         Food food = leastRottenFood(lookForAdjacentFood());
@@ -201,7 +201,7 @@ public class Human implements Steppable {
         }
     }
 
-    private void basicNeedHealh(){
+    protected void basicNeedHealth(){
         // Call a doctor if not done
         if (doctorCalled == null) {
             Int2D doctorLocation = lookForDoctorLocation();
@@ -226,7 +226,7 @@ public class Human implements Steppable {
     }
 
 
-    private void basicNeedProcreate(){
+    protected void basicNeedProcreate(){
         System.out.println("I would like to procreate");
         Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
         if (human != null && canProcreateWith(human)) {
@@ -246,7 +246,7 @@ public class Human implements Steppable {
         }
     }
 
-    private Boolean mustDie(){
+    protected Boolean mustDie(){
         if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
             System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
             return true;
@@ -668,10 +668,10 @@ public class Human implements Steppable {
         return leastRottenFood;
     }
 
-    private boolean needEatingStrong(){
+    protected boolean needEatingStrong(){
         return (getGratification() < 0.2f * Constants.MAX_GRATIFICATION);
     }
-    private boolean needEatingMedium(){
+    protected boolean needEatingMedium(){
         return (getGratification() < 0.6f * Constants.MAX_GRATIFICATION);
     }
 
@@ -790,6 +790,12 @@ public class Human implements Steppable {
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
     }
 
+    protected boolean needHealing() { return health < Constants.LOW_HEALTH; }
+
+    protected boolean needCuration() { return getCondition() == Condition.SICK; }
+
+    protected boolean needVaccination() { return immunity < Constants.LOW_IMMUNITY; }
+
     //
     // END OF THE DOCTOR SECTION
     //
@@ -896,6 +902,8 @@ public class Human implements Steppable {
 	}
 
 	public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
+
+	public Stoppable getStoppable(){ return this.stoppable; }
 
 	public boolean getHasRecentlyProcreated(){ return this.hasRecentlyProcreated; }
 
