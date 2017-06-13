@@ -76,40 +76,14 @@ public class Doctor extends Human {
                 basicNeedCuration();
             } else if (needVaccination()){
                 basicNeedVaccination();
-            } else if (humansToHelp.isEmpty() == false) {
-            	System.out.println("Humains à soigner");
-            	// Si il y a des gens à soigner.
-            	Human patient = humansToHelp.get(0);
-            	if (objectIsAdjacent(patient)) {
-					// SI je suis a cote de lui je le soigne.
-            		System.out.println("Je te soigne.");
-            		handlePatient(patient);
-            		humansToHelp.remove(0);
-            		
-				} else {
-					System.out.println("Poussez vous je suis medecin !");
-					// SInon je m'approche de lui.
-					moveTowardsPatient();
-				}
+            } else if (!humansToHelp.isEmpty()) {
+            	basicNeedHelpHuman();
             } else if (needEatingMedium()){
                 basicNeedEat();
             }
 
 
         }
-
-
-        //TODO exclusive strategy of a doctor which supports his humans needs
-        // 1. Eat if gratification is very low => needEatingStrong
-
-
-        //if sick --> heal himself
-        //if weak immunity --> vaccinate himself
-        //if humansToHelp --> help human
-        //else --> move to human
-        //++ consider his human needs
-//        super.step(state);
-        
     }
 
 
@@ -124,6 +98,23 @@ public class Doctor extends Human {
 
     protected void basicNeedVaccination(){
         vaccinateMyself();
+    }
+
+    protected void basicNeedHelpHuman(){
+        System.out.println("Humains ï¿½ soigner");
+        // Si il y a des gens ï¿½ soigner.
+        Human patient = humansToHelp.get(0);
+        if (objectIsAdjacent(patient)) {
+            // SI je suis a cote de lui je le soigne.
+            System.out.println("Je te soigne.");
+            handlePatient(patient);
+            humansToHelp.remove(0);
+
+        } else {
+            System.out.println("Poussez vous je suis medecin !");
+            // SInon je m'approche de lui.
+            moveTowardsPatient();
+        }
     }
 
     /**
