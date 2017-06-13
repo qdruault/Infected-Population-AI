@@ -81,8 +81,6 @@ public class Doctor extends Human {
             } else if (needEatingMedium()){
                 basicNeedEat();
             }
-
-
         }
     }
 
@@ -203,7 +201,9 @@ public class Doctor extends Human {
     		heal(patient);
     	} else if (patient.getCondition() == Condition.SICK) {
     		cureDisease(patient);
-    	}
+    	} else if (patient.getImmunity() < Constants.LOW_IMMUNITY){
+    	    vaccinate(patient);
+        }
     }
     
     /**
