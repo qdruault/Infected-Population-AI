@@ -103,8 +103,12 @@ public class Human implements Steppable {
             // TODO add a parameter to define the level of gratification below which each human start looking for food
             // TODO change the behaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
 
-            // NEED TO EAT
-            if (needEatingStrong()) {
+            // NEED DOCTOR
+            if (doctorCalled != null) {
+				// On se dirige vers le docteur.
+            	moveTowardsDoctor();
+			} else if (needEatingStrong()) {
+				// NEED TO EAT
                 //System.out.println("I strongly need to eat");
                 basicNeedEat();
             } else {
@@ -788,6 +792,14 @@ public class Human implements Steppable {
 
     protected boolean needDoctor(){
         return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
+    }
+    
+    /**
+     * Se déplace vers le docteur appelé.
+     */
+    protected void moveTowardsDoctor() {
+    	Int2D positionDoctor = new Int2D(doctorCalled.getX(), doctorCalled.getY());
+    	moveTowardsCell(positionDoctor);
     }
 
     protected boolean needHealing() { return health < Constants.LOW_HEALTH; }
