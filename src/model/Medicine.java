@@ -21,6 +21,7 @@ public class Medicine implements Steppable {
     }
 
     public Medicine(){
+//    	System.out.println(" un medicine de généré ");
         quantity = beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY);
     }
 

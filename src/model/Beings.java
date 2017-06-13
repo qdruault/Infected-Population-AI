@@ -29,6 +29,7 @@ public class Beings extends SimState {
 		addAgentsHuman();
 		addAgentsFood();
 		//addAgentsDoctor();
+		addEnvironment();
 	}
 
 	/**
@@ -125,6 +126,14 @@ public class Beings extends SimState {
 		}
 	}
 
+	/**
+	 * G�n�re un environnement.
+	 */
+	public void addEnvironment(){
+		Environment  a  =  new Environment();
+		schedule.scheduleRepeating(a);
+	}
+	
 	/**
 	 * Indique si une case est libre.
 	 * @param x

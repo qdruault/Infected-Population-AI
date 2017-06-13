@@ -12,7 +12,9 @@ import sim.engine.SimState;
 import sim.portrayal.Inspector;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
+import sim.portrayal.simple.HexagonalPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 
@@ -112,8 +114,8 @@ public class BeingsWithUI extends GUIState {
 		return hPortrayal;
 	}
 
-	private OvalPortrayal2D getDoctorPortrayal() {
-		OvalPortrayal2D dPortrayal = new OvalPortrayal2D()
+	private RectanglePortrayal2D getDoctorPortrayal() {
+		RectanglePortrayal2D dPortrayal = new RectanglePortrayal2D()
 		{
 			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 			{
@@ -122,11 +124,14 @@ public class BeingsWithUI extends GUIState {
 				Human.Condition c = d.getCondition();
 				int age = d.getAge();
 				if (c== Human.Condition.SICK)
-					paint = new Color(255, 255, 0);
+//					paint = new Color(255, 255, 0);
+					paint=new Color(255, 128, 0);
 				else if (age<15)
-					paint = new Color(153, 51, 255);
+//					paint = new Color(153, 51, 255);
+					paint=new Color(153, 51, 255);
 				else if (c== Human.Condition.FINE)
-					paint=new Color(0,153,153);
+//					paint=new Color(0,153,153);
+					paint=new Color(0, 128,255);
 				scale=1;
 				super.draw(object, graphics, info);  // it'll use the new paint and scale values
 			}
@@ -156,8 +161,8 @@ public class BeingsWithUI extends GUIState {
 		return malePortrayal;
 	}
 
-	private OvalPortrayal2D getVirusPortrayal() {
-		OvalPortrayal2D r = new OvalPortrayal2D();
+	private HexagonalPortrayal2D getVirusPortrayal() {
+		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
 		r.paint = Color.RED;
 		r.filled = true;
 		return r;

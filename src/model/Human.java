@@ -196,7 +196,8 @@ public class Human implements Steppable {
                     moveRandom();
                 }
             } else {
-                // TODO do something instead of waiting depending on what there is on the adjacent cells
+//            	Make sure it does not create an infinite loop
+            	basicNeedProcreate();	// Instead of waiting depending on what there is on the adjacent cells decide to procreate
             }
         }
     }
@@ -239,9 +240,10 @@ public class Human implements Steppable {
                 } else {
                     // Move in a random Direction and hope to find a human to procreate with
                     moveRandom();
+                	
                 }
             } else {
-                // TODO do something instead of waiting depending on what there is on the adjacent cells
+            	basicNeedEat();	          //Instead of waiting depending on what there is on the adjacent cells decide to go and eat
             }
         }
     }

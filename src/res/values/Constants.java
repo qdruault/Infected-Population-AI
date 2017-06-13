@@ -8,9 +8,9 @@ public class Constants {
     public static int GRID_SIZE = 25;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 2;
-    public static int NUM_DOCTORS = 5;
-    public static int NUM_FOODS = 20;
+    public static int NUM_HUMANS = 40;
+    public static int NUM_DOCTORS = 3;
+    public static int NUM_FOODS = 5;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
@@ -67,4 +67,8 @@ public class Constants {
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
+    // ENVIRONMENT parameters
+    public static final int MAX_FOOD_ENV = 100;
+    public static final int MAX_MEDICINE_ENV = 30;
+    
 }
