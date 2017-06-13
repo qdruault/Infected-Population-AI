@@ -98,15 +98,15 @@ public class Doctor extends Human {
 
     @Override
     protected void basicNeedHealth(){
-        // TODO need to heal himself
+        healMyself();
     }
 
     protected void basicNeedCuration(){
-        // TODO need to cure himself
+        cureMyself();
     }
 
     protected void basicNeedVaccination(){
-        // TODO need to vaccinate himself
+        vaccinateMyself();
     }
 
     /**
@@ -132,6 +132,16 @@ public class Doctor extends Human {
         if(!feelBetter){
             if (canCure())
                 feelBetter = tryCure(this);
+        }
+        return feelBetter;
+    }
+
+    private boolean cureMyself(){
+
+        boolean feelBetter = false;
+
+        if(canCure()){
+            feelBetter = tryCure(this);
         }
         return feelBetter;
     }
