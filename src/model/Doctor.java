@@ -1,9 +1,7 @@
 package model;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import res.values.Constants;
 import sim.engine.SimState;
-import model.Human;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +42,49 @@ public class Doctor extends Human {
     }
     @Override
     public void step(SimState state) {
-	    //TODO exclusive strategy of a doctor which supports his humans needs
+
+        setHasRecentlyProcreated(false);
+        setAge(getAge() + 1);
+
+        if (mustDie()) {
+            beings.yard.set(x, y, null);
+            getStoppable().stop();
+        } else {
+            //decrease health level depending on his condition the activation and gravity of the virus
+            if (getCondition() == Condition.SICK) {
+                if (timeBeforeSuffering == 0)
+                    health -= infection_gravity;
+                else timeBeforeSuffering--;
+            } else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
+                // Increase the health level if the human is fine
+                setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
+            }
+
+            if (getGratification() <= 0) {
+                health--; // the Human is Starving
+            } else {
+                setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
+            }
+
+            if (needEatingStrong()){
+                basicNeedEat();
+            } else if (needHealing()){
+                basicNeedHealth();
+            } else if (needEatingMedium()){
+                basicNeedEat();
+            } else if (needCuration()){
+                basicNeedCuration();
+            } else if (needVaccination()){
+                basicNeedVaccination();
+            }
+
+
+        }
+
+
+        //TODO exclusive strategy of a doctor which supports his humans needs
         // 1. Eat if gratification is very low => needEatingStrong
+
 
         //if sick --> heal himself
         //if weak immunity --> vaccinate himself
@@ -54,6 +93,20 @@ public class Doctor extends Human {
         //++ consider his human needs
 //        super.step(state);
         beings = (Beings)state;
+    }
+
+
+    @Override
+    protected void basicNeedHealth(){
+        // TODO need to heal himself
+    }
+
+    protected void basicNeedCuration(){
+        // TODO need to cure himself
+    }
+
+    protected void basicNeedVaccination(){
+        // TODO need to vaccinate himself
     }
 
     /**
@@ -212,6 +265,5 @@ public class Doctor extends Human {
     public void processRequest(Human human){
         humansToHelp.add(human);
     }
-
 
 }
