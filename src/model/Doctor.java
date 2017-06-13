@@ -11,6 +11,9 @@ import java.util.List;
 /**
  * Created by Louis on 22/05/2017.
  */
+
+
+// TODO add the methods basicNeed: Heal myself, Cure myself, vaccinate myself, help someone who called, help someone who doesn't call
 public class Doctor extends Human {
 
 	private static final long serialVersionUID = 1L;
@@ -42,6 +45,8 @@ public class Doctor extends Human {
     @Override
     public void step(SimState state) {
 	    //TODO exclusive strategy of a doctor which supports his humans needs
+        // 1. Eat if gratification is very low => needEatingStrong
+
         //if sick --> heal himself
         //if weak immunity --> vaccinate himself
         //if humansToHelp --> help human
