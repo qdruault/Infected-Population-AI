@@ -117,6 +117,7 @@ public class Human implements Steppable {
 			// NEED DOCTOR
 			if (doctorCalled != null) {
 				// On se dirige vers le docteur.
+				System.out.println("Je vais voir un docteur");
 				moveTowardsDoctor();
 			} else if (needEatingStrong()) {
 				// NEED TO EAT
@@ -380,7 +381,7 @@ public class Human implements Steppable {
 					if (object instanceof Doctor) {
 						// Ajout de la case avec sa distance.
 						Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
-						doctorCases.put(new Case(indexX, indexY), distance);
+						doctorCases.put(new Case(realX, realY), distance);
 					}
 				}
 			}
