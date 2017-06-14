@@ -3,6 +3,7 @@ package model;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
 
 /**
  * Created by Louis on 03/06/2017.
@@ -11,9 +12,11 @@ public class Medicine implements Steppable {
 
     Beings beings;
     int quantity;
+    private Stoppable stoppable;
 
     private int x;
     private int y;
+    public void setStoppable(Stoppable stoppable){ this.stoppable = stoppable; }
 
     @Override
     public void step(SimState simState) {
