@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.util.Int2D;
 
 /**
@@ -50,9 +51,12 @@ public class Environment implements Steppable{
     public Environment(){
     }
 
-	// Generate a random food quantity on the yard
+    /**
+     * Generate a random food quantity on the yard
+     */
     public void generateFood(int max) {
         int result = beings.random.nextInt(max + 1);
+        Stoppable stoppable;
 //        System.out.println("Result food "+result);
         
         for (int i = 0; i < result; i++){
@@ -61,11 +65,15 @@ public class Environment implements Steppable{
             beings.yard.set(pos.x, pos.y, food);
             food.setX(pos.x);
             food.setY(pos.y);
+            stoppable = beings.schedule.scheduleRepeating(food);
+            food.setStoppable(stoppable);
         }
     }
 
+
     // Generate a random medicine quantity on the yard
     public void generateMedicine(int max){
+        Stoppable stoppable;
         int result = beings.random.nextInt(max + 1);
 //        System.out.println("Result medecine "+result);
 
@@ -77,16 +85,18 @@ public class Environment implements Steppable{
             beings.yard.set(pos.x, pos.y, medicine);
             medicine.setX(pos.x);
             medicine.setY(pos.y);
+            stoppable = beings.schedule.scheduleRepeating(medicine);
+            medicine.setStoppable(stoppable);
         }
     }
     
     public void famine(){
-    	// Réduction de la nourriture.
+    	// Rï¿½duction de la nourriture.
     	usedFoodStat = 1;
     }
     
     public void restoreFood(){
-    	// Restauration de la quantité de nourriture normale
+    	// Restauration de la quantitï¿½ de nourriture normale
     	usedFoodStat = maxFood;
     }
     

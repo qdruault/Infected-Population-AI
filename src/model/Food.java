@@ -15,11 +15,11 @@ public class Food implements Steppable {
 	private Stoppable stoppable;
 
 	private static final long serialVersionUID = 1L;
-	// Coordonn�es.
+	// Coordonnees.
 	private int x;
     private int y;
 
-    // Dur�e avent que �a pourisse.
+    // Duree avent que la nourriture pourisse.
     private int rottingIn = Constants.ROTTING_DURATION;
     // Pourri.
     private boolean rotten;

@@ -67,6 +67,19 @@ public class Doctor extends Human {
             } else {
                 setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
             }
+            
+            if (humansToHelp.isEmpty() == false) {
+            	// On vire ceux qui sont morts
+            	List<Human> deadPatients = new ArrayList<Human>();
+            	for (Human patient : humansToHelp) {
+					if (patient.mustDie()) {
+						deadPatients.add(patient);
+					}
+				}
+            	
+            	humansToHelp.removeAll(deadPatients);
+            	System.out.println(humansToHelp.size() + " client(s) restant(s)");
+            }
 
             if (needEatingStrong()){
                 basicNeedEat();
@@ -99,8 +112,8 @@ public class Doctor extends Human {
     }
 
     protected void basicNeedHelpHuman(){
-        System.out.println("Humains ï¿½ soigner");
-        // Si il y a des gens ï¿½ soigner.
+        System.out.println("Humains a soigner");
+        // Si il y a des gens a soigner.
         Human patient = humansToHelp.get(0);
         if (objectIsAdjacent(patient)) {
             // SI je suis a cote de lui je le soigne.
@@ -259,6 +272,7 @@ public class Doctor extends Human {
      * @param human who is calling for help
      */
     public void processRequest(Human human){
+    	System.out.println("J'ai repéré un patient.");
         humansToHelp.add(human);
     }
 
