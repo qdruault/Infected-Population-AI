@@ -47,8 +47,10 @@ public class Environment implements Steppable{
     
     /**
      * Constructeur
+     * @param beings
      */
-    public Environment(){
+    public Environment(Beings beings){
+    	this.beings = beings;
     }
 
     /**
@@ -61,7 +63,7 @@ public class Environment implements Steppable{
         
         for (int i = 0; i < result; i++){
             Int2D pos = beings.getFreeLocation();
-            Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY));
+            Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY), beings);
             beings.yard.set(pos.x, pos.y, food);
             food.setX(pos.x);
             food.setY(pos.y);

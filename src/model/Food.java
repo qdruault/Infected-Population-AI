@@ -33,10 +33,14 @@ public class Food implements Steppable {
      * @param nutritionalProvision
      * @param quantity
      */
-    public Food(int nutritionalProvision, int quantity) {
+    public Food(int nutritionalProvision, int quantity, Beings beings) {
 		this.nutritionalProvision = nutritionalProvision;
 		this.quantity = quantity;
 		rotten = false;
+		this.beings = beings;
+		
+		// MAJ des stats.
+		beings.increaseNbFood(quantity);
 	}
     
     // Getters and setters.
@@ -93,13 +97,14 @@ public class Food implements Steppable {
 
 	@Override
     public void step(SimState state) {
-        Beings beings = (Beings) state;
+        beings = (Beings) state;
 
         // remove if needed
         if (mustDisappear()){
             beings.yard.set(getX(), getY(), null);
 			stoppable.stop();
-//            addFood();      //TODO : passer le Beings en constructeur sinon nullpointerexception?
+//            addFood();      
+			beings.decreaseNbFood(quantity);
         } else {
 			// Rotting
 			if (!rotten) {
@@ -123,10 +128,12 @@ public class Food implements Steppable {
     public int consume(int q){
         if(quantity > q){
             quantity -= q;
+            beings.decreaseNbFood(q);
             return q;
         } else {
             q = quantity;
             quantity = 0;
+            beings.decreaseNbFood(quantity);
             return q;
         }
     }
@@ -142,13 +149,12 @@ public class Food implements Steppable {
             return true;
         else return false;
     }
-    
-  //TODO : passer le Beings en constructeur sinon nullpointerexception?    
+       
     private void addFood(){
     	System.out.println(" Food added ");
     	int quantity = beings.random.nextInt(Constants.MAX_FOOD_QUANTITY);
         int nutritionalProvision = beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION);
-        Food  a  =  new Food(nutritionalProvision,quantity);
+        Food  a  =  new Food(nutritionalProvision,quantity, beings);
     	System.out.println(" Food added 2");
 		Int2D location = beings.getFreeLocation();
     	System.out.println(" Food added  3");

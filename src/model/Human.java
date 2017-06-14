@@ -97,6 +97,15 @@ public class Human implements Steppable {
 		if (mustDie()) {
 			beings.yard.set(x, y, null);
 			stoppable.stop();
+			beings.decreaseNbHuman();
+			if (gender == Gender.MALE) {
+				beings.decreaseNbMen();
+			} else {
+				beings.decreaseNbWomen();
+			}
+			if (condition == Condition.SICK) {
+				beings.decreaseNbInfectedHuman();
+			}
 		} else {
 			//decrease health level depending on his condition the activation and gravity of the virus
 			if (this.condition == Condition.SICK) {
@@ -163,8 +172,9 @@ public class Human implements Steppable {
 	 * @param gender
 	 * @param condition
 	 * @param vision
+	 * @param beings
 	 */
-	public Human(int immunity, int fertility, Gender gender, Condition condition, int vision) {
+	public Human(int immunity, int fertility, Gender gender, Condition condition, int vision, Beings beings) {
 		health = Constants.MAX_HEALTH;
 		gratification = Constants.MAX_GRATIFICATION;
 		age = 0;
@@ -177,10 +187,30 @@ public class Human implements Steppable {
 		this.survival=Constants.MAX_SURVIVAL;
 		this.move = 1;
 		this.infection_gravity=0;
+		this.beings = beings;
+		
+		// MAJ des stats.
+		this.beings.increaseNbHuman();
+		if (this.gender == Gender.MALE) {
+			this.beings.increaseNbMen();
+		} else {
+			this.beings.increaseNbWomen();
+		}
+		if (this.condition == Condition.SICK) {
+			this.beings.increaseNbInfectedHuman();
+		}
 	}
 
-	// To create humans at the  beginning of the simulation
-	public Human(int immunity, int fertility, Gender gender, int vision, int age){
+	/**
+	 * To create humans at the  beginning of the simulation
+	 * @param immunity
+	 * @param fertility
+	 * @param gender
+	 * @param vision
+	 * @param age
+	 * @param beings
+	 */
+	public Human(int immunity, int fertility, Gender gender, int vision, int age, Beings beings){
 		health = Constants.MAX_HEALTH;
 		//        gratification = Constants.MAX_GRATIFICATION;
 		gratification = 60;
@@ -192,7 +222,15 @@ public class Human implements Steppable {
 		this.survival=Constants.MAX_SURVIVAL;
 		this.age = age;
 		this.move = 1;
+		this.beings = beings;
 
+		// MAJ des stats.
+		this.beings.increaseNbHuman();
+		if (this.gender == Gender.MALE) {
+			this.beings.increaseNbMen();
+		} else {
+			this.beings.increaseNbWomen();
+		}
 	}
 
 	//
@@ -795,10 +833,10 @@ public class Human implements Steppable {
 			Human child;
 			if (doctorProbability> Constants.DOCTOR_PROBABILITY){
 				float skill = beings.random.nextFloat();
-				child = new Doctor(immunity, fertility, gender, condition, vision, skill);
+				child = new Doctor(immunity, fertility, gender, condition, vision, skill, beings);
 			
 			} else {
-				child = new Human(immunity, fertility, gender, condition, vision);				
+				child = new Human(immunity, fertility, gender, condition, vision, beings);				
 			}
 			
 			Case pos = beings.getFreeAdjacentCell(getX(), getY());
@@ -976,6 +1014,12 @@ public class Human implements Steppable {
 	}
 
 	public void setCondition(Condition condition) {
+		if (this.condition == Condition.FINE && condition == Condition.SICK) {
+			beings.increaseNbInfectedHuman();
+		}
+		if (this.condition == Condition.SICK && condition == Condition.FINE) {
+			beings.decreaseNbInfectedHuman();
+		}
 		this.condition = condition;
 	}
 

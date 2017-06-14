@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Human.Condition;
+import model.Human.Gender;
 
 /**
  * Created by Louis on 22/05/2017.
@@ -28,20 +29,46 @@ public class Doctor extends Human {
 		super();
 	}
 
-	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision, float skill) {
-		super(immunity, fertility, gender, condition, vision);
+	/**
+	 * 
+	 * @param immunity
+	 * @param fertility
+	 * @param gender
+	 * @param condition
+	 * @param vision
+	 * @param skill
+	 * @param beings
+	 */
+	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision, float skill, Beings beings) {
+		super(immunity, fertility, gender, condition, vision, beings);
 		this.skill = skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
+		
+		// MAJ des stats.
+		this.beings.increaseNbDoctor();
 	}
 
-	// To create doctors at the  beginning of the simulation
-	public Doctor(int immunity, int fertility, Gender gender, int vision, int age, float skill){
-		super(immunity, fertility, gender, vision, age);
+	/**
+	 * To create doctors at the  beginning of the simulation
+	 * @param immunity
+	 * @param fertility
+	 * @param gender
+	 * @param vision
+	 * @param age
+	 * @param skill
+	 * @param beings
+	 */
+	public Doctor(int immunity, int fertility, Gender gender, int vision, int age, float skill, Beings beings){
+		super(immunity, fertility, gender, vision, age, beings);
 		this.skill=skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
+		
+		// MAJ des stats.
+		this.beings.increaseNbDoctor();
 	}
+	
 	@Override
 	public void step(SimState state) {
 		beings = (Beings)state;
@@ -51,6 +78,16 @@ public class Doctor extends Human {
 		if (mustDie()) {
 			beings.yard.set(x, y, null);
 			getStoppable().stop();
+			beings.decreaseNbHuman();
+			beings.decreaseNbDoctor();
+			if (gender == Gender.MALE) {
+				beings.decreaseNbMen();
+			} else {
+				beings.decreaseNbWomen();
+			}
+			if (condition == Condition.SICK) {
+				beings.decreaseNbInfectedHuman();
+			}
 		} else {
 			//decrease health level depending on his condition the activation and gravity of the virus
 			if (getCondition() == Condition.SICK) {

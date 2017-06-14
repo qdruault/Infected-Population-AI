@@ -17,7 +17,12 @@ public class Beings extends SimState {
 
 
 	public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE, Constants.GRID_SIZE);
-
+	protected int nbHuman = 0;
+	protected int nbMen = 0;
+	protected int nbWomen = 0;
+	protected int nbDoctor = 0;
+	protected int nbFood = 0;
+	protected int nbInfectedHuman = 0;	
 
 	public Beings(long seed) {
 		super(seed);
@@ -26,6 +31,15 @@ public class Beings extends SimState {
 		//System.out.println("Simulation started");
 		super.start();
 		yard.clear();
+		
+		// RAZ des stats.
+		nbHuman = 0;
+		nbMen = 0;
+		nbWomen = 0;
+		nbDoctor = 0;
+		nbFood = 0;
+		nbInfectedHuman = 0;	
+		
 		addAgentsHuman();
 		addAgentsFood();
 		addEnvironment();
@@ -49,7 +63,7 @@ public class Beings extends SimState {
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
 			int age = random.nextInt(Constants.MAX_AGE);
 			int vision = 10;
-			Human a = new Human(immunity, fertility, gender, vision, age);
+			Human a = new Human(immunity, fertility, gender, vision, age, this);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
@@ -75,7 +89,7 @@ public class Beings extends SimState {
 			int age = random.nextInt(Constants.MAX_AGE);
 			int vision = 10;
 			float skill = random.nextFloat();
-			Human a = new Doctor(immunity, fertility, gender, vision, age, skill);
+			Human a = new Doctor(immunity, fertility, gender, vision, age, skill, this);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
@@ -84,9 +98,6 @@ public class Beings extends SimState {
 			a.setStoppable(stoppable);
 		}
 	}
-	
-	
-
 
 	/**
 	 * G�n�re de la nourriture sur la carte.
@@ -94,7 +105,7 @@ public class Beings extends SimState {
 	public void addAgentsFood(){
 		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
-			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION));
+			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), this);
 			Int2D location = getFreeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
@@ -129,7 +140,7 @@ public class Beings extends SimState {
 	 * G�n�re un environnement.
 	 */
 	public void addEnvironment(){
-		Environment  a  =  new Environment();
+		Environment  a  =  new Environment(this);
 		schedule.scheduleRepeating(a);
 	}
 	
@@ -248,5 +259,62 @@ public class Beings extends SimState {
 		objects.add(yard.get(yard.stx(x + 1), yard.sty(y - 1)));
 
 		return objects;
+	}
+	
+
+	public int getNbHuman() {
+		return nbHuman;
+	}	
+	public int getNbMen() {
+		return nbMen;
+	}
+	public int getNbWomen() {
+		return nbWomen;
+	}
+	public int getNbDoctor() {
+		return nbDoctor;
+	}
+	public int getNbFood() {
+		return nbFood;
+	}
+	public int getNbInfectedHuman() {
+		return nbInfectedHuman;
+	}
+	
+	public void increaseNbHuman() {
+		this.nbHuman++;
+	}
+	public void decreaseNbHuman() {
+		this.nbHuman--;
+	}
+	public void increaseNbWomen() {
+		this.nbWomen++;
+	}
+	public void decreaseNbWomen() {
+		this.nbWomen--;
+	}
+	public void increaseNbMen() {
+		this.nbMen++;
+	}
+	public void decreaseNbMen() {
+		this.nbMen--;
+	}
+	public void increaseNbDoctor() {
+		this.nbDoctor++;
+	}
+	public void decreaseNbDoctor() {
+		this.nbDoctor--;
+	}
+	public void increaseNbFood(int p_quantity) {
+		this.nbFood += p_quantity;
+	}
+	public void decreaseNbFood(int p_quantity) {
+		this.nbFood -= p_quantity;
+	}
+	public void increaseNbInfectedHuman() {
+		this.nbInfectedHuman++;
+	}
+	public void decreaseNbInfectedHuman() {
+		this.nbInfectedHuman--;
 	}
 }
