@@ -136,6 +136,7 @@ public class Virus implements Steppable {
 					Human h = (Human) object;
 
 					// L'humain est infectï¿½.
+					System.out.println("Humain infecté");
 					h.setCondition(Condition.SICK);
 					h.setTimeBeforeSuffering(timeBeforeActivation);
 					h.setInfectionGravity(gravity);

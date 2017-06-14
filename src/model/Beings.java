@@ -23,7 +23,7 @@ public class Beings extends SimState {
 		super(seed);
 	}
 	public void start() {
-		System.out.println("Simulation started");
+		//System.out.println("Simulation started");
 		super.start();
 		yard.clear();
 		addAgentsHuman();

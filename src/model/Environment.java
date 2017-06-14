@@ -25,7 +25,7 @@ public class Environment implements Steppable{
     @Override
     public void step(SimState state) {
         beings = (Beings) state;
-        System.out.println("Dans l'environnement");
+        //System.out.println("Dans l'environnement");
         
         // 1 chance sur 3
         int faminePossibility = ThreadLocalRandom.current().nextInt(0, 3);

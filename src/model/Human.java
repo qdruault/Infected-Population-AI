@@ -65,6 +65,14 @@ public class Human implements Steppable {
 	protected boolean hasRecentlyProcreated = false;
 	protected Doctor doctorCalled = null;
 
+	public Doctor getDoctorCalled() {
+		return doctorCalled;
+	}
+
+	public void setDoctorCalled(Doctor doctorCalled) {
+		this.doctorCalled = doctorCalled;
+	}
+
 	/**
 	 * Corrige la coordonnee X ou Y.
 	 * @param p_coord
@@ -126,7 +134,7 @@ public class Human implements Steppable {
 			} else {
 				// NEED TO LOOK FOR A DOCTOR
 				if (needDoctor()) {
-					System.out.println("I need a doctor");
+					//System.out.println("I need a doctor");
 					basicNeedHealth();
 				} else {
 					// NEED TO EAT
@@ -761,7 +769,7 @@ public class Human implements Steppable {
 	 * @param h
 	 */
 	public void toProcreate(Human h){
-		System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
+		//System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
 
 		if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) ||
 				beings.getFreeAdjacentCell(h.getX(), h.getY()) != null
@@ -827,7 +835,7 @@ public class Human implements Steppable {
 	 * @return
 	 */
 	public boolean canProcreateWith(Human h){
-		System.out.println("Data about both humans: " + this.getGender() + " " + h.getGender() + " " + this.getAge() + " " + h.getAge());
+		//System.out.println("Data about both humans: " + this.getGender() + " " + h.getGender() + " " + this.getAge() + " " + h.getAge());
         Case freeCell = null;
         freeCell = (getGender() == Gender.FEMALE) ? beings.getFreeAdjacentCell(getX(), getY()) : beings.getFreeAdjacentCell(h.getX(), h.getY());
         return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80 && !h.getHasRecentlyProcreated() && freeCell != null);
@@ -857,7 +865,17 @@ public class Human implements Steppable {
 	 * @return
 	 */
 	protected boolean needDoctor(){
-		return (health < Constants.LOW_HEALTH || getCondition() == Condition.SICK);
+		if (health < Constants.LOW_HEALTH) {
+			System.out.println("Santé basse.");
+			return true;
+		}
+		
+		if (getCondition() == Condition.SICK) {
+			System.out.println("Malade.");
+			return true;
+		}
+		
+		return false;
 	}
 
 	/**
