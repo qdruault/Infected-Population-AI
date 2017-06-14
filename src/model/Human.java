@@ -73,10 +73,10 @@ public class Human implements Steppable {
 		if (p_coord < 0) {
 			return Constants.GRID_SIZE + p_coord;
 		}
-		
+
 		return p_coord %= Constants.GRID_SIZE;		
 	}
-	
+
 	@Override
 	public void step(SimState state) {
 		beings = (Beings) state;
@@ -125,7 +125,7 @@ public class Human implements Steppable {
 			} else {
 				// NEED TO LOOK FOR A DOCTOR
 				if (needDoctor()) {
-					//System.out.println("I need a doctor");
+					System.out.println("I need a doctor");
 					basicNeedHealth();
 				} else {
 					// NEED TO EAT
@@ -194,7 +194,7 @@ public class Human implements Steppable {
 	 * Besoin de manger.
 	 */
 	protected void basicNeedEat(){
-		System.out.println("Basic Need Eat");
+		//System.out.println("Basic Need Eat");
 		// Look for food
 		Food food = leastRottenFood(lookForAdjacentFood());
 		// Eat adjacent food
@@ -222,12 +222,17 @@ public class Human implements Steppable {
 		}
 	}
 
+	/**
+	 * Besoin de se soigner (santé).
+	 */
 	protected void basicNeedHealth(){
-		// Call a doctor if not done
+		// SI on n'a pas encore appele de docteur
 		if (doctorCalled == null) {
 			Int2D doctorLocation = lookForDoctorLocation();
+			// Si on en trouve un
 			if (doctorLocation != null){
 				doctorCalled = (Doctor)beings.yard.get(doctorLocation.getX(), doctorLocation.getY());
+				// On l'appelle
 				callDoctor(doctorCalled);
 			}
 		}
@@ -246,9 +251,11 @@ public class Human implements Steppable {
 		}
 	}
 
-
+	/**
+	 * Besoin de procreer.
+	 */
 	protected void basicNeedProcreate(){
-		System.out.println("I would like to procreate");
+		//System.out.println("I would like to procreate");
 		Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
 		if (human != null && canProcreateWith(human)) {
 			tryToProcreate(human);
@@ -267,6 +274,10 @@ public class Human implements Steppable {
 		}
 	}
 
+	/**
+	 * Renvoie true si la personne doit mourir.
+	 * @return
+	 */
 	protected Boolean mustDie(){
 		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
 			System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
@@ -288,7 +299,10 @@ public class Human implements Steppable {
 	//
 
 
-	// Check if there are any food available around
+	/**
+	 * Check if there are any food available around
+	 * @return : la position de la nourriture la plus proche.
+	 */
 	public Int2D lookForFoodLocation(){
 
 		HashMap<Case, Integer> foodCases = new HashMap<Case, Integer>();
@@ -338,11 +352,13 @@ public class Human implements Steppable {
 		return res;
 	}
 
-	// Check if there are any food available around
+	/**
+	 * Check if there are any available doctor around
+	 * @return : le docteur le plus proche
+	 */
 	public Int2D lookForDoctorLocation(){
 
 		HashMap<Case, Integer> doctorCases = new HashMap<Case, Integer>();
-
 
 		int x_depart = x - vision;
 		int y_depart = y - vision;
@@ -355,10 +371,9 @@ public class Human implements Steppable {
 			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
 				// Pour pas sortir de la grille.
 				int realX = fixCoordinate(indexX);
-
 				int realY = fixCoordinate(indexY);
 
-				// Objet aux coordonnï¿½es
+				// Objet aux coordonnees
 				Object object = beings.yard.get(realX, realY);
 				if (object != null) {
 					// Si la case contient un objet Docteur
@@ -371,7 +386,7 @@ public class Human implements Steppable {
 			}
 		}
 
-		// On cherche la plus proche.
+		// On cherche le plus proche.
 		Int2D res = null;
 		Integer minD = Constants.GRID_SIZE;
 
@@ -388,10 +403,13 @@ public class Human implements Steppable {
 		return res;
 	}
 
+	/**
+	 * Cherche un humain du sexe oppose.
+	 * @return : le plus proche
+	 */
 	public Int2D lookForOppositeGenderHumanLocation(){
 
 		HashMap<Case, Integer> humanCases = new HashMap<Case, Integer>();
-
 
 		int x_depart = x - vision;
 		int y_depart = y - vision;
@@ -450,7 +468,6 @@ public class Human implements Steppable {
 
 		for (int i = 0; i < 8; i++){
 			if (currentNeighbor instanceof  Human) {
-				System.out.println("FOUND HUMAN");
 				humans.add(currentNeighbor);
 			}
 			currentNeighbor = neighbors.pop();
@@ -458,17 +475,20 @@ public class Human implements Steppable {
 		return humans;
 	}
 
-	// Return the adjacent food
+	/**
+	 * Cherche de la nourriture autour de soi.
+	 * @return un bag avec des Food
+	 */
 	protected Bag lookForAdjacentFood(){
 		Bag foods = new Bag();
 		Bag neighbors = beings.getAdjacentCells(getX(), getY());
 
-		System.out.println(neighbors.size());
+		//System.out.println(neighbors.size());
 		Object currentNeighbor = neighbors.pop();
 
 		for (int i = 0; i < 8; i++){
 			if (currentNeighbor instanceof  Food) {
-				System.out.println("FOUND FOOD");
+				//System.out.println("FOUND FOOD");
 				foods.add(currentNeighbor);
 			}
 			currentNeighbor = neighbors.pop();
@@ -476,12 +496,18 @@ public class Human implements Steppable {
 		return foods;
 	}
 
-	//Perceive the cells around, should be called at the beginning of each step
+	/**
+	 * Perceive the cells around, should be called at the beginning of each step
+	 */
 	public void perceiveCells(){
 		this.neighbors = beings.yard.getRadialNeighbors(x, y, vision ,Grid2D.TOROIDAL, false, new Bag(), neighborsPosX, neighborsPosY);
 	}
 
-	// Return a human of requested gender
+	/**
+	 * Return a human of requested gender
+	 * @param humans
+	 * @return
+	 */
 	protected Human getHumanOfOppositeGender(Bag humans){
 		Human human;
 		Bag availableHumans = new Bag();
@@ -496,7 +522,11 @@ public class Human implements Steppable {
 		return null;
 	}
 
-	// True if the given object is adjacent to the human
+	/**
+	 * True if the given object is adjacent to the human
+	 * @param o
+	 * @return
+	 */
 	protected boolean objectIsAdjacent(Object o){
 		return beings.getAdjacentCells(getX(), getY()).contains(o);
 	}
@@ -517,7 +547,7 @@ public class Human implements Steppable {
 	 * Les hommes vont d'abord en haut a gauche et les femmes en haut a droite.
 	 */
 	protected void moveRandom(){
-		System.out.println("Move random");
+		//System.out.println("Move random");
 		if (gender == Gender.MALE) {
 
 			if (canMoveOn(getX() - 1, getY() - 1)) {
@@ -693,7 +723,7 @@ public class Human implements Steppable {
 			}
 			food = foods.pop();
 		}
-		System.out.println(leastRottenFood);
+		//System.out.println(leastRottenFood);
 		return leastRottenFood;
 	}
 
@@ -732,46 +762,44 @@ public class Human implements Steppable {
 	public void toProcreate(Human h){
 		System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
 
-		if(this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80){
-			if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) || beings.getFreeAdjacentCell(h.getX(), h.getY()) != null)
-			{
-				System.out.println("I have a child!");
+		if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) ||
+				beings.getFreeAdjacentCell(h.getX(), h.getY()) != null
+		){
+			System.out.println("I have a child!");
 
-				int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
-				int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
-				Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
-				int vision = beings.random.nextInt(Constants.MAX_VISION);
+			int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
+			int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
+			Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
+			int vision = beings.random.nextInt(Constants.MAX_VISION);
 
-				Condition condition = Condition.FINE;
-				float conditionResult = beings.random.nextFloat();
-				if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
-					if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
-						condition = Condition.SICK;
-				} else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
-					if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
-						condition = Condition.SICK;
-				}
-
-				float doctorProbability =  beings.random.nextFloat();
-				if (doctorProbability> Constants.DOCTOR_PROBABILITY){
-					float skill = beings.random.nextFloat();
-					Doctor child = new Doctor(immunity, fertility, gender, condition, vision, skill);
-					Case pos = beings.getFreeAdjacentCell(getX(), getY());
-					beings.yard.set(pos.getX(), pos.getY(), child);
-					child.setX(pos.getX());
-					child.setY(pos.getY());
-					beings.schedule.scheduleRepeating(child);
-				}
-				else {
-					Human child = new Human(immunity, fertility, gender, condition, vision);
-					Case pos = beings.getFreeAdjacentCell(getX(), getY());
-					beings.yard.set(pos.getX(), pos.getY(), child);
-					child.setX(pos.getX());
-					child.setY(pos.getY());
-					beings.schedule.scheduleRepeating(child);
-				}
+			Condition condition = Condition.FINE;
+			float conditionResult = beings.random.nextFloat();
+			if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
+					condition = Condition.SICK;
+			} else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
+					condition = Condition.SICK;
 			}
+
+			float doctorProbability =  beings.random.nextFloat();
+			Human child;
+			if (doctorProbability> Constants.DOCTOR_PROBABILITY){
+				float skill = beings.random.nextFloat();
+				child = new Doctor(immunity, fertility, gender, condition, vision, skill);
+			
+			} else {
+				child = new Human(immunity, fertility, gender, condition, vision);				
+			}
+			
+			Case pos = beings.getFreeAdjacentCell(getX(), getY());
+			beings.yard.set(pos.getX(), pos.getY(), child);
+			child.setX(pos.getX());
+			child.setY(pos.getY());
+			Stoppable stoppableChild = beings.schedule.scheduleRepeating(child);
+			child.setStoppable(stoppableChild);
 		}
+
 	}
 
 	/**
@@ -814,23 +842,6 @@ public class Human implements Steppable {
 	//
 	// START OF THE DOCTOR SECTION
 	//
-
-	/**
-	 * Ask to be curated by a doctor in the perception zone
-	 * @return true if a doctor was called
-	 */
-	// TODO call the nearest doctor around
-	public boolean callDoctor() {
-		System.out.println("Je cherche un medecin");
-		for (Object object : this.neighbors){
-			if (object instanceof Doctor){
-				((Doctor)object).processRequest(this);
-				System.out.println("Medecin trouvé !");
-				return true;
-			}
-		}
-		return false;
-	}
 
 	/**
 	 * Call the doctor passed as a parameter
