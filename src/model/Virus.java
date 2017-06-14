@@ -26,6 +26,8 @@ public class Virus implements Steppable {
 	// Stoppable.
 	private Stoppable stoppable;
 
+	private Beings beings;
+
 	// Cases contenant des humains et leur distance par rapport au virus.
 	private ArrayList<Case> humanCases;
 
@@ -40,12 +42,12 @@ public class Virus implements Steppable {
 
 	@Override
 	public void step(SimState state) {
-		Beings beings = (Beings) state;
-		if (isAlive(beings))
-			move(beings);
+		beings = (Beings) state;
+		if (isAlive())
+			move();
 	}
 
-	private boolean isAlive(Beings beings) {
+	private boolean isAlive() {
 		if (propagationDuration == 0) {
 
 			// Suppression dans la grille.
@@ -58,7 +60,7 @@ public class Virus implements Steppable {
 		return true;
 	}
 
-	private void move(Beings beings) {
+	private void move() {
 		// Un d�placement coute un point de dur�e.
 		propagationDuration--;
 		
@@ -66,27 +68,18 @@ public class Virus implements Steppable {
 		int oldy = y;
 
 		// D�placement al�atoire.
-		x += ThreadLocalRandom.current().nextInt(1, moveRange + 1);
-		// Modulo la taille de la grille.
-		x %= Constants.GRID_SIZE;
 
-		if (x < 0)
-			x = Constants.GRID_SIZE + x;
-
-		y += ThreadLocalRandom.current().nextInt(1, moveRange + 1);
-		y %= Constants.GRID_SIZE;
-		;
-		if (y < 0)
-			y = Constants.GRID_SIZE + y;
+        x = beings.yard.stx(x + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
+        y = beings.yard.sty(y + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
 
 		beings.yard.set(x, y, this);
 		beings.yard.set(oldx, oldy, null);
 
-		detectInfectableHumans(beings);
-		infect(beings);
+		detectInfectableHumans();
+		infect();
 	}
 
-	private void detectInfectableHumans(Beings beings) {
+	private void detectInfectableHumans() {
 		humanCases = new ArrayList<Case>();
 
 		int x_depart = x - infectingArea;
@@ -100,15 +93,8 @@ public class Virus implements Steppable {
 			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
 							
 				// Pour ne pas sortir de la grille
-                int realX = indexX % Constants.GRID_SIZE;
-                if (realX < 0) {
-                    realX = Constants.GRID_SIZE + realX;
-                }
-
-                int realY = indexY % Constants.GRID_SIZE;
-                if (realY < 0) {
-                    realY = Constants.GRID_SIZE + realY;
-                }
+                int realX = beings.yard.stx(indexX);
+                int realY = beings.yard.sty(indexY);
 				
 				// Objet aux coordonn�es
 				Object object = beings.yard.get(realX, realY);
@@ -123,7 +109,7 @@ public class Virus implements Steppable {
 		}
 	}
 
-	private void infect(Beings beings) {
+	private void infect() {
 		// Une infection coute 5 point de dur�e.
 		//propagationDuration -= 5;
 
@@ -137,7 +123,7 @@ public class Virus implements Steppable {
 
 			// Tant que le nombre max d'humain � infecter n'a pas �t�
 			// atteint.
-			while (nbInfectedHuman <= nbHumanToInfect && nbInfectedHuman <= humanCases.size()) {
+			while (nbInfectedHuman <= nbHumanToInfect && humanCases.size() > 0) {
 
 				// On r�cup�re une case al�atoire dans la liste.
 				int indexhuman = ThreadLocalRandom.current().nextInt(0, humanCases.size());
@@ -145,8 +131,8 @@ public class Virus implements Steppable {
 
 				Object object = beings.yard.get(hcase.getX(), hcase.getY());
 
-				// Si la case contient bien un humain.
-				if (object instanceof Human) {
+				// Si la case contient bien un humain sain.
+				if (object instanceof Human && ((Human)object).getCondition() == Human.Condition.FINE ) {
 					Human h = (Human) object;
 
 					// L'humain est infect�.
