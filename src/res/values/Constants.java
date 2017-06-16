@@ -71,5 +71,6 @@ public class Constants {
     public static final int MAX_FOOD_ENV = 100;
     public static final int MAX_MEDICINE_ENV = 30;
     public static final int FAMINE_DURATION = 10;
-    
+    public static final float FAMINE_PROBABILITY = 0.05f;
+    public static final int FAMINE_REDUCTION = 4;
 }

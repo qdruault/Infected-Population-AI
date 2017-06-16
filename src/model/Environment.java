@@ -27,22 +27,25 @@ public class Environment implements Steppable{
         beings = (Beings) state;
         //System.out.println("Dans l'environnement");
         
-        // 1 chance sur 3
-        int faminePossibility = ThreadLocalRandom.current().nextInt(0, 3);
-        if (faminePossibility == 0){
-        	famine();
-        }
 
+        if (usedFoodStat == maxFood) {
+            // 1 chance sur 50
+            float faminePossibility = beings.random.nextFloat();
+            if (faminePossibility <= Constants.FAMINE_PROBABILITY) {
+                famine();
+            }
+        } else {
+            famineDuration--;
+            if (famineDuration == 0){
+                restoreFood();
+            }
+        }
         
         generateFood(usedFoodStat);
 //        generateMedicine(this.getMaxMedicine());
         
         
-        famineDuration--;
-        if (famineDuration == 0){
-        	restoreFood();
-        	famineDuration = Constants.FAMINE_DURATION;
-        }
+
     }
     
     /**
@@ -94,7 +97,8 @@ public class Environment implements Steppable{
     
     public void famine(){
     	// R�duction de la nourriture.
-    	usedFoodStat = 1;
+    	usedFoodStat = maxFood / Constants.FAMINE_REDUCTION;
+        famineDuration = Constants.FAMINE_DURATION;
     }
     
     public void restoreFood(){
