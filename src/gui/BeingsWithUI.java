@@ -28,7 +28,7 @@ public class BeingsWithUI extends GUIState {
 	public static int FRAME_SIZE = 600;
 	public Display2D display;
 	public JFrame displayFrame;
-	ObjectGridPortrayal2D yardPortrayal = new ObjectGridPortrayal2D();
+	private ObjectGridPortrayal2D yardPortrayal = new ObjectGridPortrayal2D();
 	
 	public BeingsWithUI(SimState state) {
 		super(state);
@@ -92,7 +92,7 @@ public class BeingsWithUI extends GUIState {
 		return r;
 	}
 
-	private OvalPortrayal2D getHumanPortrayal() {
+	public OvalPortrayal2D getHumanPortrayal() {
 		OvalPortrayal2D hPortrayal = new OvalPortrayal2D()
 		{
 			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
@@ -114,7 +114,7 @@ public class BeingsWithUI extends GUIState {
 		return hPortrayal;
 	}
 
-	private RectanglePortrayal2D getDoctorPortrayal() {
+	public RectanglePortrayal2D getDoctorPortrayal() {
 		RectanglePortrayal2D dPortrayal = new RectanglePortrayal2D()
 		{
 			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
@@ -161,7 +161,7 @@ public class BeingsWithUI extends GUIState {
 		return malePortrayal;
 	}
 
-	private HexagonalPortrayal2D getVirusPortrayal() {
+	public HexagonalPortrayal2D getVirusPortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
 		r.paint = Color.RED;
 		r.filled = true;
@@ -185,4 +185,7 @@ public class BeingsWithUI extends GUIState {
 		i.setVolatile(true);
 		return  i;
 	}
+
+	public ObjectGridPortrayal2D getYardPortrayal(){ return yardPortrayal; }
+	public void setYardPortrayal(){ this.yardPortrayal = yardPortrayal; }
 }

@@ -834,9 +834,13 @@ public class Human implements Steppable {
 			if (doctorProbability> Constants.DOCTOR_PROBABILITY){
 				float skill = beings.random.nextFloat();
 				child = new Doctor(immunity, fertility, gender, condition, vision, skill, beings);
+
+				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getDoctorPortrayal());
 			
 			} else {
-				child = new Human(immunity, fertility, gender, condition, vision, beings);				
+				child = new Human(immunity, fertility, gender, condition, vision, beings);
+				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getHumanPortrayal());
+
 			}
 			
 			Case pos = beings.getFreeAdjacentCell(getX(), getY());

@@ -1,6 +1,7 @@
 package model;
 
 import com.sun.corba.se.impl.orbutil.closure.Constant;
+import gui.BeingsWithUI;
 import res.values.Constants;
 import sim.engine.SimState;
 import sim.engine.Stoppable;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class Beings extends SimState {
 
-
+	private BeingsWithUI beingsWithUI;
 	public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE, Constants.GRID_SIZE);
 	protected int nbHuman = 0;
 	protected int nbMen = 0;
@@ -280,6 +281,8 @@ public class Beings extends SimState {
 	public int getNbInfectedHuman() {
 		return nbInfectedHuman;
 	}
+	public BeingsWithUI getBeingsWithUI() { return beingsWithUI; }
+	public void setBeingsWithUI(BeingsWithUI beingsWithUI){ this.beingsWithUI = beingsWithUI; }
 	
 	public void increaseNbHuman() {
 		this.nbHuman++;
