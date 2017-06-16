@@ -84,13 +84,6 @@ public class BeingsWithUI extends GUIState {
 //		return r;
 //	}
 
-	private OvalPortrayal2D getFoodPortrayal() {
-		OvalPortrayal2D r = new OvalPortrayal2D();
-		r.paint = Color.GREEN;
-		r.filled = true;
-		return r;
-	}
-
 	public OvalPortrayal2D getHumanPortrayal() {
 		OvalPortrayal2D hPortrayal = new OvalPortrayal2D()
 		{
@@ -138,27 +131,27 @@ public class BeingsWithUI extends GUIState {
 		return dPortrayal;
 	}
 
-	private OvalPortrayal2D getFemaleHumanPortrayal() {
-		OvalPortrayal2D malePortrayal = new OvalPortrayal2D()
-		{
-			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-			{
-				Human female = (Human)object;
-				//make orange if sick
-				Human.Condition c = female.getCondition();
-				int age = female.getAge();
-				if (c== Human.Condition.SICK)
-					paint=new Color(255, 255, 0);
-				else if (age<15)
-					paint=new Color(153, 51, 255);
-				else if (c== Human.Condition.FINE)
-					paint=new Color(204,0,204);
-				scale=1;
-				super.draw(object, graphics, info);  // it'll use the new paint and scale values
-			}
-		};
-		return malePortrayal;
-	}
+//	private OvalPortrayal2D getFemaleHumanPortrayal() {
+//		OvalPortrayal2D malePortrayal = new OvalPortrayal2D()
+//		{
+//			public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+//			{
+//				Human female = (Human)object;
+//				//make orange if sick
+//				Human.Condition c = female.getCondition();
+//				int age = female.getAge();
+//				if (c== Human.Condition.SICK)
+//					paint=new Color(255, 255, 0);
+//				else if (age<15)
+//					paint=new Color(153, 51, 255);
+//				else if (c== Human.Condition.FINE)
+//					paint=new Color(204,0,204);
+//				scale=1;
+//				super.draw(object, graphics, info);  // it'll use the new paint and scale values
+//			}
+//		};
+//		return malePortrayal;
+//	}
 
 	public HexagonalPortrayal2D getVirusPortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
@@ -169,6 +162,12 @@ public class BeingsWithUI extends GUIState {
 
 	private HexagonalPortrayal2D getMedicinePortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
+		r.paint=new Color(255, 0,255);
+		r.filled = true;
+		return r;
+	}
+	private OvalPortrayal2D getFoodPortrayal() {
+		OvalPortrayal2D r = new OvalPortrayal2D();
 		r.paint = Color.GREEN;
 		r.filled = true;
 		return r;

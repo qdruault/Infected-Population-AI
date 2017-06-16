@@ -9,8 +9,8 @@ public class Constants {
 
     // BEGINNING parameters
     public static int NUM_HUMANS = 2;
-    public static int NUM_DOCTORS = 0;
-    public static int NUM_FOODS = 0;
+    public static int NUM_DOCTORS = 2;
+    public static int NUM_FOODS = 5;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
@@ -50,17 +50,19 @@ public class Constants {
     public static int IMPROVE_IMMUNITY_DOCTOR_2=10;
 
     // MEDICINE parameters
+    public static int QUANTITY_PER_MEDICINE = 3;
+    public static int NUM_MEDICINE = 5;
     public static int MAX_MEDICINE_QUANTITY = 100;
 
     // FOOD parameters
     public static int MAX_NUTRITIONAL_PROVISION = 10;
     public static int MAX_FOOD_QUANTITY = 5;
-    public static int ROTTING_DURATION = 100;
+    public static int ROTTING_DURATION = 10;
 
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
     public static final int MAX_INFECTING_ZONE = 2;
-    public static final int MAX_PROPAGATION_DURATION = 10;
+    public static final int MAX_PROPAGATION_DURATION = 8;
     public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;

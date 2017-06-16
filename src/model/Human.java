@@ -32,6 +32,8 @@ public class Human implements Steppable {
 	protected int health;
 	//temps avant l'activation du virus
 	protected int timeBeforeSuffering;
+	//temps initial d'activation du virue
+	protected int initialActivationTimeVirus;
 	// Capacitï¿½ de rï¿½sistance au virus.
 	protected int immunity;
 	// Fertilitï¿½.
@@ -157,6 +159,8 @@ public class Human implements Steppable {
 					}
 				}
 			}
+			//will become sick if one of his neighbor is
+			isBeingInfected();
 		}
 	}
 
@@ -270,7 +274,7 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Besoin de se soigner (santé).
+	 * Besoin de se soigner (santï¿½).
 	 */
 	protected void basicNeedHealth(){
 		// SI on n'a pas encore appele de docteur
@@ -509,6 +513,7 @@ public class Human implements Steppable {
 	 * Cherche des humains autour de soi.
 	 * @return un bag avec des Human
 	 */
+	//TODO enlever cette fonction des mÃ©thodes car neighbors est une propriÃ©tÃ© de Human (mise Ã  jour par perceiveCells())
 	protected Bag lookForAdjacentHumans(){
 		Bag humans = new Bag();
 		Object currentNeighbor = neighbors.pop();
@@ -520,6 +525,33 @@ public class Human implements Steppable {
 			currentNeighbor = neighbors.pop();
 		}
 		return humans;
+	}
+
+	/**
+	 * Est infectÃ© si un huamin Ã  cÃ´tÃ© de lui est malade
+	 * @return un bag avec des Food
+	 */
+	protected void isBeingInfected(){
+//		Bag  neighbors= lookForAdjacentHumans();
+		for (int i = -1 ; i <= 1 ; i++) {
+			for (int j = -1 ; j <= 1 ; j++) {
+				if (i != 0 || j != 0) {
+					Int2D flocation = new Int2D(beings.yard.stx(x + i),beings.yard.sty(y + j));
+					Object currentNeighbor = beings.yard.get(flocation.x,flocation.y);
+					if (currentNeighbor != null) {
+						if (currentNeighbor instanceof  Human) {
+							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
+								System.out.println("I am infected by my neighbor ");
+								condition = Condition.SICK;
+								initialActivationTimeVirus=((Human)currentNeighbor).getInitialActivationTimeVirus();
+								timeBeforeSuffering=((Human)currentNeighbor).getInitialActivationTimeVirus();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -637,7 +669,7 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Se déplace sur une case.
+	 * Se dï¿½place sur une case.
 	 * @param position
 	 */
 	public void move(Int2D position){
@@ -714,13 +746,13 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Permet de savoir si l'on peut se déplacer sur une case précise.
-	 * @param x
-	 * @param y
+	 * Permet de savoir si l'on peut se dï¿½placer sur une case prï¿½cise.
+	 * @param p_x
+	 * @param p_y
 	 * @return
 	 */
 	protected boolean canMoveOn(int p_x, int p_y){
-		// On met les bonnes coordonnées.
+		// On met les bonnes coordonnï¿½es.
 		p_x = fixCoordinate(p_x);
 		p_y = fixCoordinate(p_y);
 
@@ -728,7 +760,7 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Permet de savoir si l'on peut se déplacer sur une case adjacente.
+	 * Permet de savoir si l'on peut se dï¿½placer sur une case adjacente.
 	 * @return
 	 */
 	protected boolean canMove(){
@@ -753,12 +785,12 @@ public class Human implements Steppable {
 	 */
 	public void toEat(Food f, int quantity){
 		int quantityEaten = f.consume(quantity);
-		gratification = Math.min(gratification + quantityEaten * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
+		gratification += Math.min(gratification + quantityEaten * f.getNutritionalProvision(), Constants.MAX_GRATIFICATION);
 	}
 
 	/**
 	 * Return non rotten food in priority
-	 * @param foods : les différentes nourritures a proximite
+	 * @param foods : les diffï¿½rentes nourritures a proximite
 	 * @return
 	 */
 	protected Food leastRottenFood(Bag foods){
@@ -887,9 +919,6 @@ public class Human implements Steppable {
 	// END OF THE PROCREATION SECTION
 	//
 
-
-
-
 	//
 	// START OF THE DOCTOR SECTION
 	//
@@ -908,7 +937,7 @@ public class Human implements Steppable {
 	 */
 	protected boolean needDoctor(){
 		if (health < Constants.LOW_HEALTH) {
-			System.out.println("Santé basse.");
+			System.out.println("Santï¿½ basse.");
 			return true;
 		}
 		
@@ -921,7 +950,7 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Se déplace vers le docteur appelé.
+	 * Se dï¿½place vers le docteur appelï¿½.
 	 */
 	protected void moveTowardsDoctor() {
 		Int2D positionDoctor = new Int2D(doctorCalled.getX(), doctorCalled.getY());
@@ -1064,4 +1093,11 @@ public class Human implements Steppable {
 	public boolean getHasRecentlyProcreated(){ return this.hasRecentlyProcreated; }
 
 	public void setHasRecentlyProcreated(boolean b){ this.hasRecentlyProcreated = b; }
+	public int getInitialActivationTimeVirus() {
+		return initialActivationTimeVirus;
+	}
+
+	public void setInitialActivationTimeVirus(int initialActivationTimeVirus) {
+		this.initialActivationTimeVirus = initialActivationTimeVirus;
+	}
 }

@@ -39,8 +39,8 @@ public class Environment implements Steppable{
             }
         }
 
-        //generateFood(usedFoodStat);
-        generateMedicine(this.getMaxMedicine());
+        generateFood(usedFoodStat);
+//        generateMedicine(this.getMaxMedicine());
     }
     
     /**

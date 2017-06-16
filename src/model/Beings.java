@@ -46,6 +46,7 @@ public class Beings extends SimState {
 		addEnvironment();
 		addAgentsDoctor();
 		addAgentsVirus();
+		addAgentsMedicine();
 	}
 
 	/**
@@ -99,12 +100,28 @@ public class Beings extends SimState {
 			a.setStoppable(stoppable);
 		}
 	}
+	/**
+	 * G�n�re des medicaments sur la carte.
+	 */
+	public void addAgentsMedicine(){
+		Stoppable stoppable;
+		for(int  i  =  0;  i  <  Constants.NUM_MEDICINE;  i++) {
+			Medicine a = new Medicine(Constants.QUANTITY_PER_MEDICINE);
+			Int2D location = getFreeLocation();
+			yard.set(location.x, location.y, a);
+			a.setX(location.x);
+			a.setY(location.y);
+			stoppable = schedule.scheduleRepeating(a);
+			a.setStoppable(stoppable);
+		}
+	}
 
 	/**
 	 * G�n�re de la nourriture sur la carte.
 	 */
 	public void addAgentsFood(){
 		Stoppable stoppable;
+		System.out.println("agent food soon created");
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), this);
 			Int2D location = getFreeLocation();
@@ -113,6 +130,7 @@ public class Beings extends SimState {
 			a.setY(location.y);
 			stoppable = schedule.scheduleRepeating(a);
 			a.setStoppable(stoppable);
+			System.out.println("agent food created");
 		}
 	}
 
