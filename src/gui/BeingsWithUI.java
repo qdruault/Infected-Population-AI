@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.Color;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import model.*;
 import sim.display.Controller;
@@ -12,9 +12,7 @@ import sim.engine.SimState;
 import sim.portrayal.Inspector;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
-import sim.portrayal.simple.HexagonalPortrayal2D;
-import sim.portrayal.simple.OvalPortrayal2D;
-import sim.portrayal.simple.RectanglePortrayal2D;
+import sim.portrayal.simple.*;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 
@@ -52,6 +50,7 @@ public class BeingsWithUI extends GUIState {
 		setupPortrayalForHumans(beings);
 		yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
 		yardPortrayal.setPortrayalForClass(Virus.class, getVirusPortrayal());
+		yardPortrayal.setPortrayalForClass(Medicine.class, getMedicinePortrayal());
 		display.reset();
 		display.setBackdrop(Color.LIGHT_GRAY);
 		display.repaint();
@@ -164,6 +163,13 @@ public class BeingsWithUI extends GUIState {
 	public HexagonalPortrayal2D getVirusPortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
 		r.paint = Color.RED;
+		r.filled = true;
+		return r;
+	}
+
+	private HexagonalPortrayal2D getMedicinePortrayal() {
+		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
+		r.paint = Color.GREEN;
 		r.filled = true;
 		return r;
 	}

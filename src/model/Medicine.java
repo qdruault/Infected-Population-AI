@@ -23,9 +23,9 @@ public class Medicine implements Steppable {
         beings = (Beings) simState;
     }
 
-    public Medicine(){
+    public Medicine(int _quantity){
 //    	System.out.println(" un medicine de généré ");
-        quantity = beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY);
+        quantity = _quantity;
     }
 
     // Getters ans setters

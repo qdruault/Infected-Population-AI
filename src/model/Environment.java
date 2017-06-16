@@ -25,8 +25,6 @@ public class Environment implements Steppable{
     @Override
     public void step(SimState state) {
         beings = (Beings) state;
-        //System.out.println("Dans l'environnement");
-        
 
         if (usedFoodStat == maxFood) {
             // 1 chance sur 50
@@ -40,12 +38,9 @@ public class Environment implements Steppable{
                 restoreFood();
             }
         }
-        
-        generateFood(usedFoodStat);
-//        generateMedicine(this.getMaxMedicine());
-        
-        
 
+        //generateFood(usedFoodStat);
+        generateMedicine(this.getMaxMedicine());
     }
     
     /**
@@ -84,9 +79,7 @@ public class Environment implements Steppable{
 
         for (int i = 0; i < result; i++){
             Int2D pos = beings.getFreeLocation();
-            Medicine medicine = new Medicine();
-//            TODO : corriger le bug ici (plante et ne met pas de médoc)
-//            Peut-être parce qu'il n'y a pas de portrayals pour les médoc?
+            Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY));
             beings.yard.set(pos.x, pos.y, medicine);
             medicine.setX(pos.x);
             medicine.setY(pos.y);

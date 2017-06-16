@@ -8,9 +8,9 @@ public class Constants {
     public static int GRID_SIZE = 25;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 5;
-    public static int NUM_DOCTORS = 5;
-    public static int NUM_FOODS = 20;
+    public static int NUM_HUMANS = 2;
+    public static int NUM_DOCTORS = 0;
+    public static int NUM_FOODS = 0;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
@@ -46,7 +46,6 @@ public class Constants {
     public static int VACCINATE_DIFFICULTY = 1;
     public static int VACCINATE_EFFICIENCY = 100;
     public static float SUCCESS_DIFFICULTY = 0.8f;
-    public static int BASE_MEDICINE = 100;
     public static int IMPROVE_IMMUNITY_DOCTOR_1=5;
     public static int IMPROVE_IMMUNITY_DOCTOR_2=10;
 
@@ -57,8 +56,7 @@ public class Constants {
     public static int MAX_NUTRITIONAL_PROVISION = 10;
     public static int MAX_FOOD_QUANTITY = 5;
     public static int ROTTING_DURATION = 100;
-    public static int BASE_FOOD = 5;
-    
+
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
     public static final int MAX_INFECTING_ZONE = 2;
@@ -68,8 +66,8 @@ public class Constants {
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
     // ENVIRONMENT parameters
-    public static final int MAX_FOOD_ENV = 100;
-    public static final int MAX_MEDICINE_ENV = 30;
+    public static int BASE_FOOD = 5;
+    public static int BASE_MEDICINE = 5;
     public static final int FAMINE_DURATION = 10;
     public static final float FAMINE_PROBABILITY = 0.05f;
     public static final int FAMINE_REDUCTION = 4;
