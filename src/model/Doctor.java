@@ -119,11 +119,13 @@ public class Doctor extends Human {
 			}
 
 
-			// S'il y a un malade juste à coté on le soigne.
+			// S'il y a un malade juste ï¿½ cotï¿½ on le soigne.
 			if (!basicNeedHelpHumanAdjacent()) {
 
 				if (needEatingStrong()){
 					basicNeedEat();
+				} else if (needDrugs()) {
+					// TODO add the basicNeedLookForFood method here
 				} else if (needHealing()){
 					basicNeedHealth();
 				} else if (needCuration()){
@@ -157,8 +159,8 @@ public class Doctor extends Human {
 	}
 
 	/**
-	 * Soigne un malade près de lui.
-	 * @return true si réussi.
+	 * Soigne un malade prï¿½s de lui.
+	 * @return true si rï¿½ussi.
 	 */
 	protected boolean basicNeedHelpHumanAdjacent(){
 		if (humansToHelp.isEmpty()) {
@@ -335,8 +337,16 @@ public class Doctor extends Human {
 	 * @param human who is calling for help
 	 */
 	public void processRequest(Human human){
-		//System.out.println("J'ai repéré un patient.");
+		//System.out.println("J'ai repï¿½rï¿½ un patient.");
 		humansToHelp.add(human);
 	}
 
+	public void pickUpMedicine(Medicine medicine){
+		int quantityPickedUp = medicine.consume(Constants.MAX_MEDICINE_QUANTITY - drugStock);
+		drugStock = Math.min(drugStock + quantityPickedUp * medicine.getQuantity(), Constants.MAX_MEDICINE_QUANTITY);
+	}
+
+	public boolean needDrugs(){
+		return drugStock > Constants.HEAL_CONSUMMATION;
+	}
 }

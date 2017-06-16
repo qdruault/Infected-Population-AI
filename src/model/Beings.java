@@ -23,7 +23,8 @@ public class Beings extends SimState {
 	protected int nbWomen = 0;
 	protected int nbDoctor = 0;
 	protected int nbFood = 0;
-	protected int nbInfectedHuman = 0;	
+	protected int nbInfectedHuman = 0;
+	protected int nbMedicine = 0;
 
 	public Beings(long seed) {
 		super(seed);
@@ -39,7 +40,8 @@ public class Beings extends SimState {
 		nbWomen = 0;
 		nbDoctor = 0;
 		nbFood = 0;
-		nbInfectedHuman = 0;	
+		nbInfectedHuman = 0;
+		nbMedicine = 0;
 		
 		addAgentsHuman();
 		addAgentsFood();
@@ -320,4 +322,6 @@ public class Beings extends SimState {
 	public void decreaseNbInfectedHuman() {
 		this.nbInfectedHuman--;
 	}
+	public void decreaseNbMedicine(int p_quantity) { this.nbMedicine -= p_quantity; }
+	public void increaseNbMedicine(int p_quantity) { this.nbMedicine += p_quantity; }
 }
