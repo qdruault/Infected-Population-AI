@@ -96,7 +96,7 @@ public class Doctor extends Human {
 		} else {
 			// Si on est malade, on perd de la vie.
 			if (this.condition == Condition.SICK) {
-				System.out.println("Je souffre x( -" + infection_gravity + "PV");
+				//System.out.println("Je souffre x( -" + infection_gravity + "PV");
 				health -= infection_gravity;
 				
 			} else if (getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
@@ -123,7 +123,7 @@ public class Doctor extends Human {
 				}
 
 				humansToHelp.removeAll(deadPatients);
-				System.out.println(humansToHelp.size() + " client(s) restant(s)");
+				//System.out.println(humansToHelp.size() + " client(s) restant(s)");
 			}
 
 

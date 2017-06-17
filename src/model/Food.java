@@ -33,7 +33,7 @@ public class Food implements Steppable {
      * @param nutritionalProvision
      * @param quantity
      */
-    public Food(int nutritionalProvision, int quantity, Beings beings) {
+    public Food(int quantity, int nutritionalProvision, Beings beings) {
 		this.nutritionalProvision = nutritionalProvision;
 		this.quantity = quantity;
 		rotten = false;
@@ -133,7 +133,7 @@ public class Food implements Steppable {
         } else {
             q = quantity;
             quantity = 0;
-            beings.decreaseNbFood(quantity);
+            beings.decreaseNbFood(q);
             return q;
         }
     }

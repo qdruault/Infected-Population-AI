@@ -22,6 +22,11 @@ public class Beings extends SimState {
 	protected int nbInfectedHuman = 0;
 	protected int nbMedicine = 0;
 	protected Map map;
+	protected int nbDeadVirus = 0;
+	protected int nbDeadAge = 0;
+	protected int nbDeadStarvation = 0;
+	
+	protected int nbBirth = 0;
 
 	public Beings(long seed) {
 		super(seed);
@@ -63,7 +68,7 @@ public class Beings extends SimState {
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
-			int age = random.nextInt(Constants.MAX_AGE);
+			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age, this);
 			Int2D location = freeLocation();
@@ -88,7 +93,7 @@ public class Beings extends SimState {
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
-			int age = random.nextInt(Constants.MAX_AGE);
+			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			float skill = random.nextFloat();
 			Human a = new Doctor(immunity, fertility, gender, vision, age, skill, this);
@@ -345,4 +350,32 @@ public class Beings extends SimState {
 	}
 	public void decreaseNbMedicine(int p_quantity) { this.nbMedicine -= p_quantity; }
 	public void increaseNbMedicine(int p_quantity) { this.nbMedicine += p_quantity; }
+	
+	public void increaseNbDeadVirus() {
+		this.nbDeadVirus++;
+	}
+	public void increaseNbDeadAge() {
+		this.nbDeadAge++;
+	}
+	public void increaseNbDeadStarvation() {
+		this.nbDeadStarvation++;
+	}
+	public void increaseNbBirth() {
+		this.nbBirth++;
+	}
+	public int getNbMedicine() {
+		return nbMedicine;
+	}
+	public int getNbDeadVirus() {
+		return nbDeadVirus;
+	}
+	public int getNbDeadAge() {
+		return nbDeadAge;
+	}
+	public int getNbDeadStarvation() {
+		return nbDeadStarvation;
+	}
+	public int getNbBirth() {
+		return nbBirth;
+	}
 }
