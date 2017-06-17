@@ -72,7 +72,12 @@ public class Doctor extends Human {
 	@Override
 	public void step(SimState state) {
 		beings = (Beings)state;
-		setHasRecentlyProcreated(false);
+
+		// On se remet de la naissance.
+		if (timeBeforeProcreating > 0) {
+			timeBeforeProcreating--;
+		}
+		
 		setAge(getAge() + 1);
 
 		if (mustDie()) {
