@@ -30,8 +30,6 @@ public class Human implements Steppable {
 	protected int age;
 	// PV
 	protected int health;
-	//temps avant l'activation du virus
-	protected int timeBeforeSuffering;
 	// Capacit� de r�sistance au virus.
 	protected int immunity;
 	// Fertilit�.
@@ -104,12 +102,11 @@ public class Human implements Steppable {
 				beings.decreaseNbInfectedHuman();
 			}
 		} else {
-			//decrease health level depending on his condition the activation and gravity of the virus
+			// Si on est malade, on perd de la vie.
 			if (this.condition == Condition.SICK) {
-				if (timeBeforeSuffering == 0)
-					health -= infection_gravity;
-				else timeBeforeSuffering--;
-			} else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
+				System.out.println("Je souffre x( -" + infection_gravity + "PV");
+				health -= infection_gravity;
+			} else if (getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
 				// Increase the health level if the human is fine
 				setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
 			}
@@ -118,6 +115,9 @@ public class Human implements Steppable {
 				health--; // the Human is Starving
 			} else {
 				setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
+				if (gratification < 0) {
+					gratification = 0;
+				}
 			}
 
 			// Perceive the cells around himself
@@ -125,8 +125,6 @@ public class Human implements Steppable {
 
 			// Eat: Rule about eating, a human always try to eat so that gratification = 100, meaning that he's full
 			// Gratification: if the gratification level is only half empty: the stomach is empty and the human is hungry. If it is below this level, the hunger starts to be dangerous
-			// TODO add a parameter to define the level of gratification below which each human start looking for food
-			// TODO change the behaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
 
 			// NEED DOCTOR
 			if (doctorCalled != null) {
@@ -181,7 +179,6 @@ public class Human implements Steppable {
 		this.immunity = immunity;
 		this.fertility = fertility;
 		this.gender = gender;
-		//TODO the condition is always initialized with FINE
 		this.condition = condition;
 		this.vision = vision;
 		this.survival=Constants.MAX_SURVIVAL;
@@ -263,8 +260,6 @@ public class Human implements Steppable {
 					// Move in a random direction and hope to find food
 					moveRandom();
 				}
-			} else {
-				// TODO do something instead of waiting depending on what there is on the adjacent cells
 			}
 		}
 	}
@@ -311,10 +306,7 @@ public class Human implements Steppable {
 				// Move in a random Direction and hope to find a human to procreate with
 				moveRandom();
 			}
-		} else {
-			// TODO do something instead of waiting depending on what there is on the adjacent cells
 		}
-
 	}
 
 	/**
@@ -337,7 +329,10 @@ public class Human implements Steppable {
 	 * @return
 	 */
 	protected Boolean mustDie(){
-		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
+		if (health < 0) {
+			health = 0;
+		}
+		if (health <= 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
 			System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
 			return true;
 		}
@@ -668,7 +663,6 @@ public class Human implements Steppable {
 
 	/**
 	 * Move toward the given cell until it's reached or the human can't move anymore
-	 * TODO prevent the human from going on an occupied cell.
 	 * @param position
 	 */
 	public void moveTowardsCell(Int2D position){
@@ -718,7 +712,6 @@ public class Human implements Steppable {
 				setX(resultX);
 				setY(resultY);
 			} else {
-				// TODO create a new strategy to move in an intelligent way
 				moveRandom();
 			}
 		}
@@ -823,7 +816,7 @@ public class Human implements Steppable {
 			(gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) ||
 			 beings.getFreeAdjacentCell(h.getX(), h.getY()) != null
 		){
-			System.out.println("I have a child!");
+			System.out.println("Naissance !");
 
 			int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
@@ -841,6 +834,12 @@ public class Human implements Steppable {
 			} else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
 				// Un seul parent malade.
 				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
+					condition = Condition.SICK;
+				}
+				
+			} else {
+				// Aucun parent malade.
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_0) {
 					condition = Condition.SICK;
 				}
 			}
@@ -868,13 +867,20 @@ public class Human implements Steppable {
 			if (isDoctor){
 				float skill = beings.random.nextFloat();
 				child = new Doctor(immunity, fertility, gender, condition, vision, skill, beings);
-
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getDoctorPortrayal());
 
 			} else {
 				child = new Human(immunity, fertility, gender, condition, vision, beings);
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getHumanPortrayal());
-
+			}
+			
+			// On devient de plus en plus resistant.
+			if (child.getCondition() == Condition.SICK) {
+				if (infection_gravity < 2) {
+					child.setCondition(Condition.FINE);
+				} else {
+					child.setInfectionGravity(infection_gravity / 2);
+				}				
 			}
 
 			Case pos = beings.getFreeAdjacentCell(getX(), getY());
@@ -1024,9 +1030,6 @@ public class Human implements Steppable {
 		this.health += health;
 	}
 
-	public void setTimeBeforeSuffering(int time){
-		this.timeBeforeSuffering=time;
-	}
 	public int getImmunity() {
 		return immunity;
 	}

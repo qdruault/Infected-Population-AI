@@ -1,6 +1,5 @@
 package model;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import gui.BeingsWithUI;
 import res.values.Constants;
 import sim.engine.SimState;
@@ -10,9 +9,6 @@ import sim.util.Bag;
 import sim.util.Int2D;
 
 import model.Human.Gender;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Beings extends SimState {
 
@@ -128,14 +124,15 @@ public class Beings extends SimState {
 		Stoppable stoppable;
 		System.out.println("NOUVEAU VIRUS");
 
-			int gravity= random.nextInt(Constants.MAX_GRAVITY);
+			// Gravite entre 8 et 12
+			int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
 			int moveRange = Constants.MAX_MOVE_RANGE;
 			int infectingArea = Constants.MAX_INFECTING_ZONE;
 			int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
 			int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
-			int timeBeforeActivation = random.nextInt(Constants.MAX_TIME_BEFORE_ACTIVATION);
-			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
+			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect);
 			Int2D location = freeLocation();
+
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -200,8 +197,6 @@ public class Beings extends SimState {
 		}
 		return location;
 	}
-
-
 
 	// Return a free adjacent cell if there is one, null otherwise
 	public Case getFreeAdjacentCell(int x, int y){

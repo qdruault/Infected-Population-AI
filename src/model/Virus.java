@@ -16,8 +16,6 @@ public class Virus implements Steppable {
 	private int infectingArea; // zone de contamination
 	private int propagationDuration; // temps avant la disparition du virus
 	private int nbHumanToInfect; // nombre d'humain � infecter
-	private int timeBeforeActivation; // durée avant d'être ressenti par
-										// l'humain
 	private int gravity; // gravité de la maladie (impact sur la santé lorsque
 							// le virus est actif)
 
@@ -31,13 +29,12 @@ public class Virus implements Steppable {
 	// Cases contenant des humains et leur distance par rapport au virus.
 	private ArrayList<Case> humanCases;
 
-	public Virus(int _gravity, int _moveRange, int _infectingArea, int _propagationDuration, int _nbHumanToInfect,
-			int _timeBeforeActivation) {
+	public Virus(int _gravity, int _moveRange, int _infectingArea, int _propagationDuration, int _nbHumanToInfect) {
+		gravity = _gravity;
 		moveRange = _moveRange;
 		infectingArea = _infectingArea;
 		propagationDuration = _propagationDuration;
 		nbHumanToInfect = _nbHumanToInfect;
-		timeBeforeActivation = _timeBeforeActivation;
 	}
 
 	@Override
@@ -143,7 +140,6 @@ public class Virus implements Steppable {
 					// L'humain est infect�.
 					System.out.println("Humain infect�");
 					h.setCondition(Condition.SICK);
-					h.setTimeBeforeSuffering(timeBeforeActivation);
 					h.setInfectionGravity(gravity);
 					nbInfectedHuman++;
 				}

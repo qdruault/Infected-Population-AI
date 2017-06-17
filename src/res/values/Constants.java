@@ -28,6 +28,7 @@ public class Constants {
     public static int MAX_VISION = 4;
     public static int STARVATION_LOSS = 10;
     public static int PROCREATION_MULTIPLIER = 100;
+    public static float TRANSMISSION_PROBABILITY_0 = 0.1f;
     public static float TRANSMISSION_PROBABILITY_1 = 0.5f;
     public static float TRANSMISSION_PROBABILITY_2 = 0.75f;
     public static float DOCTOR_PROBABILITY_2 = 0.75f;

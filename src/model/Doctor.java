@@ -44,7 +44,7 @@ public class Doctor extends Human {
 		this.skill = skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
-		
+
 		// MAJ des stats.
 		this.beings.increaseNbDoctor();
 	}
@@ -64,11 +64,11 @@ public class Doctor extends Human {
 		this.skill=skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
-		
+
 		// MAJ des stats.
 		this.beings.increaseNbDoctor();
 	}
-	
+
 	@Override
 	public void step(SimState state) {
 		beings = (Beings)state;
@@ -77,7 +77,7 @@ public class Doctor extends Human {
 		if (timeBeforeProcreating > 0) {
 			timeBeforeProcreating--;
 		}
-		
+
 		setAge(getAge() + 1);
 
 		if (mustDie()) {
@@ -94,12 +94,12 @@ public class Doctor extends Human {
 				beings.decreaseNbInfectedHuman();
 			}
 		} else {
-			//decrease health level depending on his condition the activation and gravity of the virus
-			if (getCondition() == Condition.SICK) {
-				if (timeBeforeSuffering == 0)
-					health -= infection_gravity;
-				else timeBeforeSuffering--;
-			} else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
+			// Si on est malade, on perd de la vie.
+			if (this.condition == Condition.SICK) {
+				System.out.println("Je souffre x( -" + infection_gravity + "PV");
+				health -= infection_gravity;
+				
+			} else if (getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
 				// Increase the health level if the human is fine
 				setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
 			}
@@ -108,6 +108,9 @@ public class Doctor extends Human {
 				health--; // the Human is Starving
 			} else {
 				setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
+				if (gratification < 0) {
+					gratification = 0;
+				}
 			}
 
 			if (humansToHelp.isEmpty() == false) {
@@ -171,7 +174,7 @@ public class Doctor extends Human {
 		if (humansToHelp.isEmpty()) {
 			return false;
 		}
-		
+
 		Human patient = humansToHelp.get(0);
 		if (objectIsAdjacent(patient)) {
 			// SI je suis a cote de lui je le soigne.
@@ -180,7 +183,7 @@ public class Doctor extends Human {
 			humansToHelp.remove(0);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -318,7 +321,7 @@ public class Doctor extends Human {
 	public Boolean tryCure(Human human) {
 		if (tryOperation(Constants.CURE_DIFFICULTY)){
 			cureDisease(human);
-			
+
 			return true;
 		}
 		return false;
