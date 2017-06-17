@@ -156,7 +156,7 @@ public class Food implements Steppable {
         int nutritionalProvision = beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION);
         Food  a  =  new Food(nutritionalProvision,quantity, beings);
     	System.out.println(" Food added 2");
-		Int2D location = beings.getFreeLocation();
+		Int2D location = beings.freeLocation();
     	System.out.println(" Food added  3");
 		beings.yard.set(location.x, location.y, a);
 		a.setX(location.x);

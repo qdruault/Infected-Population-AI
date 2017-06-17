@@ -8,9 +8,9 @@ public class Constants {
     public static int GRID_SIZE = 25;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 2;
+    public static int NUM_HUMANS = 10;
     public static int NUM_DOCTORS = 0;
-    public static int NUM_FOODS = 0;
+    public static int NUM_FOODS = 5;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;

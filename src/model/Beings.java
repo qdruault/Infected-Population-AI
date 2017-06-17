@@ -25,6 +25,7 @@ public class Beings extends SimState {
 	protected int nbFood = 0;
 	protected int nbInfectedHuman = 0;
 	protected int nbMedicine = 0;
+	protected Map map;
 
 	public Beings(long seed) {
 		super(seed);
@@ -42,6 +43,8 @@ public class Beings extends SimState {
 		nbFood = 0;
 		nbInfectedHuman = 0;
 		nbMedicine = 0;
+
+		addObstacles();
 		
 		addAgentsHuman();
 		addAgentsFood();
@@ -67,7 +70,7 @@ public class Beings extends SimState {
 			int age = random.nextInt(Constants.MAX_AGE);
 			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age, this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -93,7 +96,7 @@ public class Beings extends SimState {
 			int vision = 10;
 			float skill = random.nextFloat();
 			Human a = new Doctor(immunity, fertility, gender, vision, age, skill, this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -109,7 +112,7 @@ public class Beings extends SimState {
 		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -131,7 +134,7 @@ public class Beings extends SimState {
 			int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
 			int timeBeforeActivation = random.nextInt(Constants.MAX_TIME_BEFORE_ACTIVATION);
 			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -145,6 +148,29 @@ public class Beings extends SimState {
 	public void addEnvironment(){
 		Environment  a  =  new Environment(this);
 		schedule.scheduleRepeating(a);
+	}
+	
+	/**
+	 * Génère les obstacles.
+	 */
+	public void addObstacles(){
+		map = new Map();
+
+		for(int  i  =  0;  i  <  map.getObstacles().size();  i++) {
+			yard.set(map.getObstacles().get(i).getX(), map.getObstacles().get(i).getY(), map.getObstacles().get(i));
+		}
+	}
+	
+	/** Remet un obstacle sur la carte.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void putBackObstacle(int x, int y){
+		for(int  i  =  0;  i  <  map.getObstacles().size();  i++) {
+			if (map.getObstacles().get(i).getX() == x && map.getObstacles().get(i).getY() == y)
+				yard.set(x, y, map.getObstacles().get(i));
+		}
 	}
 	
 	/**
@@ -163,11 +189,11 @@ public class Beings extends SimState {
 	 * Trouve un endroit libre sur la carte.
 	 * @return
 	 */
-	public Int2D getFreeLocation() {
+	public Int2D freeLocation() {
 		Int2D location = new Int2D(random.nextInt(yard.getWidth()),
 				random.nextInt(yard.getHeight()) );
 		Object ag;
-		while ((ag = yard.get(location.x,location.y)) != null) {
+		while ((ag = yard.get(location.x,location.y)) != null || !map.isLocationFree(location.x,location.y)) {
 			location = new Int2D(random.nextInt(yard.getWidth()),
 					random.nextInt(yard.getHeight()) );
 		}
@@ -274,6 +300,7 @@ public class Beings extends SimState {
 	public int getNbWomen() {
 		return nbWomen;
 	}
+	public void setBeingsWithUI(BeingsWithUI beingsWithUI){ this.beingsWithUI = beingsWithUI; }
 	public int getNbDoctor() {
 		return nbDoctor;
 	}
@@ -284,8 +311,6 @@ public class Beings extends SimState {
 		return nbInfectedHuman;
 	}
 	public BeingsWithUI getBeingsWithUI() { return beingsWithUI; }
-	public void setBeingsWithUI(BeingsWithUI beingsWithUI){ this.beingsWithUI = beingsWithUI; }
-	
 	public void increaseNbHuman() {
 		this.nbHuman++;
 	}

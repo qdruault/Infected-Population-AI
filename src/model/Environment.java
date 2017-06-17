@@ -39,8 +39,8 @@ public class Environment implements Steppable{
             }
         }
 
-        //generateFood(usedFoodStat);
-        generateMedicine(this.getMaxMedicine());
+        generateFood(usedFoodStat);
+        //generateMedicine(this.getMaxMedicine());
     }
     
     /**
@@ -60,7 +60,7 @@ public class Environment implements Steppable{
 //        System.out.println("Result food "+result);
         
         for (int i = 0; i < result; i++){
-            Int2D pos = beings.getFreeLocation();
+            Int2D pos = beings.freeLocation();
             Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY), beings);
             beings.yard.set(pos.x, pos.y, food);
             food.setX(pos.x);
@@ -78,7 +78,7 @@ public class Environment implements Steppable{
 //        System.out.println("Result medecine "+result);
 
         for (int i = 0; i < result; i++){
-            Int2D pos = beings.getFreeLocation();
+            Int2D pos = beings.freeLocation();
             Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY));
             beings.yard.set(pos.x, pos.y, medicine);
             medicine.setX(pos.x);

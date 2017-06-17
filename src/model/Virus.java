@@ -52,6 +52,7 @@ public class Virus implements Steppable {
 
 			// Suppression dans la grille.
 			beings.yard.set(x, y, null);
+			beings.putBackObstacle(x, y);
 			// Suppression de l'agent dans le scheduling
 			stoppable.stop();
 
@@ -67,13 +68,15 @@ public class Virus implements Steppable {
 		int oldx = x;
 		int oldy = y;
 
-		// D�placement al�atoire.
+		// D�placement.
 
         x = beings.yard.stx(x + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
         y = beings.yard.sty(y + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
 
 		beings.yard.set(x, y, this);
 		beings.yard.set(oldx, oldy, null);
+		
+		beings.putBackObstacle(oldx, oldy);
 
 		detectInfectableHumans();
 		infect();
