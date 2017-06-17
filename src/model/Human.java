@@ -924,6 +924,7 @@ public class Human implements Steppable {
 				condition = Condition.SICK;
 				h.setCondition(Condition.SICK);
 				System.out.println("Virus transmis");
+				this.beings.increaseNbInfectedHuman();
 			}
 		}
 
