@@ -21,26 +21,20 @@ public class Environment implements Steppable{
     Beings beings;
     
     int famineDuration = Constants.FAMINE_DURATION;
+    int shortageDuration = Constants.SHORTAGE_DURATION;
+    
+    int virusGap = Constants.VIRUS_GAP-1;
     
     @Override
     public void step(SimState state) {
         beings = (Beings) state;
 
-        if (usedFoodStat == maxFood) {
-            // 1 chance sur 50
-            float faminePossibility = beings.random.nextFloat();
-            if (faminePossibility <= Constants.FAMINE_PROBABILITY) {
-                famine();
-            }
-        } else {
-            famineDuration--;
-            if (famineDuration == 0){
-                restoreFood();
-            }
-        }
+        manageFamine();
+        manageShortage();
+        manageVirus();
 
         generateFood(usedFoodStat);
-        //generateMedicine(this.getMaxMedicine());
+        generateMedicine(usedMedicineStat);
     }
     
     /**
@@ -97,6 +91,60 @@ public class Environment implements Steppable{
     public void restoreFood(){
     	// Restauration de la quantitï¿½ de nourriture normale
     	usedFoodStat = maxFood;
+    }
+    
+    public void medicineShortage(){
+    	// Rï¿½duction des medicaments.
+    	usedMedicineStat = maxMedicine / Constants.SHORTAGE_REDUCTION;
+        shortageDuration = Constants.SHORTAGE_DURATION;
+    }
+    
+    public void restoreMedicine(){
+    	// Restauration de la quantitï¿½ de médicament normale
+    	usedMedicineStat = maxMedicine;
+    }
+    
+    public void manageFamine(){
+        if (usedFoodStat == maxFood) {
+            float faminePossibility = beings.random.nextFloat();
+            if (faminePossibility <= Constants.FAMINE_PROBABILITY) {
+                famine();
+            }
+        } else {
+            famineDuration--;
+            if (famineDuration == 0){
+                restoreFood();
+            }
+        }
+    }
+    
+    public void manageShortage(){
+        if (usedMedicineStat == maxMedicine) {
+            float shortagePossibility = beings.random.nextFloat();
+            if (shortagePossibility <= Constants.SHORTAGE_PROBABILITY) {
+                medicineShortage();
+            }
+        } else {
+            shortageDuration--;
+            if (shortageDuration == 0){
+                restoreMedicine();
+            }
+        }
+    }
+    
+    public void manageVirus(){
+        if (virusGap==Constants.VIRUS_GAP) {
+            float virusPossibility = beings.random.nextFloat();
+            if (virusPossibility <= Constants.VIRUS_PROBABILITY) {
+                beings.addAgentsVirus();
+                virusGap--;
+            }
+        } else {
+        	virusGap--;
+            if (virusGap == 0){
+            	virusGap = Constants.VIRUS_GAP;
+            }
+        }
     }
     
     public int getMaxFood() {

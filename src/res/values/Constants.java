@@ -5,11 +5,11 @@ package res.values;
  */
 public class Constants {
 
-    public static int GRID_SIZE = 25;
+    public static int GRID_SIZE = 50;
 
     // BEGINNING parameters
     public static int NUM_HUMANS = 10;
-    public static int NUM_DOCTORS = 0;
+    public static int NUM_DOCTORS = 20;
     public static int NUM_FOODS = 5;
 
     // HUMAN parameters
@@ -60,17 +60,22 @@ public class Constants {
     public static int ROTTING_DURATION = 100;
 
     // VIRUS parameters
-    public static final int MAX_MOVE_RANGE = 3;
-    public static final int MAX_INFECTING_ZONE = 2;
-    public static final int MAX_PROPAGATION_DURATION = 10;
+    public static final int MAX_MOVE_RANGE = 5;
+    public static final int MAX_INFECTING_ZONE = 8;
+    public static final int MAX_PROPAGATION_DURATION = 5;
     public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION = 500;
 
     // ENVIRONMENT parameters
     public static int BASE_FOOD = 5;
-    public static int BASE_MEDICINE = 5;
+    public static int BASE_MEDICINE = 2;
     public static final int FAMINE_DURATION = 10;
     public static final float FAMINE_PROBABILITY = 0.05f;
     public static final int FAMINE_REDUCTION = 4;
+    public static final int SHORTAGE_DURATION = 10;
+    public static final float SHORTAGE_PROBABILITY = 0.05f;
+    public static final int SHORTAGE_REDUCTION = 4;
+    public static final float VIRUS_PROBABILITY = 0.25f;
+    public static final int VIRUS_GAP = 50;
 }

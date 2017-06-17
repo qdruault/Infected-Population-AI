@@ -126,6 +126,7 @@ public class Beings extends SimState {
 	 */
 	public void addAgentsVirus(){
 		Stoppable stoppable;
+		System.out.println("NOUVEAU VIRUS");
 
 			int gravity= random.nextInt(Constants.MAX_GRAVITY);
 			int moveRange = Constants.MAX_MOVE_RANGE;

@@ -55,6 +55,8 @@ public class Virus implements Steppable {
 			beings.putBackObstacle(x, y);
 			// Suppression de l'agent dans le scheduling
 			stoppable.stop();
+			
+			System.out.println("DISPARITION VIRUS");
 
 			return false;
 		}
