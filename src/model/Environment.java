@@ -120,7 +120,7 @@ public class Environment implements Steppable{
     public void famine(){
     	// Rï¿½duction de la nourriture.
     	//usedFoodStat = maxFood / Constants.FAMINE_REDUCTION;
-    	System.out.println("Début famine");
+    	System.out.println("Dï¿½but famine");
         famineDuration = beings.getNbHuman() / 10;
     }
     
