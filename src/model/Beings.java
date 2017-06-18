@@ -107,7 +107,7 @@ public class Beings extends SimState {
 	public void addAgentsMedicine(){
 		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_MEDICINE;  i++) {
-			Medicine a = new Medicine(Constants.QUANTITY_PER_MEDICINE);
+			Medicine a = new Medicine(Constants.QUANTITY_PER_MEDICINE, this);
 			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);

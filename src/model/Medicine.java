@@ -30,7 +30,7 @@ public class Medicine implements Steppable {
         }
     }
 
-    public Medicine(int _quantity){
+    public Medicine(int _quantity, Beings beings){
         quantity = _quantity;
     }
 

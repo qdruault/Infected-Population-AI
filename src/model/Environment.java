@@ -33,29 +33,12 @@ public class Environment implements Steppable{
         manageShortage();
         manageVirus();
 
-<<<<<<< HEAD
-        if (usedFoodStat == maxFood) {
-            // 1 chance sur 50
-            float faminePossibility = beings.random.nextFloat();
-            if (faminePossibility <= Constants.FAMINE_PROBABILITY) {
-                famine();
-            }
-        } else {
-            famineDuration--;
-            if (famineDuration == 0){
-                restoreFood();
-            }
-        }
 
-        generateFood(usedFoodStat);
-//        generateMedicine(this.getMaxMedicine());
-=======
         
         generateFood();
         //generateMedicine(usedMedicineStat);
         
         cpt++;
->>>>>>> 3f0cd6efc533a8360339751763243d4a5450e749
     }
     
     /**
@@ -120,7 +103,7 @@ public class Environment implements Steppable{
     public void famine(){
     	// Rï¿½duction de la nourriture.
     	//usedFoodStat = maxFood / Constants.FAMINE_REDUCTION;
-    	System.out.println("Début famine");
+    	System.out.println("Dï¿½but famine");
         famineDuration = beings.getNbHuman() / 10;
     }
     
