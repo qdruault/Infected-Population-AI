@@ -1,6 +1,5 @@
 package model;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import gui.BeingsWithUI;
 import res.values.Constants;
 import sim.engine.SimState;
@@ -11,9 +10,6 @@ import sim.util.Int2D;
 
 import model.Human.Gender;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Beings extends SimState {
 
 	private BeingsWithUI beingsWithUI;
@@ -23,7 +19,14 @@ public class Beings extends SimState {
 	protected int nbWomen = 0;
 	protected int nbDoctor = 0;
 	protected int nbFood = 0;
-	protected int nbInfectedHuman = 0;	
+	protected int nbInfectedHuman = 0;
+	protected int nbMedicine = 0;
+	protected Map map;
+	protected int nbDeadVirus = 0;
+	protected int nbDeadAge = 0;
+	protected int nbDeadStarvation = 0;
+	
+	protected int nbBirth = 0;
 
 	public Beings(long seed) {
 		super(seed);
@@ -34,19 +37,17 @@ public class Beings extends SimState {
 		yard.clear();
 		
 		// RAZ des stats.
-		nbHuman = 0;
-		nbMen = 0;
-		nbWomen = 0;
-		nbDoctor = 0;
-		nbFood = 0;
-		nbInfectedHuman = 0;	
+		resetStats();
+
+		addObstacles();
 		
 		addAgentsHuman();
-		addAgentsFood();
+		//addAgentsFood();
 		addEnvironment();
 		addAgentsDoctor();
 		addAgentsVirus();
 		addAgentsMedicine();
+		//addAgentsVirus();
 	}
 
 	/**
@@ -63,10 +64,10 @@ public class Beings extends SimState {
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
-			int age = random.nextInt(Constants.MAX_AGE);
+			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age, this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -88,11 +89,11 @@ public class Beings extends SimState {
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = random.nextInt(Constants.MAX_FERTILITY);
-			int age = random.nextInt(Constants.MAX_AGE);
+			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			float skill = random.nextFloat();
 			Human a = new Doctor(immunity, fertility, gender, vision, age, skill, this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -107,7 +108,7 @@ public class Beings extends SimState {
 		Stoppable stoppable;
 		for(int  i  =  0;  i  <  Constants.NUM_MEDICINE;  i++) {
 			Medicine a = new Medicine(Constants.QUANTITY_PER_MEDICINE);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -124,7 +125,7 @@ public class Beings extends SimState {
 		System.out.println("agent food soon created");
 		for(int  i  =  0;  i  <  Constants.NUM_FOODS;  i++) {
 			Food  a  =  new Food(random.nextInt(Constants.MAX_FOOD_QUANTITY), random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), this);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -139,15 +140,18 @@ public class Beings extends SimState {
 	 */
 	public void addAgentsVirus(){
 		Stoppable stoppable;
+		System.out.println("NOUVEAU VIRUS");
 
-			int gravity= random.nextInt(Constants.MAX_GRAVITY);
+			// Gravite entre 8 et 12
+			int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
 			int moveRange = Constants.MAX_MOVE_RANGE;
 			int infectingArea = Constants.MAX_INFECTING_ZONE;
 			int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
 			int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
-			int timeBeforeActivation = random.nextInt(Constants.MAX_TIME_BEFORE_ACTIVATION);
+			int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
 			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
-			Int2D location = getFreeLocation();
+			Int2D location = freeLocation();
+
 			yard.set(location.x, location.y, a);
 			a.setX(location.x);
 			a.setY(location.y);
@@ -161,6 +165,29 @@ public class Beings extends SimState {
 	public void addEnvironment(){
 		Environment  a  =  new Environment(this);
 		schedule.scheduleRepeating(a);
+	}
+	
+	/**
+	 * G�n�re les obstacles.
+	 */
+	public void addObstacles(){
+		map = new Map();
+
+		for(int  i  =  0;  i  <  map.getObstacles().size();  i++) {
+			yard.set(map.getObstacles().get(i).getX(), map.getObstacles().get(i).getY(), map.getObstacles().get(i));
+		}
+	}
+	
+	/** Remet un obstacle sur la carte.
+	 * 
+	 * @param x
+	 * @param y
+	 */
+	public void putBackObstacle(int x, int y){
+		for(int  i  =  0;  i  <  map.getObstacles().size();  i++) {
+			if (map.getObstacles().get(i).getX() == x && map.getObstacles().get(i).getY() == y)
+				yard.set(x, y, map.getObstacles().get(i));
+		}
 	}
 	
 	/**
@@ -179,18 +206,16 @@ public class Beings extends SimState {
 	 * Trouve un endroit libre sur la carte.
 	 * @return
 	 */
-	public Int2D getFreeLocation() {
+	public Int2D freeLocation() {
 		Int2D location = new Int2D(random.nextInt(yard.getWidth()),
 				random.nextInt(yard.getHeight()) );
 		Object ag;
-		while ((ag = yard.get(location.x,location.y)) != null) {
+		while ((ag = yard.get(location.x,location.y)) != null || !map.isLocationFree(location.x,location.y)) {
 			location = new Int2D(random.nextInt(yard.getWidth()),
 					random.nextInt(yard.getHeight()) );
 		}
 		return location;
 	}
-
-
 
 	// Return a free adjacent cell if there is one, null otherwise
 	public Case getFreeAdjacentCell(int x, int y){
@@ -234,35 +259,15 @@ public class Beings extends SimState {
 	public Bag getAdjacentCells(int x, int y){
 		Bag objects = new Bag();
 		// RIGHT
-//		if (x + 1 > Constants.GRID_SIZE-1)
-//			objects.add( yard.get(0, y));
-//		else
-//			objects.add( yard.get(x + 1, y));
-
 		objects.add(yard.get(yard.stx(x + 1), y));
 
 		// LEFT
-//		if (x - 1 < 0)
-//			objects.add( yard.get(Constants.GRID_SIZE-1, y));
-//		else
-//			objects.add( yard.get(x - 1, y));
-
 		objects.add(yard.get(yard.stx(x - 1), y));
 
 		// DOWN
-//		if (y + 1 > Constants.GRID_SIZE-1)
-//			objects.add( yard.get(x, 0));
-//		else
-//			objects.add( yard.get(x, y + 1));
-
 		objects.add(yard.get(x, yard.sty(y + 1)));
 
 		// UP
-//		if (y - 1 < 0)
-//			objects.add( yard.get(x, Constants.GRID_SIZE-1));
-//		else
-//			objects.add( yard.get(x, y - 1));
-
 		objects.add(yard.get(x, yard.sty(y - 1)));
 
 		// TOP RIGHT
@@ -290,6 +295,7 @@ public class Beings extends SimState {
 	public int getNbWomen() {
 		return nbWomen;
 	}
+	public void setBeingsWithUI(BeingsWithUI beingsWithUI){ this.beingsWithUI = beingsWithUI; }
 	public int getNbDoctor() {
 		return nbDoctor;
 	}
@@ -300,8 +306,6 @@ public class Beings extends SimState {
 		return nbInfectedHuman;
 	}
 	public BeingsWithUI getBeingsWithUI() { return beingsWithUI; }
-	public void setBeingsWithUI(BeingsWithUI beingsWithUI){ this.beingsWithUI = beingsWithUI; }
-	
 	public void increaseNbHuman() {
 		this.nbHuman++;
 	}
@@ -337,5 +341,49 @@ public class Beings extends SimState {
 	}
 	public void decreaseNbInfectedHuman() {
 		this.nbInfectedHuman--;
+	}
+	public void decreaseNbMedicine(int p_quantity) { this.nbMedicine -= p_quantity; }
+	public void increaseNbMedicine(int p_quantity) { this.nbMedicine += p_quantity; }
+	
+	public void increaseNbDeadVirus() {
+		this.nbDeadVirus++;
+	}
+	public void increaseNbDeadAge() {
+		this.nbDeadAge++;
+	}
+	public void increaseNbDeadStarvation() {
+		this.nbDeadStarvation++;
+	}
+	public void increaseNbBirth() {
+		this.nbBirth++;
+	}
+	public int getNbMedicine() {
+		return nbMedicine;
+	}
+	public int getNbDeadVirus() {
+		return nbDeadVirus;
+	}
+	public int getNbDeadAge() {
+		return nbDeadAge;
+	}
+	public int getNbDeadStarvation() {
+		return nbDeadStarvation;
+	}
+	public int getNbBirth() {
+		return nbBirth;
+	}
+	
+	protected void resetStats() {
+		nbBirth = 0;
+		nbDeadAge = 0;
+		nbDeadStarvation = 0;
+		nbDeadVirus = 0;
+		nbDoctor = 0;
+		nbFood = 0;
+		nbHuman = 0;
+		nbInfectedHuman = 0;
+		nbMedicine = 0;
+		nbMen = 0;
+		nbWomen = 0;
 	}
 }

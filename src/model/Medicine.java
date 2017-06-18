@@ -20,12 +20,37 @@ public class Medicine implements Steppable {
 
     @Override
     public void step(SimState simState) {
+
         beings = (Beings) simState;
+
+        if (mustDisappear()){
+            System.out.println("Medicine  is disappearing");
+            beings.yard.set(getX(), getY(), null);
+            stoppable.stop();
+        }
     }
 
     public Medicine(int _quantity){
-//    	System.out.println(" un medicine de généré ");
         quantity = _quantity;
+    }
+
+    public int consume(int q){
+        if(quantity > q){
+            quantity -= q;
+            beings.decreaseNbMedicine(q);
+            return q;
+        } else {
+            q = quantity;
+            quantity = 0;
+            beings.decreaseNbMedicine(q);
+            return q;
+        }
+    }
+
+    public Boolean mustDisappear(){
+        if (quantity == 0)
+            return true;
+        else return false;
     }
 
     // Getters ans setters
@@ -41,5 +66,7 @@ public class Medicine implements Steppable {
     public void setY(int y){
         this.y = y;
     }
+    public void setQuantity(int q) { this.quantity = q; }
+    public int getQuantity() { return this.quantity; }
 
 }

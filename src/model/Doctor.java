@@ -2,10 +2,11 @@ package model;
 
 import res.values.Constants;
 import sim.engine.SimState;
+import sim.util.Bag;
 import sim.util.Int2D;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Map;
 
 import model.Human.Condition;
 import model.Human.Gender;
@@ -42,9 +43,10 @@ public class Doctor extends Human {
 	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision, float skill, Beings beings) {
 		super(immunity, fertility, gender, condition, vision, beings);
 		this.skill = skill;
-		this.drugStock = Constants.MAX_DRUG_STOCK;
+		//this.drugStock = Constants.MAX_DRUG_STOCK;
+		this.drugStock = 0;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
-		
+
 		// MAJ des stats.
 		this.beings.increaseNbDoctor();
 	}
@@ -64,15 +66,20 @@ public class Doctor extends Human {
 		this.skill=skill;
 		this.drugStock = Constants.MAX_DRUG_STOCK;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
-		
+
 		// MAJ des stats.
 		this.beings.increaseNbDoctor();
 	}
-	
+
 	@Override
 	public void step(SimState state) {
 		beings = (Beings)state;
-		setHasRecentlyProcreated(false);
+
+		// On se remet de la naissance.
+		if (timeBeforeProcreating > 0) {
+			timeBeforeProcreating--;
+		}
+
 		setAge(getAge() + 1);
 
 		if (mustDie()) {
@@ -89,12 +96,12 @@ public class Doctor extends Human {
 				beings.decreaseNbInfectedHuman();
 			}
 		} else {
-			//decrease health level depending on his condition the activation and gravity of the virus
-			if (getCondition() == Condition.SICK) {
-				if (timeBeforeSuffering == 0)
-					health -= infection_gravity;
-				else timeBeforeSuffering--;
-			} else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
+			// Si on est malade, on perd de la vie.
+			if (this.condition == Condition.SICK) {
+				//System.out.println("Je souffre x( -" + infection_gravity + "PV");
+				health -= infection_gravity;
+				
+			} else if (getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
 				// Increase the health level if the human is fine
 				setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
 			}
@@ -103,6 +110,9 @@ public class Doctor extends Human {
 				health--; // the Human is Starving
 			} else {
 				setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
+				if (gratification < 0) {
+					gratification = 0;
+				}
 			}
 
 			if (humansToHelp.isEmpty() == false) {
@@ -115,19 +125,21 @@ public class Doctor extends Human {
 				}
 
 				humansToHelp.removeAll(deadPatients);
-				System.out.println(humansToHelp.size() + " client(s) restant(s)");
+				//System.out.println(humansToHelp.size() + " client(s) restant(s)");
 			}
 
 
-			// S'il y a un malade juste à coté on le soigne.
+			// S'il y a un malade juste ï¿½ cotï¿½ on le soigne.
 			if (!basicNeedHelpHumanAdjacent()) {
 
 				if (needEatingStrong()){
 					basicNeedEat();
+				} else if (needDrugs()) {
+					basicNeedLookForMedicine();
 				} else if (needHealing()){
 					basicNeedHealth();
 				} else if (needCuration()){
-					System.out.println("J'essaye de me soigner");
+					//System.out.println("J'essaye de me soigner");
 					basicNeedCuration();
 				} else if (needVaccination()){
 					basicNeedVaccination();
@@ -157,23 +169,23 @@ public class Doctor extends Human {
 	}
 
 	/**
-	 * Soigne un malade près de lui.
-	 * @return true si réussi.
+	 * Soigne un malade prï¿½s de lui.
+	 * @return true si rï¿½ussi.
 	 */
 	protected boolean basicNeedHelpHumanAdjacent(){
 		if (humansToHelp.isEmpty()) {
 			return false;
 		}
-		
+
 		Human patient = humansToHelp.get(0);
 		if (objectIsAdjacent(patient)) {
 			// SI je suis a cote de lui je le soigne.
-			System.out.println("Je te soigne.");
+			//System.out.println("Je te soigne.");
 			handlePatient(patient);
 			humansToHelp.remove(0);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -184,10 +196,31 @@ public class Doctor extends Human {
 		//System.out.println("Humains a soigner");
 		// Si il y a des gens a soigner.
 		Human patient = humansToHelp.get(0);
-		System.out.println("Je pars soigner un humain !");
+		//System.out.println("Je pars soigner un humain !");
 		moveTowardsPatient();
 	}
 
+	protected void basicNeedLookForMedicine() {
+		Bag medicines = lookForAdjacentMedicine();
+		if (medicines.size() > 0){
+			Medicine medicine = (Medicine)medicines.pop();
+			if( medicine.getQuantity() > 0) {
+				pickUpMedicine(medicine);
+			}
+		} else {
+			if (canMove()){
+				// Move to find medicine
+				Int2D medicineCase = lookForMedicineLocation();
+
+				if (medicineCase != null){
+					moveTowardsCell(medicineCase);
+				} else {
+					// Move in a random direction and hope to find medicine
+					moveRandom();
+				}
+			}
+		}
+	}
 	/**
 	 * Decide to vaccinate himself
 	 * @return true if successed, false otherwise
@@ -311,7 +344,7 @@ public class Doctor extends Human {
 	public Boolean tryCure(Human human) {
 		if (tryOperation(Constants.CURE_DIFFICULTY)){
 			cureDisease(human);
-			
+
 			return true;
 		}
 		return false;
@@ -335,8 +368,83 @@ public class Doctor extends Human {
 	 * @param human who is calling for help
 	 */
 	public void processRequest(Human human){
-		//System.out.println("J'ai repéré un patient.");
+		//System.out.println("J'ai repï¿½rï¿½ un patient.");
 		humansToHelp.add(human);
 	}
 
+	private void pickUpMedicine(Medicine medicine){
+		int quantityPickedUp = medicine.consume(Constants.MAX_MEDICINE_QUANTITY - drugStock);
+		drugStock = Math.min(drugStock + quantityPickedUp * medicine.getQuantity(), Constants.MAX_MEDICINE_QUANTITY);
+		System.out.println(drugStock);
+	}
+
+	private Bag lookForAdjacentMedicine(){
+		Bag medicines = new Bag();
+		Bag neighbors = beings.getAdjacentCells(getX(),getY());
+
+		Object currentNeighbor = neighbors.pop();
+
+		for (int i = 0; i < 8; i++){
+			if (currentNeighbor instanceof Medicine){
+				medicines.add(currentNeighbor);
+			}
+			currentNeighbor = neighbors.pop();
+		}
+		return medicines;
+	}
+
+	public Int2D lookForMedicineLocation(){
+		HashMap<Case, Integer> medicineCases = new HashMap<Case, Integer>();
+
+
+		int x_depart = x - vision;
+		int y_depart = y - vision;
+
+		int x_fin = x + vision;
+		int y_fin = y + vision;
+
+		// Parcours de toutes les cases
+		for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
+			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
+				// Pour pas sortir de la grille.
+				int realX = fixCoordinate(indexX);
+
+				int realY = fixCoordinate(indexY);
+
+				// Objet aux coordonnÃ¯Â¿Â½es
+				Object object = beings.yard.get(realX, realY);
+				if (object != null) {
+					// Si la case contient un objet Medicine
+					if (object instanceof Medicine) {
+						// Ajout de la case avec sa distance.
+						Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
+						medicineCases.put(new Case(indexX, indexY), distance);
+					}
+				}
+			}
+		}
+
+		// On cherche la plus proche.
+		Int2D res = null;
+		Integer minD = Constants.GRID_SIZE;
+
+		Iterator<Map.Entry<Case, Integer>> it = medicineCases.entrySet().iterator();
+		while (it.hasNext()) {
+			HashMap.Entry pair = (HashMap.Entry)it.next();
+			Integer value = (Integer)pair.getValue();
+			Case key = (Case)pair.getKey();
+			if(value < minD) {
+				minD = value;
+				res = new Int2D(key.getX(), key.getY());
+			}
+		}
+		return res;
+	}
+
+	public boolean needDrugs(){
+		return drugStock > Constants.HEAL_CONSUMMATION;
+	}
+
+	public int getDrugStock(){ return drugStock; }
+	public void setDrugStock(int drugStock){ this.drugStock = drugStock; }
 }

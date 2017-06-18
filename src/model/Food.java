@@ -33,7 +33,7 @@ public class Food implements Steppable {
      * @param nutritionalProvision
      * @param quantity
      */
-    public Food(int nutritionalProvision, int quantity, Beings beings) {
+    public Food(int quantity, int nutritionalProvision, Beings beings) {
 		this.nutritionalProvision = nutritionalProvision;
 		this.quantity = quantity;
 		rotten = false;
@@ -133,7 +133,7 @@ public class Food implements Steppable {
         } else {
             q = quantity;
             quantity = 0;
-            beings.decreaseNbFood(quantity);
+            beings.decreaseNbFood(q);
             return q;
         }
     }
@@ -156,7 +156,7 @@ public class Food implements Steppable {
         int nutritionalProvision = beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION);
         Food  a  =  new Food(nutritionalProvision,quantity, beings);
     	System.out.println(" Food added 2");
-		Int2D location = beings.getFreeLocation();
+		Int2D location = beings.freeLocation();
     	System.out.println(" Food added  3");
 		beings.yard.set(location.x, location.y, a);
 		a.setX(location.x);

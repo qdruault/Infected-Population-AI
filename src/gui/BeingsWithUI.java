@@ -51,6 +51,7 @@ public class BeingsWithUI extends GUIState {
 		yardPortrayal.setPortrayalForClass(Food.class, getFoodPortrayal());
 		yardPortrayal.setPortrayalForClass(Virus.class, getVirusPortrayal());
 		yardPortrayal.setPortrayalForClass(Medicine.class, getMedicinePortrayal());
+		yardPortrayal.setPortrayalForClass(Obstacle.class, getObstaclePortrayal());
 		display.reset();
 		display.setBackdrop(Color.LIGHT_GRAY);
 		display.repaint();
@@ -168,7 +169,16 @@ public class BeingsWithUI extends GUIState {
 	}
 	private OvalPortrayal2D getFoodPortrayal() {
 		OvalPortrayal2D r = new OvalPortrayal2D();
-		r.paint = Color.GREEN;
+		//r.paint = Color.GREEN;
+		r.paint = new Color(54, 178, 42);
+		//54 178 42
+		r.filled = true;
+		return r;
+	}
+	
+	private RectanglePortrayal2D getObstaclePortrayal() {
+		RectanglePortrayal2D r = new RectanglePortrayal2D();
+		r.paint = new Color(24, 40, 79);
 		r.filled = true;
 		return r;
 	}

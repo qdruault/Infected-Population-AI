@@ -30,6 +30,7 @@ public class Human implements Steppable {
 	protected int age;
 	// PV
 	protected int health;
+
 	//temps avant l'activation du virus
 	protected int timeBeforeSuffering;
 	//temps initial d'activation du virue
@@ -52,9 +53,7 @@ public class Human implements Steppable {
 	protected int x;
 	protected int y;
 	protected int infection_gravity;
-	// A MAX_SURVIVAL à la naissance puis diminue avec les maladies et autres 
-	// ± probabilite de mourir
-	public int survival;
+
 	public enum Gender {
 		MALE,
 		FEMALE
@@ -64,16 +63,9 @@ public class Human implements Steppable {
 		FINE
 	};
 
-	protected boolean hasRecentlyProcreated = false;
+	protected int timeBeforeProcreating = 0;
+
 	protected Doctor doctorCalled = null;
-
-	public Doctor getDoctorCalled() {
-		return doctorCalled;
-	}
-
-	public void setDoctorCalled(Doctor doctorCalled) {
-		this.doctorCalled = doctorCalled;
-	}
 
 	/**
 	 * Corrige la coordonnee X ou Y.
@@ -91,7 +83,11 @@ public class Human implements Steppable {
 	public void step(SimState state) {
 		beings = (Beings) state;
 
-		hasRecentlyProcreated = false;
+		// On se remet de la naissance.
+		if (timeBeforeProcreating > 0) {
+			timeBeforeProcreating--;
+		}
+
 		setAge(getAge() + 1);
 
 		// TODO remove the agent from the scheduling
@@ -109,20 +105,23 @@ public class Human implements Steppable {
 				beings.decreaseNbInfectedHuman();
 			}
 		} else {
-			//decrease health level depending on his condition the activation and gravity of the virus
+			// Si on est malade, on perd de la vie.
 			if (this.condition == Condition.SICK) {
-				if (timeBeforeSuffering == 0)
-					health -= infection_gravity;
-				else timeBeforeSuffering--;
-			} else if (getCondition() == Condition.FINE && getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
+				//System.out.println("Je souffre x( -" + infection_gravity + "PV");
+				health -= infection_gravity;
+			} else if (getGratification() > 0 && getHealth() < Constants.MID_HEALTH) {
 				// Increase the health level if the human is fine
 				setHealth(getHealth() + Constants.PASSIVE_HEALTH_GAIN);
 			}
 
 			if (getGratification() <= 0) {
-				health--; // the Human is Starving
+				health -= Constants.STARVATION_LOSS; // the Human is Starving
+				//System.out.println("Je meurs de faim ! :(");
 			} else {
 				setGratification(getGratification() - Constants.GRATIFICATION_LOSS);
+				if (gratification < 0) {
+					gratification = 0;
+				}
 			}
 
 			// Perceive the cells around himself
@@ -130,34 +129,33 @@ public class Human implements Steppable {
 
 			// Eat: Rule about eating, a human always try to eat so that gratification = 100, meaning that he's full
 			// Gratification: if the gratification level is only half empty: the stomach is empty and the human is hungry. If it is below this level, the hunger starts to be dangerous
-			// TODO add a parameter to define the level of gratification below which each human start looking for food
-			// TODO change the behaviour when looking for food, if no food is available on an adjacent cell, the human must look for a cell with food
 
 			// NEED DOCTOR
 			if (doctorCalled != null) {
 				// On se dirige vers le docteur.
-				System.out.println("Je vais voir un docteur");
+				//System.out.println("Je vais voir un docteur");
 				moveTowardsDoctor();
+
 			} else if (needEatingStrong()) {
 				// NEED TO EAT
 				//System.out.println("I strongly need to eat");
 				basicNeedEat();
-			} else {
+
+			} else if (needDoctor()) {
 				// NEED TO LOOK FOR A DOCTOR
-				if (needDoctor()) {
-					//System.out.println("I need a doctor");
-					basicNeedHealth();
-				} else {
-					// NEED TO EAT
-					if (needEatingMedium()) {
-						//System.out.println("I need to eat");
-						basicNeedEat();
-					} else {
-						// NEED TO PROCREATE
-						//System.out.println("I need to procreate");
-						basicNeedProcreate();
-					}
-				}
+				//System.out.println("I need a doctor");
+				basicNeedHealth();
+
+			} else if (!basicNeedProcreateAdjacent() && needEatingMedium()) {
+				// Si on n'arrive pas a procreer a cote.
+				// NEED TO EAT
+				//System.out.println("I need to eat");
+				basicNeedEat();
+
+			} else {
+				// NEED TO PROCREATE
+				//System.out.println("I need to procreate");
+				basicNeedProcreate();
 			}
 			//will become sick if one of his neighbor is
 			isBeingInfected();
@@ -185,14 +183,12 @@ public class Human implements Steppable {
 		this.immunity = immunity;
 		this.fertility = fertility;
 		this.gender = gender;
-		//TODO the condition is always initialized with FINE
 		this.condition = condition;
 		this.vision = vision;
-		this.survival=Constants.MAX_SURVIVAL;
 		this.move = 1;
 		this.infection_gravity=0;
 		this.beings = beings;
-		
+
 		// MAJ des stats.
 		this.beings.increaseNbHuman();
 		if (this.gender == Gender.MALE) {
@@ -223,7 +219,6 @@ public class Human implements Steppable {
 		this.gender = gender;
 		this.condition = Condition.FINE;
 		this.vision = vision;
-		this.survival=Constants.MAX_SURVIVAL;
 		this.age = age;
 		this.move = 1;
 		this.beings = beings;
@@ -267,8 +262,6 @@ public class Human implements Steppable {
 					// Move in a random direction and hope to find food
 					moveRandom();
 				}
-			} else {
-				// TODO do something instead of waiting depending on what there is on the adjacent cells
 			}
 		}
 	}
@@ -303,26 +296,34 @@ public class Human implements Steppable {
 	}
 
 	/**
-	 * Besoin de procreer.
+	 * Besoin d'aller procreer.
 	 */
 	protected void basicNeedProcreate(){
 		//System.out.println("I would like to procreate");
+		if (canMove()) {
+			Int2D humanLocation = lookForOppositeGenderHumanLocation();
+			if (humanLocation != null) {
+				moveTowardsCell(humanLocation);
+			} else {
+				// Move in a random Direction and hope to find a human to procreate with
+				moveRandom();
+			}
+		}
+	}
+
+	/**
+	 * Se reproduit avec un humain a cote.
+	 * @return true s'il a reussi.
+	 */
+	protected boolean basicNeedProcreateAdjacent() {
 		Human human = getHumanOfOppositeGender(lookForAdjacentHumans());
 		if (human != null && canProcreateWith(human)) {
 			tryToProcreate(human);
-		} else {
-			if (canMove()) {
-				Int2D humanLocation = lookForOppositeGenderHumanLocation();
-				if (humanLocation != null) {
-					moveTowardsCell(humanLocation);
-				} else {
-					// Move in a random Direction and hope to find a human to procreate with
-					moveRandom();
-				}
-			} else {
-				// TODO do something instead of waiting depending on what there is on the adjacent cells
-			}
+
+			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -330,11 +331,27 @@ public class Human implements Steppable {
 	 * @return
 	 */
 	protected Boolean mustDie(){
-		if (health == 0 || survival <= 10 || getAge() >= Constants.MAX_AGE){
-			System.out.println("I'm dead, health = "+getHealth()+" age ="+getAge()+" gratification = "+getGratification());
+		// MAJ stats.
+		if (health <= 0) {
+			health = 0;
+			if (condition == Condition.SICK) {
+				//System.out.println("Mort de maladie");
+				beings.increaseNbDeadVirus();
+			} else {
+				//System.out.println("Mort de faim");
+				beings.increaseNbDeadStarvation();
+			}
+
 			return true;
 		}
-		else return false;
+
+		if (age >= Constants.MAX_AGE) {
+			//System.out.println("Mort vieillesse.");
+			beings.increaseNbDeadAge();
+			return true;
+		}
+
+		return false;
 	}
 
 	//
@@ -689,7 +706,6 @@ public class Human implements Steppable {
 
 	/**
 	 * Move toward the given cell until it's reached or the human can't move anymore
-	 * TODO prevent the human from going on an occupied cell.
 	 * @param position
 	 */
 	public void moveTowardsCell(Int2D position){
@@ -739,7 +755,6 @@ public class Human implements Steppable {
 				setX(resultX);
 				setY(resultY);
 			} else {
-				// TODO create a new strategy to move in an intelligent way
 				moveRandom();
 			}
 		}
@@ -835,16 +850,14 @@ public class Human implements Steppable {
 
 	/**
 	 * Procreation
-	 * TODO add a pregnancy mecanism
 	 * @param h
 	 */
 	public void toProcreate(Human h){
 		//System.out.println("I want to procreate, age 1 ="+this.getAge()+" age 2 ="+h.getAge()+" gender 1 ="+this.getGender()+" gender 2 ="+h.getGender());
 
 		if ((gender == Gender.FEMALE && beings.getFreeAdjacentCell(x, y) != null) ||
-				beings.getFreeAdjacentCell(h.getX(), h.getY()) != null
+			beings.getFreeAdjacentCell(h.getX(), h.getY()) != null
 		){
-			System.out.println("I have a child!");
 
 			int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
 			int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
@@ -853,34 +866,82 @@ public class Human implements Steppable {
 
 			Condition condition = Condition.FINE;
 			float conditionResult = beings.random.nextFloat();
+			// Les deux parents malades.
 			if (getCondition() == Condition.SICK && h.getCondition() == Condition.SICK) {
-				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2)
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_2) {
 					condition = Condition.SICK;
+				}
+
 			} else if (getCondition() == Condition.SICK || h.getCondition() == Condition.SICK) {
-				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1)
+				// Un seul parent malade.
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
 					condition = Condition.SICK;
+				}
+
+			} else {
+				// Aucun parent malade.
+				if (conditionResult < Constants.TRANSMISSION_PROBABILITY_0) {
+					condition = Condition.SICK;
+				}
 			}
 
 			float doctorProbability =  beings.random.nextFloat();
+			boolean isDoctor = false;
 			Human child;
-			if (doctorProbability> Constants.DOCTOR_PROBABILITY){
+			// 2 parents docteurs
+			if (this instanceof Doctor && h instanceof Doctor) {
+				if (doctorProbability < Constants.DOCTOR_PROBABILITY_2) {
+					isDoctor = true;
+				}
+			} else if (this instanceof Doctor || h instanceof Doctor) {
+				// 1 parent docteur
+				if (doctorProbability < Constants.DOCTOR_PROBABILITY_1) {
+					isDoctor = true;
+				}
+			} else {
+				// Aucun parent docteur
+				if (doctorProbability < Constants.DOCTOR_PROBABILITY_0) {
+					isDoctor = true;
+				}
+			}
+
+			if (isDoctor){
 				float skill = beings.random.nextFloat();
 				child = new Doctor(immunity, fertility, gender, condition, vision, skill, beings);
-
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getDoctorPortrayal());
-			
+
 			} else {
 				child = new Human(immunity, fertility, gender, condition, vision, beings);
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getHumanPortrayal());
-
 			}
-			
-			Case pos = beings.getFreeAdjacentCell(getX(), getY());
+
+			// On devient de plus en plus resistant.
+			if (child.getCondition() == Condition.SICK) {
+				//System.out.println("Naissance enfant infect�");
+				if (infection_gravity < 2) {
+					child.setCondition(Condition.FINE);
+				} else {
+					child.setInfectionGravity(infection_gravity / 2);
+				}				
+			} else {
+				//System.out.println("Naissance");
+			}
+
+			Case pos;
+			if (beings.getFreeAdjacentCell(getX(), getY()) != null) {
+				pos = beings.getFreeAdjacentCell(x, y);
+			} else {
+				pos = beings.getFreeAdjacentCell(h.getX(), h.getY());
+			}
+
 			beings.yard.set(pos.getX(), pos.getY(), child);
 			child.setX(pos.getX());
 			child.setY(pos.getY());
 			Stoppable stoppableChild = beings.schedule.scheduleRepeating(child);
 			child.setStoppable(stoppableChild);
+
+			// MAJ stats.
+			beings.increaseNbBirth();
 		}
 
 	}
@@ -890,6 +951,18 @@ public class Human implements Steppable {
 	 * @param h : l'humain avec qui procreer
 	 */
 	public void tryToProcreate(Human h){
+		// Si un des deux est infecte
+		if (condition == Condition.SICK || h.getCondition() == Condition.SICK) {
+			// On infecte le partenaire.
+			float conditionResult = beings.random.nextFloat();
+			if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
+				condition = Condition.SICK;
+				h.setCondition(Condition.SICK);
+				//System.out.println("Virus transmis");
+				this.beings.increaseNbInfectedHuman();
+			}
+		}
+
 		float fertilityProbability1 = (float) fertility  / (float) Constants.MAX_FERTILITY;
 		float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
 
@@ -900,7 +973,10 @@ public class Human implements Steppable {
 		if (beings.random.nextFloat() < successProbability){
 			toProcreate(h);
 		}
-		hasRecentlyProcreated = true;
+
+		// On met a jour les temps a attendre.
+		this.updateTimeBeforeProcreating();
+		h.updateTimeBeforeProcreating();
 	}
 
 	/**
@@ -910,9 +986,22 @@ public class Human implements Steppable {
 	 */
 	public boolean canProcreateWith(Human h){
 		//System.out.println("Data about both humans: " + this.getGender() + " " + h.getGender() + " " + this.getAge() + " " + h.getAge());
-        Case freeCell = null;
-        freeCell = (getGender() == Gender.FEMALE) ? beings.getFreeAdjacentCell(getX(), getY()) : beings.getFreeAdjacentCell(h.getX(), h.getY());
-        return (this.getGender()!=h.getGender() && this.getAge()>15 && this.getAge()<80 && h.getAge()>15 && h.getAge()<80 && !h.getHasRecentlyProcreated() && freeCell != null);
+		Case freeCell = null;
+		freeCell = (getGender() == Gender.FEMALE) ? beings.getFreeAdjacentCell(getX(), getY()) : beings.getFreeAdjacentCell(h.getX(), h.getY());
+
+		if (this.getGender() != h.getGender() && 
+				this.getAge() > 15 && 
+				this.getAge() < 80 && 
+				h.getAge() > 15 && 
+				h.getAge() < 80 && 
+				h.getTimeBeforeProcreating() == 0 &&
+				this.getTimeBeforeProcreating() == 0 &&
+				freeCell != null
+		) {
+			return true;			
+		}
+		
+		return false;
 	}
 
 	//
@@ -937,15 +1026,15 @@ public class Human implements Steppable {
 	 */
 	protected boolean needDoctor(){
 		if (health < Constants.LOW_HEALTH) {
-			System.out.println("Sant� basse.");
+			//System.out.println("Sant� basse.");
 			return true;
 		}
-		
+
 		if (getCondition() == Condition.SICK) {
-			System.out.println("Malade.");
+			//System.out.println("Malade.");
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -1003,9 +1092,6 @@ public class Human implements Steppable {
 		this.health += health;
 	}
 
-	public void setTimeBeforeSuffering(int time){
-		this.timeBeforeSuffering=time;
-	}
 	public int getImmunity() {
 		return immunity;
 	}
@@ -1090,14 +1176,37 @@ public class Human implements Steppable {
 
 	public Stoppable getStoppable(){ return this.stoppable; }
 
-	public boolean getHasRecentlyProcreated(){ return this.hasRecentlyProcreated; }
+	/**
+	 * Met a jour le temps a attendre avant de procreer a nouveau.
+	 */
+	public void updateTimeBeforeProcreating() {
+		this.timeBeforeProcreating = 3;
+	}
 
-	public void setHasRecentlyProcreated(boolean b){ this.hasRecentlyProcreated = b; }
+	public int getTimeBeforeProcreating() {
+		return timeBeforeProcreating;
+	}
+
+	public Doctor getDoctorCalled() {
+		return doctorCalled;
+	}
+
 	public int getInitialActivationTimeVirus() {
 		return initialActivationTimeVirus;
 	}
 
 	public void setInitialActivationTimeVirus(int initialActivationTimeVirus) {
 		this.initialActivationTimeVirus = initialActivationTimeVirus;
+	}
+	public void setDoctorCalled(Doctor doctorCalled) {
+		this.doctorCalled = doctorCalled;
+	}
+
+
+	public int getTimeBeforeSuffering() {
+		return timeBeforeSuffering;
+	}
+	public void setTimeBeforeSuffering(int timeBeforeSuffering) {
+		this.timeBeforeSuffering = timeBeforeSuffering;
 	}
 }

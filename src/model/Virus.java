@@ -33,8 +33,8 @@ public class Virus implements Steppable {
 	// Cases contenant des humains et leur distance par rapport au virus.
 	private ArrayList<Case> humanCases;
 
-	public Virus(int _gravity, int _moveRange, int _infectingArea, int _propagationDuration, int _nbHumanToInfect,
-			int _timeBeforeActivation) {
+	public Virus(int _gravity, int _moveRange, int _infectingArea, int _propagationDuration, int _nbHumanToInfect, int _timeBeforeActivation) {
+		gravity = _gravity;
 		moveRange = _moveRange;
 		infectingArea = _infectingArea;
 		propagationDuration = _propagationDuration;
@@ -55,8 +55,11 @@ public class Virus implements Steppable {
 
 			// Suppression dans la grille.
 			beings.yard.set(x, y, null);
+			beings.putBackObstacle(x, y);
 			// Suppression de l'agent dans le scheduling
 			stoppable.stop();
+			
+			System.out.println("DISPARITION VIRUS");
 
 			return false;
 		}
@@ -70,13 +73,15 @@ public class Virus implements Steppable {
 		int oldx = x;
 		int oldy = y;
 
-		// D�placement al�atoire.
+		// D�placement.
 
         x = beings.yard.stx(x + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
         y = beings.yard.sty(y + ThreadLocalRandom.current().nextInt(1, moveRange + 1));
 
 		beings.yard.set(x, y, this);
 		beings.yard.set(oldx, oldy, null);
+		
+		beings.putBackObstacle(oldx, oldy);
 
 		InfectAdjacentHumans();
 //		detectInfectableHumans();
@@ -164,13 +169,11 @@ public class Virus implements Steppable {
 				// Si la case contient bien un humain sain.
 				if (object instanceof Human && ((Human)object).getCondition() == Human.Condition.FINE ) {
 					Human h = (Human) object;
-
 					// L'humain est infect�.
 					System.out.println("Humain infect�");
 					h.setCondition(Condition.SICK);
 					h.setTimeBeforeSuffering(timeBeforeActivation);
 					h.setInitialActivationTimeVirus(timeBeforeActivation);
-					h.setInfectionGravity(gravity);
 					nbInfectedHuman++;
 				}
 				humanCases.remove(indexhuman);
