@@ -328,10 +328,10 @@ public class Human implements Steppable {
 		if (health <= 0) {
 			health = 0;
 			if (condition == Condition.SICK) {
-				System.out.println("Mort de maladie");
+				//System.out.println("Mort de maladie");
 				beings.increaseNbDeadVirus();
 			} else {
-				System.out.println("Mort de faim");
+				//System.out.println("Mort de faim");
 				beings.increaseNbDeadStarvation();
 			}
 
@@ -339,7 +339,7 @@ public class Human implements Steppable {
 		}
 
 		if (age >= Constants.MAX_AGE) {
-			System.out.println("Mort vieillesse.");
+			//System.out.println("Mort vieillesse.");
 			beings.increaseNbDeadAge();
 			return true;
 		}
@@ -882,14 +882,14 @@ public class Human implements Steppable {
 
 			// On devient de plus en plus resistant.
 			if (child.getCondition() == Condition.SICK) {
-				System.out.println("Naissance enfant infecté");
+				//System.out.println("Naissance enfant infecté");
 				if (infection_gravity < 2) {
 					child.setCondition(Condition.FINE);
 				} else {
 					child.setInfectionGravity(infection_gravity / 2);
 				}				
 			} else {
-				System.out.println("Naissance");
+				//System.out.println("Naissance");
 			}
 
 			Case pos;
@@ -923,7 +923,7 @@ public class Human implements Steppable {
 			if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
 				condition = Condition.SICK;
 				h.setCondition(Condition.SICK);
-				System.out.println("Virus transmis");
+				//System.out.println("Virus transmis");
 				this.beings.increaseNbInfectedHuman();
 			}
 		}
@@ -994,12 +994,12 @@ public class Human implements Steppable {
 	 */
 	protected boolean needDoctor(){
 		if (health < Constants.LOW_HEALTH) {
-			System.out.println("Santé basse.");
+			//System.out.println("Santé basse.");
 			return true;
 		}
 
 		if (getCondition() == Condition.SICK) {
-			System.out.println("Malade.");
+			//System.out.println("Malade.");
 			return true;
 		}
 

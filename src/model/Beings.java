@@ -37,21 +37,15 @@ public class Beings extends SimState {
 		yard.clear();
 		
 		// RAZ des stats.
-		nbHuman = 0;
-		nbMen = 0;
-		nbWomen = 0;
-		nbDoctor = 0;
-		nbFood = 0;
-		nbInfectedHuman = 0;
-		nbMedicine = 0;
+		resetStats();
 
 		addObstacles();
 		
 		addAgentsHuman();
-		addAgentsFood();
+		//addAgentsFood();
 		addEnvironment();
 		addAgentsDoctor();
-		addAgentsVirus();
+		//addAgentsVirus();
 	}
 
 	/**
@@ -357,5 +351,19 @@ public class Beings extends SimState {
 	}
 	public int getNbBirth() {
 		return nbBirth;
+	}
+	
+	protected void resetStats() {
+		nbBirth = 0;
+		nbDeadAge = 0;
+		nbDeadStarvation = 0;
+		nbDeadVirus = 0;
+		nbDoctor = 0;
+		nbFood = 0;
+		nbHuman = 0;
+		nbInfectedHuman = 0;
+		nbMedicine = 0;
+		nbMen = 0;
+		nbWomen = 0;
 	}
 }

@@ -139,7 +139,7 @@ public class Doctor extends Human {
 				} else if (needHealing()){
 					basicNeedHealth();
 				} else if (needCuration()){
-					System.out.println("J'essaye de me soigner");
+					//System.out.println("J'essaye de me soigner");
 					basicNeedCuration();
 				} else if (needVaccination()){
 					basicNeedVaccination();
@@ -180,7 +180,7 @@ public class Doctor extends Human {
 		Human patient = humansToHelp.get(0);
 		if (objectIsAdjacent(patient)) {
 			// SI je suis a cote de lui je le soigne.
-			System.out.println("Je te soigne.");
+			//System.out.println("Je te soigne.");
 			handlePatient(patient);
 			humansToHelp.remove(0);
 			return true;
@@ -196,7 +196,7 @@ public class Doctor extends Human {
 		//System.out.println("Humains a soigner");
 		// Si il y a des gens a soigner.
 		Human patient = humansToHelp.get(0);
-		System.out.println("Je pars soigner un humain !");
+		//System.out.println("Je pars soigner un humain !");
 		moveTowardsPatient();
 	}
 
