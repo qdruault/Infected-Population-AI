@@ -64,19 +64,20 @@ public class Constants {
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
     public static final int MAX_INFECTING_ZONE = 5;
-    public static final int MAX_PROPAGATION_DURATION = 20;
+    public static final int MAX_PROPAGATION_DURATION = 5;
     public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
 
     // ENVIRONMENT parameters
     public static int BASE_FOOD = 10;
     public static int BASE_MEDICINE = 5;
-    public static final int FAMINE_DURATION = 10;
-    public static final float FAMINE_PROBABILITY = 0.05f;
-    public static final int FAMINE_REDUCTION = 4;
+    public static final int FAMINE_DURATION = 15;
+    public static final float FAMINE_PROBABILITY = 1f;
     public static final int SHORTAGE_DURATION = 10;
     public static final float SHORTAGE_PROBABILITY = 0.05f;
     public static final int SHORTAGE_REDUCTION = 4;
-    public static final float VIRUS_PROBABILITY = 0.25f;
-    public static final int VIRUS_GAP = 50;
+    public static final float VIRUS_PROBABILITY = 1f;
+    public static final int VIRUS_GAP = 100;
+    public static final int STARVATION_GAP = 130;
+    public static final int MAX_NB_HUMAN = 200;
 }
