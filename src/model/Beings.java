@@ -63,7 +63,7 @@ public class Beings extends SimState {
 				gender = Gender.MALE;
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
-			int fertility = random.nextInt(Constants.MAX_FERTILITY);
+			int fertility = 91 + random.nextInt(10);
 			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			Human a = new Human(immunity, fertility, gender, vision, age, this);
@@ -88,7 +88,7 @@ public class Beings extends SimState {
 				gender = Gender.MALE;
 			}
 			int immunity = random.nextInt(Constants.MAX_IMMUNITY);
-			int fertility = random.nextInt(Constants.MAX_FERTILITY);
+			int fertility = 91 + random.nextInt(10);
 			int age = random.nextInt(Constants.MAX_AGE_START);
 			int vision = 10;
 			float skill = random.nextFloat();

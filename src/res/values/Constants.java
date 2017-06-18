@@ -8,9 +8,9 @@ public class Constants {
     public static int GRID_SIZE = 35;
 
     // BEGINNING parameters
-    public static int NUM_HUMANS = 10;
-    public static int NUM_DOCTORS = 10;
-    public static int NUM_FOODS = 10;
+    public static int NUM_HUMANS = 20;
+    public static int NUM_DOCTORS = 20;
+    public static int NUM_FOODS = 20;
 
     // HUMAN parameters
     public static int NB_DIRECTIONS = 8;
@@ -28,7 +28,6 @@ public class Constants {
     public static int MAX_AGE_START = 25;
     public static int MAX_VISION = 4;
     public static int STARVATION_LOSS = 5;
-    public static int PROCREATION_MULTIPLIER = 100;
     public static float TRANSMISSION_PROBABILITY_0 = 0.1f;
     public static float TRANSMISSION_PROBABILITY_1 = 0.5f;
     public static float TRANSMISSION_PROBABILITY_2 = 0.75f;
@@ -37,6 +36,8 @@ public class Constants {
     public static float DOCTOR_PROBABILITY_0 = 0.25f;
     public static int IMPROVE_IMMUNITY_HEALED=4;
     public static int IMPROVE_IMMUNITY_CURED=2;
+    public static final int MIN_AGE_PROCREATE = 15;
+    public static final int MAX_AGE_PROCREATE = 80;
 
 
     // DOCTOR parameters
@@ -62,7 +63,9 @@ public class Constants {
     public static int MAX_NUTRITIONAL_PROVISION = 10;
     public static int MAX_FOOD_QUANTITY = 5;
     public static int ROTTING_DURATION = 10;
-
+    public static final int MAX_FOOD = 30;
+    public static final int MIN_FOOD = 0;
+    
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
     public static final int MAX_INFECTING_ZONE = 5;
@@ -75,12 +78,12 @@ public class Constants {
     public static int BASE_FOOD = 10;
     public static int BASE_MEDICINE = 5;
     public static final int FAMINE_DURATION = 15;
-    public static final float FAMINE_PROBABILITY = 1f;
+    public static final float FAMINE_PROBABILITY = 0.75f;
     public static final int SHORTAGE_DURATION = 10;
     public static final float SHORTAGE_PROBABILITY = 0.05f;
     public static final int SHORTAGE_REDUCTION = 4;
-    public static final float VIRUS_PROBABILITY = 1f;
-    public static final int VIRUS_GAP = 100;
+    public static final int VIRUS_NB_TOUR = 10;
+    public static final int FOOD_NB_TOUR = 5;
     public static final int STARVATION_GAP = 130;
     public static final int MAX_NB_HUMAN = 200;
 }

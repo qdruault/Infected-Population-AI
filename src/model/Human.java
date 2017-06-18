@@ -860,7 +860,7 @@ public class Human implements Steppable {
 		){
 
 			int immunity = beings.random.nextInt(Constants.MAX_IMMUNITY);
-			int fertility = beings.random.nextInt(Constants.MAX_FERTILITY);
+			int fertility = 91 + beings.random.nextInt(10);
 			Gender gender = (beings.random.nextInt(2) == 0) ? Gender.MALE : Gender.FEMALE;
 			int vision = beings.random.nextInt(Constants.MAX_VISION);
 
@@ -967,8 +967,6 @@ public class Human implements Steppable {
 		float fertilityProbability2 = (float) h.getFertility() / (float) Constants.MAX_FERTILITY;
 
 		float successProbability = fertilityProbability1 * fertilityProbability2;
-		float f = 1f - successProbability;
-		successProbability = 1f - ( f / (float) Constants.PROCREATION_MULTIPLIER);
 
 		if (beings.random.nextFloat() < successProbability){
 			toProcreate(h);
@@ -990,10 +988,10 @@ public class Human implements Steppable {
 		freeCell = (getGender() == Gender.FEMALE) ? beings.getFreeAdjacentCell(getX(), getY()) : beings.getFreeAdjacentCell(h.getX(), h.getY());
 
 		if (this.getGender() != h.getGender() && 
-				this.getAge() > 15 && 
-				this.getAge() < 80 && 
-				h.getAge() > 15 && 
-				h.getAge() < 80 && 
+				this.getAge() > Constants.MIN_AGE_PROCREATE && 
+				this.getAge() < Constants.MAX_AGE_PROCREATE && 
+				h.getAge() > Constants.MIN_AGE_PROCREATE && 
+				h.getAge() < Constants.MAX_AGE_PROCREATE && 
 				h.getTimeBeforeProcreating() == 0 &&
 				this.getTimeBeforeProcreating() == 0 &&
 				freeCell != null
