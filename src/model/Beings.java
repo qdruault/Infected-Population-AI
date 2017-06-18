@@ -21,11 +21,11 @@ public class Beings extends SimState {
 	protected int nbFood = 0;
 	protected int nbInfectedHuman = 0;
 	protected int nbMedicine = 0;
-	protected Map map;
+	protected Map map = new Map();
 	protected int nbDeadVirus = 0;
 	protected int nbDeadAge = 0;
 	protected int nbDeadStarvation = 0;
-	
+
 	protected int nbBirth = 0;
 
 	public Beings(long seed) {
@@ -35,12 +35,12 @@ public class Beings extends SimState {
 		//System.out.println("Simulation started");
 		super.start();
 		yard.clear();
-		
+
 		// RAZ des stats.
 		resetStats();
 
 		addObstacles();
-		
+
 		addAgentsHuman();
 		//addAgentsFood();
 		addEnvironment();
@@ -142,21 +142,21 @@ public class Beings extends SimState {
 		Stoppable stoppable;
 		System.out.println("NOUVEAU VIRUS");
 
-			// Gravite entre 8 et 12
-			int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
-			int moveRange = Constants.MAX_MOVE_RANGE;
-			int infectingArea = Constants.MAX_INFECTING_ZONE;
-			int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
-			int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
-			int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
-			Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
-			Int2D location = freeLocation();
+		// Gravite entre 8 et 12
+		int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
+		int moveRange = Constants.MAX_MOVE_RANGE;
+		int infectingArea = Constants.MAX_INFECTING_ZONE;
+		int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
+		int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
+		int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
+		Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
+		Int2D location = freeLocation();
 
-			yard.set(location.x, location.y, a);
-			a.setX(location.x);
-			a.setY(location.y);
-			stoppable = schedule.scheduleRepeating(a);
-			a.setStoppable(stoppable);
+		yard.set(location.x, location.y, a);
+		a.setX(location.x);
+		a.setY(location.y);
+		stoppable = schedule.scheduleRepeating(a);
+		a.setStoppable(stoppable);
 	}
 
 	/**
@@ -166,18 +166,17 @@ public class Beings extends SimState {
 		Environment  a  =  new Environment(this);
 		schedule.scheduleRepeating(a);
 	}
-	
+
 	/**
 	 * G�n�re les obstacles.
 	 */
 	public void addObstacles(){
-		map = new Map();
-
+		
 		for(int  i  =  0;  i  <  map.getObstacles().size();  i++) {
 			yard.set(map.getObstacles().get(i).getX(), map.getObstacles().get(i).getY(), map.getObstacles().get(i));
 		}
 	}
-	
+
 	/** Remet un obstacle sur la carte.
 	 * 
 	 * @param x
@@ -189,7 +188,7 @@ public class Beings extends SimState {
 				yard.set(x, y, map.getObstacles().get(i));
 		}
 	}
-	
+
 	/**
 	 * Indique si une case est libre.
 	 * @param x
@@ -215,6 +214,35 @@ public class Beings extends SimState {
 					random.nextInt(yard.getHeight()) );
 		}
 		return location;
+	}
+
+
+	/**
+	 * @TODO : trouver une meilleure configuration spatiale.
+	 * Trouve un endroit libre dans les zones de nourriture.
+	 * @return
+	 */
+	public Int2D getFreeFoodLocation() {
+		Int2D location = null;
+		int cpt = 0;
+
+		if (random.nextInt() % 2 == 0) {
+			// En haut a gauche.
+			do {
+				cpt++;
+				location = new Int2D(random.nextInt(10) + 1, random.nextInt(10) + 1 );
+			} while ((yard.get(location.x,location.y)) != null || (map != null && !map.isLocationFree(location.x,location.y)) && cpt < 100);
+			
+			return location;
+
+		} else {
+			// En bas a droite.
+			do {
+				location = new Int2D(Constants.GRID_SIZE - random.nextInt(10) - 2, Constants.GRID_SIZE - random.nextInt(10) - 2);
+			} while ((yard.get(location.x,location.y)) != null || (map != null && !map.isLocationFree(location.x,location.y)) && cpt < 100);
+			
+			return location;
+		}
 	}
 
 	// Return a free adjacent cell if there is one, null otherwise
@@ -284,7 +312,7 @@ public class Beings extends SimState {
 
 		return objects;
 	}
-	
+
 
 	public int getNbHuman() {
 		return nbHuman;
@@ -344,7 +372,7 @@ public class Beings extends SimState {
 	}
 	public void decreaseNbMedicine(int p_quantity) { this.nbMedicine -= p_quantity; }
 	public void increaseNbMedicine(int p_quantity) { this.nbMedicine += p_quantity; }
-	
+
 	public void increaseNbDeadVirus() {
 		this.nbDeadVirus++;
 	}
@@ -372,7 +400,7 @@ public class Beings extends SimState {
 	public int getNbBirth() {
 		return nbBirth;
 	}
-	
+
 	protected void resetStats() {
 		nbBirth = 0;
 		nbDeadAge = 0;

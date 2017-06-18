@@ -32,6 +32,8 @@ public class Medicine implements Steppable {
 
     public Medicine(int _quantity, Beings beings){
         quantity = _quantity;
+        this.beings = beings;
+        beings.increaseNbMedicine(quantity);
     }
 
     public int consume(int q){
@@ -48,9 +50,7 @@ public class Medicine implements Steppable {
     }
 
     public Boolean mustDisappear(){
-        if (quantity == 0)
-            return true;
-        else return false;
+        return quantity == 0;
     }
 
     // Getters ans setters

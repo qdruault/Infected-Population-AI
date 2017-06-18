@@ -560,6 +560,7 @@ public class Human implements Steppable {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
 								System.out.println("I am infected by my neighbor ");
 								condition = Condition.SICK;
+								beings.increaseNbInfectedHuman();
 								initialActivationTimeVirus=((Human)currentNeighbor).getInitialActivationTimeVirus();
 								timeBeforeSuffering=((Human)currentNeighbor).getInitialActivationTimeVirus();
 								break;

@@ -126,13 +126,16 @@ public class Environment implements Steppable{
 //          System.out.println("Result food "+result);
             
             for (int i = 0; i < result; i++){
-                Int2D pos = beings.freeLocation();
-                Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY), beings);
-                beings.yard.set(pos.x, pos.y, food);
-                food.setX(pos.x);
-                food.setY(pos.y);
-                stoppable = beings.schedule.scheduleRepeating(food);
-                food.setStoppable(stoppable);
+                //Int2D pos = beings.getFreeFoodLocation();
+            	Int2D pos = beings.freeLocation();
+                if (pos != null) {
+                	Food food = new Food(beings.random.nextInt(Constants.MAX_NUTRITIONAL_PROVISION), beings.random.nextInt(Constants.MAX_FOOD_QUANTITY), beings);
+                    beings.yard.set(pos.x, pos.y, food);
+                    food.setX(pos.x);
+                    food.setY(pos.y);
+                    stoppable = beings.schedule.scheduleRepeating(food);
+                    food.setStoppable(stoppable);
+				}
             }
 		}
     }
