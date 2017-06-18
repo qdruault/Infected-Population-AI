@@ -204,7 +204,9 @@ public class Doctor extends Human {
 		Bag medicines = lookForAdjacentMedicine();
 		if (medicines.size() > 0){
 			Medicine medicine = (Medicine)medicines.pop();
-			pickUpMedicine(medicine);
+			if( medicine.getQuantity() > 0) {
+				pickUpMedicine(medicine);
+			}
 		} else {
 			if (canMove()){
 				// Move to find medicine
