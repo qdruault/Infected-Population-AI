@@ -170,7 +170,9 @@ public class BeingsWithUI extends GUIState {
 
 	private HexagonalPortrayal2D getMedicinePortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
-		r.paint = Color.GREEN;
+		//r.paint = Color.GREEN;
+		r.paint = new Color(54, 178, 42);
+		//54 178 42
 		r.filled = true;
 		return r;
 	}

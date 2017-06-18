@@ -24,13 +24,15 @@ public class Medicine implements Steppable {
         beings = (Beings) simState;
 
         if (mustDisappear()){
+            System.out.println("Medicine  is disappearing");
             beings.yard.set(getX(), getY(), null);
             stoppable.stop();
         }
     }
 
-    public Medicine(int _quantity){
+    public Medicine(int _quantity, Beings _beings){
         quantity = _quantity;
+        beings = _beings;
     }
 
     public int consume(int q){
@@ -41,7 +43,7 @@ public class Medicine implements Steppable {
         } else {
             q = quantity;
             quantity = 0;
-            beings.decreaseNbMedicine(quantity);
+            beings.decreaseNbMedicine(q);
             return q;
         }
     }

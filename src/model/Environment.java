@@ -73,7 +73,7 @@ public class Environment implements Steppable{
 
         for (int i = 0; i < result; i++){
             Int2D pos = beings.freeLocation();
-            Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY));
+            Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY), beings);
             beings.yard.set(pos.x, pos.y, medicine);
             medicine.setX(pos.x);
             medicine.setY(pos.y);
@@ -100,7 +100,7 @@ public class Environment implements Steppable{
     }
     
     public void restoreMedicine(){
-    	// Restauration de la quantitï¿½ de médicament normale
+    	// Restauration de la quantitï¿½ de mï¿½dicament normale
     	usedMedicineStat = maxMedicine;
     }
     
