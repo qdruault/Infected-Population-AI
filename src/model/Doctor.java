@@ -2,10 +2,11 @@ package model;
 
 import res.values.Constants;
 import sim.engine.SimState;
+import sim.util.Bag;
 import sim.util.Int2D;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Map;
 
 import model.Human.Condition;
 import model.Human.Gender;
@@ -42,7 +43,8 @@ public class Doctor extends Human {
 	public Doctor(int immunity, int fertility, Gender gender, Condition condition, int vision, float skill, Beings beings) {
 		super(immunity, fertility, gender, condition, vision, beings);
 		this.skill = skill;
-		this.drugStock = Constants.MAX_DRUG_STOCK;
+		//this.drugStock = Constants.MAX_DRUG_STOCK;
+		this.drugStock = 0;
 		this.humansToHelp= new ArrayList<>();//initialize the list to empty
 
 		// MAJ des stats.
@@ -133,7 +135,7 @@ public class Doctor extends Human {
 				if (needEatingStrong()){
 					basicNeedEat();
 				} else if (needDrugs()) {
-					// TODO add the basicNeedLookForFood method here
+					basicNeedLookForMedicine();
 				} else if (needHealing()){
 					basicNeedHealth();
 				} else if (needCuration()){
@@ -198,6 +200,25 @@ public class Doctor extends Human {
 		moveTowardsPatient();
 	}
 
+	protected void basicNeedLookForMedicine() {
+		Bag medicines = lookForAdjacentMedicine();
+		if (medicines.size() > 0){
+			Medicine medicine = (Medicine)medicines.pop();
+			pickUpMedicine(medicine);
+		} else {
+			if (canMove()){
+				// Move to find medicine
+				Int2D medicineCase = lookForMedicineLocation();
+
+				if (medicineCase != null){
+					moveTowardsCell(medicineCase);
+				} else {
+					// Move in a random direction and hope to find medicine
+					moveRandom();
+				}
+			}
+		}
+	}
 	/**
 	 * Decide to vaccinate himself
 	 * @return true if successed, false otherwise
@@ -349,12 +370,79 @@ public class Doctor extends Human {
 		humansToHelp.add(human);
 	}
 
-	public void pickUpMedicine(Medicine medicine){
+	private void pickUpMedicine(Medicine medicine){
 		int quantityPickedUp = medicine.consume(Constants.MAX_MEDICINE_QUANTITY - drugStock);
 		drugStock = Math.min(drugStock + quantityPickedUp * medicine.getQuantity(), Constants.MAX_MEDICINE_QUANTITY);
+		System.out.println(drugStock);
+	}
+
+	private Bag lookForAdjacentMedicine(){
+		Bag medicines = new Bag();
+		Bag neighbors = beings.getAdjacentCells(getX(),getY());
+
+		Object currentNeighbor = neighbors.pop();
+
+		for (int i = 0; i < 8; i++){
+			if (currentNeighbor instanceof Medicine){
+				medicines.add(currentNeighbor);
+			}
+			currentNeighbor = neighbors.pop();
+		}
+		return medicines;
+	}
+
+	public Int2D lookForMedicineLocation(){
+		HashMap<Case, Integer> medicineCases = new HashMap<Case, Integer>();
+
+
+		int x_depart = x - vision;
+		int y_depart = y - vision;
+
+		int x_fin = x + vision;
+		int y_fin = y + vision;
+
+		// Parcours de toutes les cases
+		for (int indexX = x_depart; indexX <= x_fin; ++indexX) {
+			for (int indexY = y_depart; indexY <= y_fin; ++indexY) {
+				// Pour pas sortir de la grille.
+				int realX = fixCoordinate(indexX);
+
+				int realY = fixCoordinate(indexY);
+
+				// Objet aux coordonnï¿½es
+				Object object = beings.yard.get(realX, realY);
+				if (object != null) {
+					// Si la case contient un objet Medicine
+					if (object instanceof Medicine) {
+						// Ajout de la case avec sa distance.
+						Integer distance = Math.max(Math.abs(indexX - x), Math.abs(indexY - y));
+						medicineCases.put(new Case(indexX, indexY), distance);
+					}
+				}
+			}
+		}
+
+		// On cherche la plus proche.
+		Int2D res = null;
+		Integer minD = Constants.GRID_SIZE;
+
+		Iterator<Map.Entry<Case, Integer>> it = medicineCases.entrySet().iterator();
+		while (it.hasNext()) {
+			HashMap.Entry pair = (HashMap.Entry)it.next();
+			Integer value = (Integer)pair.getValue();
+			Case key = (Case)pair.getKey();
+			if(value < minD) {
+				minD = value;
+				res = new Int2D(key.getX(), key.getY());
+			}
+		}
+		return res;
 	}
 
 	public boolean needDrugs(){
 		return drugStock > Constants.HEAL_CONSUMMATION;
 	}
+
+	public int getDrugStock(){ return drugStock; }
+	public void setDrugStock(int drugStock){ this.drugStock = drugStock; }
 }

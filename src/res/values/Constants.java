@@ -54,7 +54,7 @@ public class Constants {
     public static int IMPROVE_IMMUNITY_DOCTOR_2=10;
 
     // MEDICINE parameters
-    public static int MAX_MEDICINE_QUANTITY = 100;
+    public static int MAX_MEDICINE_QUANTITY = 300;
 
     // FOOD parameters
     public static int MAX_NUTRITIONAL_PROVISION = 10;

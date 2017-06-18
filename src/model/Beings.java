@@ -154,7 +154,7 @@ public class Beings extends SimState {
 	}
 	
 	/**
-	 * Génère les obstacles.
+	 * Gï¿½nï¿½re les obstacles.
 	 */
 	public void addObstacles(){
 		map = new Map();
@@ -245,35 +245,15 @@ public class Beings extends SimState {
 	public Bag getAdjacentCells(int x, int y){
 		Bag objects = new Bag();
 		// RIGHT
-//		if (x + 1 > Constants.GRID_SIZE-1)
-//			objects.add( yard.get(0, y));
-//		else
-//			objects.add( yard.get(x + 1, y));
-
 		objects.add(yard.get(yard.stx(x + 1), y));
 
 		// LEFT
-//		if (x - 1 < 0)
-//			objects.add( yard.get(Constants.GRID_SIZE-1, y));
-//		else
-//			objects.add( yard.get(x - 1, y));
-
 		objects.add(yard.get(yard.stx(x - 1), y));
 
 		// DOWN
-//		if (y + 1 > Constants.GRID_SIZE-1)
-//			objects.add( yard.get(x, 0));
-//		else
-//			objects.add( yard.get(x, y + 1));
-
 		objects.add(yard.get(x, yard.sty(y + 1)));
 
 		// UP
-//		if (y - 1 < 0)
-//			objects.add( yard.get(x, Constants.GRID_SIZE-1));
-//		else
-//			objects.add( yard.get(x, y - 1));
-
 		objects.add(yard.get(x, yard.sty(y - 1)));
 
 		// TOP RIGHT
