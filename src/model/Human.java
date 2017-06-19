@@ -158,7 +158,8 @@ public class Human implements Steppable {
 				basicNeedProcreate();
 			}
 			//will become sick if one of his neighbor is
-			isBeingInfected();
+			if (condition==Condition.FINE)
+				isBeingInfected();
 		}
 	}
 
@@ -248,6 +249,7 @@ public class Human implements Steppable {
 			// Tant que l'on a encore faim et qu'il reste a manger.
 			while (getGratification() < 100 && food.getQuantity() > 0 ){
 				// On mange une portion.
+				System.out.println("je mange");
 				toEat(food, 1);
 			}
 		} else {
@@ -908,10 +910,12 @@ public class Human implements Steppable {
 
 			if (isDoctor){
 				float skill = beings.random.nextFloat();
+				System.out.println("docteur mis au monde");
 				child = new Doctor(immunity, fertility, gender, condition, vision, skill, beings);
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getDoctorPortrayal());
 
 			} else {
+				System.out.println("humain mis au monde");
 				child = new Human(immunity, fertility, gender, condition, vision, beings);
 				beings.getBeingsWithUI().getYardPortrayal().setPortrayalForObject(child, beings.getBeingsWithUI().getHumanPortrayal());
 			}

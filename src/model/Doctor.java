@@ -79,7 +79,6 @@ public class Doctor extends Human {
 		if (timeBeforeProcreating > 0) {
 			timeBeforeProcreating--;
 		}
-
 		setAge(getAge() + 1);
 
 		if (mustDie()) {
@@ -180,7 +179,7 @@ public class Doctor extends Human {
 		Human patient = humansToHelp.get(0);
 		if (objectIsAdjacent(patient)) {
 			// SI je suis a cote de lui je le soigne.
-			//System.out.println("Je te soigne.");
+			System.out.println("Je te soigne.");
 			handlePatient(patient);
 			humansToHelp.remove(0);
 			return true;
