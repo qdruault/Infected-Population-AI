@@ -45,7 +45,7 @@ public class Beings extends SimState {
 		addAgentsFood();
 		addEnvironment();
 		addAgentsDoctor();
-		//addAgentsVirus();
+		addAgentsVirus();
 		//addAgentsMedicine();
 		//addAgentsVirus();
 	}
