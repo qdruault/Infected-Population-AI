@@ -558,11 +558,12 @@ public class Human implements Steppable {
 					if (currentNeighbor != null) {
 						if (currentNeighbor instanceof  Human) {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
-								float fertility1 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
-								float fertility2 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
-								float infectionProbability = fertility1 * fertility2;
-								if (Math.pow(beings.random.nextFloat(), 1) > infectionProbability) {
-                                    System.out.println("I am infected by my neighbor ");
+								float immunity1 = (float)getImmunity() / (float)Constants.MAX_IMMUNITY;
+								float immunity2 = (float)getImmunity() / (float)Constants.MAX_IMMUNITY;
+								float infectionProbability = immunity2;
+//								if (Math.pow(beings.random.nextFloat(), 1) > infectionProbability) {
+								if ( infectionProbability >0.5) {
+									System.out.println("I am infected by my neighbor ");
                                     condition = Condition.SICK;
                                     beings.increaseNbInfectedHuman();
                                     initialActivationTimeVirus = ((Human) currentNeighbor).getInitialActivationTimeVirus();
