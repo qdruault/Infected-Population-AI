@@ -36,12 +36,12 @@ public class Environment implements Steppable{
     public void step(SimState state) {
         beings = (Beings) state;
         
-        //manageFamine();
+        manageFamine();
         //manageShortage();
         //manageVirus();
         
         generateFood();
-        //generateMedicine(usedMedicineStat);
+        generateMedicine(usedMedicineStat);
         
         cpt++;
     }
@@ -117,10 +117,7 @@ public class Environment implements Steppable{
             if (famineDuration != 0) {
             	result = Constants.MIN_FOOD;
     		} else {
-                result = 15;
-//    			result = beings.getNbHuman() / 2;
-//    			if (result > Constants.MAX_FOOD) {
-//					result = Constants.MAX_FOOD;
+                result = Constants.MAX_FOOD;
 //				}
     		}
             Stoppable stoppable;
@@ -147,7 +144,7 @@ public class Environment implements Steppable{
      * @param max
      */
     public void generateMedicine(int max) {
-        if ((cpt + 2) % Constants.MEDICINE_NB_TOUR == 0) {
+        if ((cpt) % Constants.MEDICINE_NB_TOUR == 0) {
             Stoppable stoppable;
             int result = 1;
             //int result = beings.random.nextInt(max + 1);
