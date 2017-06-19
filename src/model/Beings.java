@@ -42,11 +42,11 @@ public class Beings extends SimState {
 		addObstacles();
 
 		addAgentsHuman();
-		//addAgentsFood();
+		addAgentsFood();
 		addEnvironment();
 		addAgentsDoctor();
 		addAgentsVirus();
-		addAgentsMedicine();
+		//addAgentsMedicine();
 		//addAgentsVirus();
 	}
 
@@ -143,12 +143,18 @@ public class Beings extends SimState {
 		System.out.println("NOUVEAU VIRUS");
 
 		// Gravite entre 8 et 12
-		int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
-		int moveRange = Constants.MAX_MOVE_RANGE;
-		int infectingArea = Constants.MAX_INFECTING_ZONE;
-		int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
-		int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
-		int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
+//		int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
+//		int moveRange = Constants.MAX_MOVE_RANGE;
+//		int infectingArea = Constants.MAX_INFECTING_ZONE;
+//		int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
+//		int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
+//		int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
+		int gravity = 4;
+		int moveRange = 1;
+		int infectingArea = 2;
+		int propagationDuration = 3;
+		int nbHumanToInfect = 2;
+		int timeBeforeActivation = 3;
 		Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
 		Int2D location = freeLocation();
 

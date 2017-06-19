@@ -163,14 +163,14 @@ public class BeingsWithUI extends GUIState {
 
 	private HexagonalPortrayal2D getMedicinePortrayal() {
 		HexagonalPortrayal2D r = new HexagonalPortrayal2D();
-		r.paint=new Color(255, 0,255);
+		r.paint=new Color(49, 178,64);
 		r.filled = true;
 		return r;
 	}
 	private OvalPortrayal2D getFoodPortrayal() {
 		OvalPortrayal2D r = new OvalPortrayal2D();
 		//r.paint = Color.GREEN;
-		r.paint = new Color(54, 178, 42);
+		r.paint = new Color(4, 239, 32);
 		//54 178 42
 		r.filled = true;
 		return r;

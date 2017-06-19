@@ -558,12 +558,19 @@ public class Human implements Steppable {
 					if (currentNeighbor != null) {
 						if (currentNeighbor instanceof  Human) {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
-								System.out.println("I am infected by my neighbor ");
-								condition = Condition.SICK;
-								beings.increaseNbInfectedHuman();
-								initialActivationTimeVirus=((Human)currentNeighbor).getInitialActivationTimeVirus();
-								timeBeforeSuffering=((Human)currentNeighbor).getInitialActivationTimeVirus();
-								break;
+								float fertility1 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
+								float fertility2 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
+								float infectionProbability = fertility1 * fertility2;
+								if (Math.pow(beings.random.nextFloat(), 1) > infectionProbability) {
+                                    System.out.println("I am infected by my neighbor ");
+                                    condition = Condition.SICK;
+                                    beings.increaseNbInfectedHuman();
+                                    initialActivationTimeVirus = ((Human) currentNeighbor).getInitialActivationTimeVirus();
+                                    timeBeforeSuffering = ((Human) currentNeighbor).getInitialActivationTimeVirus();
+                                    break;
+                                } else {
+								    System.out.println("I wasn't  infected");
+                                }
 							}
 						}
 					}
@@ -1179,7 +1186,7 @@ public class Human implements Steppable {
 	 * Met a jour le temps a attendre avant de procreer a nouveau.
 	 */
 	public void updateTimeBeforeProcreating() {
-		this.timeBeforeProcreating = 3;
+		this.timeBeforeProcreating = Constants.TIME_BETWEEN_PROCREATION;
 	}
 
 	public int getTimeBeforeProcreating() {
