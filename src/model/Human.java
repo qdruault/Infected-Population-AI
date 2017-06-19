@@ -563,8 +563,8 @@ public class Human implements Steppable {
 								float infectionProbability = fertility1 * fertility2;
 								if (Math.pow(beings.random.nextFloat(), 1) > infectionProbability) {
                                     System.out.println("I am infected by my neighbor ");
-                                    condition = Condition.SICK;
-                                    beings.increaseNbInfectedHuman();
+                                    this.setCondition(Condition.SICK);
+//                                    beings.increaseNbInfectedHuman();
                                     initialActivationTimeVirus = ((Human) currentNeighbor).getInitialActivationTimeVirus();
                                     timeBeforeSuffering = ((Human) currentNeighbor).getInitialActivationTimeVirus();
                                     break;
@@ -967,7 +967,7 @@ public class Human implements Steppable {
 				condition = Condition.SICK;
 				h.setCondition(Condition.SICK);
 				//System.out.println("Virus transmis");
-				this.beings.increaseNbInfectedHuman();
+//				this.beings.increaseNbInfectedHuman();
 			}
 		}
 
