@@ -46,12 +46,14 @@ public class Beings extends SimState {
 		addEnvironment();
 		addAgentsDoctor();
 		addAgentsVirus();
+//		addBadAgentsVirus();
+
 		//addAgentsMedicine();
 		//addAgentsVirus();
 	}
 
 	/**
-	 * G�n�re des Humains sur la carte.
+	 * Genere des Humains sur la carte.
 	 */
 	public void addAgentsHuman(){
 		Stoppable stoppable;
@@ -76,7 +78,7 @@ public class Beings extends SimState {
 		}
 	}
 	/**
-	 * G�n�re des docteurs sur la carte.
+	 * Genere des docteurs sur la carte.
 	 */
 	public void addAgentsDoctor(){
 		Stoppable stoppable;
@@ -102,7 +104,7 @@ public class Beings extends SimState {
 		}
 	}
 	/**
-	 * G�n�re des medicaments sur la carte.
+	 * Genere des medicaments sur la carte.
 	 */
 	public void addAgentsMedicine(){
 		Stoppable stoppable;
@@ -118,7 +120,7 @@ public class Beings extends SimState {
 	}
 
 	/**
-	 * G�n�re de la nourriture sur la carte.
+	 * Genere de la nourriture sur la carte.
 	 */
 	public void addAgentsFood(){
 		Stoppable stoppable;
@@ -165,6 +167,37 @@ public class Beings extends SimState {
 		a.setStoppable(stoppable);
 	}
 
+	/**
+	 * G�n�re un virus sur la carte.
+	 */
+	public void addBadAgentsVirus(){
+		Stoppable stoppable;
+		System.out.println("NOUVEAU VIRUS");
+
+		// Gravite entre 8 et 12
+//		int gravity= random.nextInt(Constants.MAX_GRAVITY) + 8;
+//		int moveRange = Constants.MAX_MOVE_RANGE;
+//		int infectingArea = Constants.MAX_INFECTING_ZONE;
+//		int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
+//		int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
+//		int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
+		int gravity = 10;
+		int moveRange = 1;
+		int infectingArea = 3;
+		int propagationDuration = 10;
+		int nbHumanToInfect = 15;
+		int timeBeforeActivation = 3;
+		Virus  a  =  new Virus(gravity, moveRange, infectingArea, propagationDuration, nbHumanToInfect, timeBeforeActivation);
+		Int2D location = freeLocation();
+
+		yard.set(location.x, location.y, a);
+		a.setX(location.x);
+		a.setY(location.y);
+		stoppable = schedule.scheduleRepeating(a);
+		a.setStoppable(stoppable);
+	}
+
+	
 	/**
 	 * G�n�re un environnement.
 	 */

@@ -71,7 +71,7 @@ public class Constants {
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
     public static final int MAX_INFECTING_ZONE = 5;
-    public static final int MAX_PROPAGATION_DURATION = 5;
+    public static final int MAX_PROPAGATION_DURATION = 15;
     public static final int MAX_NB_HUMAN_TO_CONTAMINATE = 2;
     public static final int MAX_GRAVITY = 5;
     public static final int MAX_TIME_BEFORE_ACTIVATION=3;

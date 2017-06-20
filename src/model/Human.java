@@ -558,7 +558,6 @@ public class Human implements Steppable {
 					if (currentNeighbor != null) {
 						if (currentNeighbor instanceof  Human) {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
-<<<<<<< HEAD
 								float fertility1 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
 								float fertility2 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
 								float infectionProbability = fertility1 * fertility2;
