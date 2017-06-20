@@ -151,7 +151,7 @@ public class Beings extends SimState {
 //		int propagationDuration= Constants.MAX_PROPAGATION_DURATION;
 //		int nbHumanToInfect = Constants.MAX_NB_HUMAN_TO_CONTAMINATE;
 //		int timeBeforeActivation  = Constants.MAX_TIME_BEFORE_ACTIVATION;
-		int gravity = 4;
+		int gravity = 2;
 		int moveRange = 1;
 		int infectingArea = 2;
 		int propagationDuration = 3;
