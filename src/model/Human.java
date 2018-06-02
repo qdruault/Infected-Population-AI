@@ -157,8 +157,10 @@ public class Human implements Steppable {
 				//System.out.println("I need to procreate");
 				basicNeedProcreate();
 			}
-			//will become sick if one of his neighbor is
-			isBeingInfected();
+			if (this.condition == Condition.FINE) {
+				//will become sick if one of his neighbor is
+				isBeingInfected();
+			}			
 		}
 	}
 
@@ -558,19 +560,13 @@ public class Human implements Steppable {
 					if (currentNeighbor != null) {
 						if (currentNeighbor instanceof  Human) {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
-								float fertility1 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
-								float fertility2 = (float)getFertility() / (float)Constants.MAX_IMMUNITY;
-								float infectionProbability = fertility1 * fertility2;
-//								if (Math.pow(beings.random.nextFloat(), 1) > infectionProbability) {
-								if ( infectionProbability >0.5) {
-                                    System.out.println("I am infected by my neighbor ");
+								float immunity = (float)getImmunity() / (float)Constants.MAX_IMMUNITY;
+								float infectionProbability = (float) Math.pow(beings.random.nextFloat(), 10);
+								if ( infectionProbability > immunity ) {
                                     this.setCondition(Condition.SICK);
-//                                    beings.increaseNbInfectedHuman();
                                     initialActivationTimeVirus = ((Human) currentNeighbor).getInitialActivationTimeVirus();
                                     timeBeforeSuffering = ((Human) currentNeighbor).getInitialActivationTimeVirus();
                                     break;
-                                } else {
-								    System.out.println("I wasn't  infected");
                                 }
 							}
 						}
@@ -965,7 +961,7 @@ public class Human implements Steppable {
 			// On infecte le partenaire.
 			float conditionResult = beings.random.nextFloat();
 			if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
-				condition = Condition.SICK;
+				setCondition(Condition.SICK);
 				h.setCondition(Condition.SICK);
 				//System.out.println("Virus transmis");
 //				this.beings.increaseNbInfectedHuman();

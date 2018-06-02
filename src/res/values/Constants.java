@@ -9,7 +9,7 @@ public class Constants {
 
     // BEGINNING parameters
     public static int NUM_HUMANS = 75;
-    public static int NUM_DOCTORS = 25;
+    public static int NUM_DOCTORS = 0;
     public static int NUM_FOODS = 20;
 
     // HUMAN parameters
@@ -66,7 +66,7 @@ public class Constants {
     public static int MAX_FOOD_QUANTITY = 5;
     public static int ROTTING_DURATION = 10;
     public static final int MAX_FOOD = 15;
-    public static final int MIN_FOOD = 10;
+    public static final int MIN_FOOD = 1;
     
     // VIRUS parameters
     public static final int MAX_MOVE_RANGE = 3;
