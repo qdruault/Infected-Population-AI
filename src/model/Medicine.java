@@ -13,6 +13,8 @@ public class Medicine implements Steppable {
     Beings beings;
     int quantity;
     private Stoppable stoppable;
+    private int expirationDate = Constants.MAX_EXPIRATION_DATE;
+    private boolean expired = false;
 
     private int x;
     private int y;
@@ -24,9 +26,16 @@ public class Medicine implements Steppable {
         beings = (Beings) simState;
 
         if (mustDisappear()){
-            System.out.println("Medicine  is disappearing");
             beings.yard.set(getX(), getY(), null);
             stoppable.stop();
+        } else {
+            if (!expired) {
+                // Il se p�rime.
+                expirationDate -= 5;
+                if (expirationDate <= 0) {
+                    expired = true;
+                }
+            }
         }
     }
 
@@ -50,7 +59,7 @@ public class Medicine implements Steppable {
     }
 
     public Boolean mustDisappear(){
-        return quantity == 0;
+        return (quantity == 0 || expired);
     }
 
     // Getters ans setters

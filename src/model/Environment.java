@@ -37,11 +37,11 @@ public class Environment implements Steppable{
         beings = (Beings) state;
         
         manageFamine();
-        manageShortage();
+        //manageShortage();
         manageVirus();
         
         generateFood();
-        //generateMedicine(usedMedicineStat);
+        generateMedicine(usedMedicineStat);
         
         cpt++;
     }
@@ -101,7 +101,7 @@ public class Environment implements Steppable{
         	// Plus il y a d'humain, plus la proba augmente.
             float virusPossibility = beings.random.nextFloat();
             if (virusPossibility < ratioHuman) {
-                beings.addAgentsVirus();
+                beings.addAgentsVirusStrong();
             }
     	}
     }
@@ -117,10 +117,12 @@ public class Environment implements Steppable{
             if (famineDuration != 0) {
             	result = Constants.MIN_FOOD;
     		} else {
-    			result = beings.getNbHuman() / 2;
-    			if (result > Constants.MAX_FOOD) {
+    			if (beings.getNbHuman() < Constants.MAX_FOOD) {
+					result = beings.getNbHuman() / 2;
+				} else {
 					result = Constants.MAX_FOOD;
 				}
+                
     		}
             Stoppable stoppable;
 //          System.out.println("Result food "+result);
@@ -145,19 +147,22 @@ public class Environment implements Steppable{
      * Generate a random medicine quantity on the yard
      * @param max
      */
-    public void generateMedicine(int max){
-        Stoppable stoppable;
-        int result = beings.random.nextInt(max + 1);
+    public void generateMedicine(int max) {
+        if ((cpt) % Constants.MEDICINE_NB_TOUR == 0) {
+            Stoppable stoppable;
+            int result = 1;
+            //int result = beings.random.nextInt(max + 1);
 //        System.out.println("Result medecine "+result);
 
-        for (int i = 0; i < result; i++){
-            Int2D pos = beings.freeLocation();
-            Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY), beings);
-            beings.yard.set(pos.x, pos.y, medicine);
-            medicine.setX(pos.x);
-            medicine.setY(pos.y);
-            stoppable = beings.schedule.scheduleRepeating(medicine);
-            medicine.setStoppable(stoppable);
+            for (int i = 0; i < result; i++) {
+                Int2D pos = beings.freeLocation();
+                Medicine medicine = new Medicine(beings.random.nextInt(Constants.MAX_MEDICINE_QUANTITY), beings);
+                beings.yard.set(pos.x, pos.y, medicine);
+                medicine.setX(pos.x);
+                medicine.setY(pos.y);
+                stoppable = beings.schedule.scheduleRepeating(medicine);
+                medicine.setStoppable(stoppable);
+            }
         }
     }
     

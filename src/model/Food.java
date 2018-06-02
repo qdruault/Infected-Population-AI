@@ -145,7 +145,7 @@ public class Food implements Steppable {
      */
     //TODO : changer le rotten pour avoir une condition de disparition quand la nourriture est trop périmée
     public Boolean mustDisappear(){
-        if (quantity == 0)
+        if (quantity == 0 || rottingIn < -200)
             return true;
         else return false;
     }

@@ -157,9 +157,11 @@ public class Human implements Steppable {
 				//System.out.println("I need to procreate");
 				basicNeedProcreate();
 			}
-			//will become sick if one of his neighbor is
-			if (condition==Condition.FINE)
+
+			if (this.condition == Condition.FINE) {
+				//will become sick if one of his neighbor is
 				isBeingInfected();
+			}			
 		}
 	}
 
@@ -560,12 +562,14 @@ public class Human implements Steppable {
 					if (currentNeighbor != null) {
 						if (currentNeighbor instanceof  Human) {
 							if (Condition.SICK==((Human)currentNeighbor).getCondition()) {
-								System.out.println("I am infected by my neighbor ");
-								condition = Condition.SICK;
-								beings.increaseNbInfectedHuman();
-								initialActivationTimeVirus=((Human)currentNeighbor).getInitialActivationTimeVirus();
-								timeBeforeSuffering=((Human)currentNeighbor).getInitialActivationTimeVirus();
-								break;
+								float immunity = (float)getImmunity() / (float)Constants.MAX_IMMUNITY;
+								float infectionProbability = (float) Math.pow(beings.random.nextFloat(), 10);
+								if ( infectionProbability > immunity ) {
+                                    this.setCondition(Condition.SICK);
+                                    initialActivationTimeVirus = ((Human) currentNeighbor).getInitialActivationTimeVirus();
+                                    timeBeforeSuffering = ((Human) currentNeighbor).getInitialActivationTimeVirus();
+                                    break;
+                                }
 							}
 						}
 					}
@@ -961,10 +965,10 @@ public class Human implements Steppable {
 			// On infecte le partenaire.
 			float conditionResult = beings.random.nextFloat();
 			if (conditionResult < Constants.TRANSMISSION_PROBABILITY_1) {
-				condition = Condition.SICK;
+				setCondition(Condition.SICK);
 				h.setCondition(Condition.SICK);
 				//System.out.println("Virus transmis");
-				this.beings.increaseNbInfectedHuman();
+//				this.beings.increaseNbInfectedHuman();
 			}
 		}
 
@@ -1183,7 +1187,7 @@ public class Human implements Steppable {
 	 * Met a jour le temps a attendre avant de procreer a nouveau.
 	 */
 	public void updateTimeBeforeProcreating() {
-		this.timeBeforeProcreating = 3;
+		this.timeBeforeProcreating = Constants.TIME_BETWEEN_PROCREATION;
 	}
 
 	public int getTimeBeforeProcreating() {

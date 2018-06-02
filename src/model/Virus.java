@@ -100,7 +100,7 @@ public class Virus implements Steppable {
 						if (ag instanceof Human && nbInfectedHuman!=nbHumanToInfect){
 							//infect this human
 							if ( ((Human)ag).getCondition()==Condition.FINE){
-								System.out.println("Humain infect�");
+								//System.out.println("Humain infect�");
 								((Human)ag).setCondition(Condition.SICK);
 								((Human)ag).setTimeBeforeSuffering(timeBeforeActivation);
 								((Human)ag).setInitialActivationTimeVirus(timeBeforeActivation);
@@ -170,7 +170,7 @@ public class Virus implements Steppable {
 				if (object instanceof Human && ((Human)object).getCondition() == Human.Condition.FINE ) {
 					Human h = (Human) object;
 					// L'humain est infect�.
-					System.out.println("Humain infect�");
+					//System.out.println("Humain infect�");
 					h.setCondition(Condition.SICK);
 					h.setTimeBeforeSuffering(timeBeforeActivation);
 					h.setInitialActivationTimeVirus(timeBeforeActivation);
