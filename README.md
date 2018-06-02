@@ -1,94 +1,50 @@
-# Projet IA04
+# Simulation de propagation de virus
 
-## Procédure sur Git :
+Ce projet a été développé au sein de mon cursus d'ingénieur à l'UTC. Le but de ce projet est d'utiliser un système multi-agents pour modéliser une intelligence artificielle. Nous avons choisit de simuler une population au sein de laquelle un virus pourrait apparaître. Certains humains sont docteurs et peuvent donc soigner les malades. 
 
-Sur master :
-```
-git pull -r (on récupère la dernière version du dépôt)
-git checkout -b ma-nouvelle-branche (on crée et on va sur une nouvelle branche pour travailler)
-```
+## Agents
 
-Sur ma-nouvelle-branche :
-```
-git commit (on fait ses commits)
-git commit
-...
-git push (si c'est le premier push il va vous afficher la commande à écrire)
-git checkout master (travail terminé et qui fonctionne, on retourne sur master)
-```
+### Humain
 
-Sur master :
-```
-git pull -r (on récupère les dernières modifs)
-git checkout ma-nouvelle-branche (on retourne sur la branche)
-```
+L'humain a pour objectif la survie. Il vieillit à chaque "step" et a également besoin de manger régulièrement. Sa stratégie est la suivante (par ordre décroissant d'importance) :
+ * Se diriger vers un docteur s'il en a appelé un.
+ * Chercher à manger en cas de faim importante
+ * Appelle un docteur s'il est malade
+ * Chercher à manger en cas de faim
+ * Chercher à se reproduire sinon
+ 
+Un humain peut mourir de vieillesse, de faim ou de maladie. Il est représenté par un cercle bleu pour les hommes et mauve pour les femmes.
 
-Sur ma-nouvelle-branche :
-```
-git rebase master (pour rejouer nos commits après ceux de master pour plus de lisibilité dans l'historique)
-git push -f (on force le push pour écraser l'ancien historique qui n'est plus bon)
-git checkout master (on retourne sur master)
-```
+### Docteur
 
-Sur master :
-```
-git merge --no-ff ma-nouvelle-branche (on fusionne notre branche sans la remettre à plat)
-git push (on sauvegarde le tout)
-```
+Le docteur est un humain et a donc les mêmes besoins vitaux que lui. En revanche, si un humain malade se trouve à côté de lui, il le soigne immédiatement. Un docteur peut également se soigner lui-même. 
 
-## Possibilités d'action des différents Agents :
+Il est représenté par un carré.
 
-### Humain :
+### Nourriture
 
- * Percevoir l'environnement autour de lui.
- * Se déplacer.
- * Consommer de la nourriture sur une cellule adjacente.
-    => Est-ce qu'on peut consommer plus d'une unité de nourriture par tour ou pas ?
- * Se reproduire avec une personne du sexe opposé sur une cellule adjacente.
-    => Préciser les règles pour la reproduction.
- * Mourir.
- * Souffrir de la maladie.
- * Souffrir de la famine.
+La nourriture apparaît aléatoirement sur la carte. Chaque emplacement de nourriture contient un nombre de portions qui lui est propre. La nourriture pourrit avec le temps jusqu'à disparaître complétement. Les humains doivent être à coté de la nourriture pour la manger et ainsi réduire leur sensation de faim.
 
-### Médecin :
+Le taux d'apparition de la nourriture est aléatoire ce qui peut provoquer des périodes de disette.
 
- * A les mêmes possiblités d'action qu'un humain.
- * Ramasser des médicaments sur une cellule adjacente.
- * Tenter une opération sur un humain sur une cellule adjacente (Rendre des points de vie, soigner une maladie, vacciner).
+La nourriture est représentée par un cercle vert.
 
-### Nourriture :
+### Virus
 
- * Peut-être consommée.
- * Pourrir un peu plus à chaque tour.
-    => Apparition automatique d'une nouvelle cellule de nourriture chaque fois qu'une est consommée / Génération aléatoire de cellules de nourritures à chaque tour ?
+Des virus peuvent apparaître sur la carte. Un virus a une durée de vie et un rayon de contamination. Il contamine les humains aux alentours qui deviennent alors malades et perdent de la santé. 
 
-### Virus :
+Le virus est représenté par un hexagone rouge et les humains contaminés deviennent orange.
 
- * Disparaître.
- * Se déplacer.
- * Infecter des humains.
-    => Ajouter en paramètre la gravité de l'infection, rapport avec le nombre de points de vie perdus à chaque tour ?
+## Démonstration
 
+Voilà un aperçu de l'évolution de l'environnement avec un graphique présentant différentes statistiques.
 
-## Stratégie des différents Agents :
+![Demo](https://github.com/qdruault/Infected-Population-AI/blob/master/ia04.gif "Demo")
 
-### Humain :
+## Notes
 
-### Médecin :
+Ceci reste un projet scolaire répondant à un cadre et à des délais précis. Beaucoup d'améliorations peuvent être apportées à cette application (ajout de cours d'eau, agrandissement de la carte, système de saisons, meilleure gestion du temps, différents types de virus, etc.). 
 
-### Nourriture :
+## Auteurs
 
- * Agent statique. Comportement passif et constant.
-
-### Virus :
-
-
-
-
-
-
-
-
-
-
-
+Projet développé dans le cadre de l'UV IA04 à l'UTC par Baptiste DE FILIPPIS, Estelle DE MAGONDEAUX, Quentin DRUAULT-AUBIN, Louis GROISNE et Louise NAUDIN, 
